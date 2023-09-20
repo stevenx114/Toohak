@@ -23,18 +23,3 @@ function adminQuizInfo(authUserId, quizId) {
         description: 'This is my quiz',       
     }
 }
-
-/*
-Parameters:
-      ( authUserId, quizId, name )
-      
-Return object:
-      { } empty object
-
-Updates the name of the relevant quiz.
-*/
-function adminQuizNameUpdate(authUserId, quizId, name) {
-    return {
-        
-    }
-}
