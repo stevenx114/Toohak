@@ -1,5 +1,5 @@
-// Updates the description of the relevant quiz
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+// Reset the state of the application back to the start
+function clear() {
     return {
         // Returns empty object
     }
