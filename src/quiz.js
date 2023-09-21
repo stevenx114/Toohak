@@ -1,4 +1,18 @@
 /**
+ * Given basic details about a new quiz, create one for the logged in user.
+ *
+ * @param {number} authUserId 
+ * @param {string} name 
+ * @param {string} description 
+ * @returns {object} quiz info
+ */
+function adminQuizCreate(authUserId, name, description) {
+    return {
+        quizId: 2,
+    }
+}
+
+/*
  * Given a particular quiz, permanently remove the quiz.
  *
  * @param {number} authUserId of integers
@@ -60,7 +74,6 @@ function adminQuizInfo(authUserId, quizId) {
         description: 'This is my quiz',       
     }
 }
-
 
 /*
  Provide a list of all quizzes that are owned by the currently logged in user.
