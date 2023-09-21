@@ -3,6 +3,7 @@ function adminAuthLogin(email, password) {
     return {
         authUserId: 1,
     }
+}
 
 // Given an admin user's authUserId, return details about the user.
 // "name" is the first and last name concatenated with a single space between them
