@@ -1,6 +1,5 @@
 /*
 Parameters:
-<<<<<<< src/quiz.js
    ( authUserId, quizId )
 =======
       ( authUserId, quizId, name )
