@@ -1,11 +1,9 @@
 /*
 Parameters:
-   ( authUserId, quizId )
-=======
-      ( authUserId, quizId, name )
+  ( authUserId, quizId, name )
       
 Return object:
-      { } empty object
+  { } empty object
 
 Updates the name of the relevant quiz.
 */
@@ -18,10 +16,11 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 
 
 /*
- Provide a list of all quizzes that are owned by the currently logged in user.
+Parameters:
+  ( authUserId, quizId )
 
 Return object:
-{
+  {
     quizId: 1,
     name: 'My Quiz',
     timeCreated: 1683125870,
