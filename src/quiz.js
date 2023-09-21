@@ -1,4 +1,3 @@
-
 /**
  * Given a particular quiz, permanently remove the quiz.
  *
@@ -8,7 +7,30 @@
  */
 function adminQuizRemove(authUserId, quizId ) {
     return { 
+    }
+}
 
+
+// Updates the description of the relevant quiz
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+    return {
+        // Returns empty object
+    }
+}
+
+/*
+Parameters:
+      ( authUserId, quizId, name )
+      
+Return object:
+      { } empty object
+
+Updates the name of the relevant quiz.
+*/
+
+function adminQuizNameUpdate(authUserId, quizId, name) {
+    return {
+        
     }
 }
 
@@ -28,7 +50,6 @@ function adminQuizRemove(authUserId, quizId ) {
     ]
  } 
 */
-
 
 function adminQuizList(authUserId) {
 
