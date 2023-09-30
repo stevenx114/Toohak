@@ -25,11 +25,21 @@ function adminQuizRemove(authUserId, quizId ) {
 }
 
 
-// Updates the description of the relevant quiz
+/**
+ * Updates the description of the relevant quiz.
+ *
+ * @param {string} authUserId - The ID of the user making the update.
+ * @param {string} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ *
+ * @returns {object} An empty object.
+ *
+ * @throws {Error} If an error occurs.
+ */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-    return {
-        // Returns empty object
-    }
+
+  return {};
+
 }
 
 /*
