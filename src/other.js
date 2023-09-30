@@ -1,13 +1,15 @@
-// Reset the state of the application back to the start
+/**
+ * Resets the state of the application back to the initial state, clearing all data.
+ *
+ * @returns {Object} An empty object.
+ */
 export function clear() {
     
-    // Clearing
-    data = {
-        users: [],
-        quizzes: [],
-    }
+  // Clearing
+  data = {
+    users: [],
+    quizzes: [],
+  }
 
-    return {
-        // Returns empty object
-    };
+  return {};
 }
