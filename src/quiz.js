@@ -1,4 +1,18 @@
+import { getData, setData } from './dataStore.js';
+
+export function getUser(userId) {
+  const data = getData();
+  return data.users.find(u => u.userId === userId);
+}
+
+export function getQuiz(quizId) {
+  const data = getData();
+  return data.quizzes.find(q => q.quizId === quizId);
+}
+
 /**
+ * 
+ *
  * Given basic details about a new quiz, create one for the logged in user.
  *
  * @param {number} authUserId 
@@ -75,31 +89,37 @@ function adminQuizInfo(authUserId, quizId) {
     }
 }
 
-/*
- Provide a list of all quizzes that are owned by the currently logged in user.
+/**
+ * 
+ * Provide a list of all quizzes that are owned by the currently logged in user.
+ * 
+ * @param {*} authUserId 
+ * @returns 
+ * 
+ */
 
- Input Parameters:
- ( authUserId )
+export function adminQuizList(authUserId) {
+  const userId = getUser(authUserId);
 
- Return: 
+  if (!userId) {
+    return { error: "AuthUserId is not a valid user" };
+  }
 
-{ quizzes: [
-    {
-      quizId: 1,
-      name: 'My Quiz',
-    }
-    ]
- } 
-*/
+  const quizList = userId.quizzesOwned;
+  let quizListArr = [];
 
-function adminQuizList(authUserId) {
+  for (let quizId in quizList) {
+    const currQuizId = getQuiz(quizList[quizId]);
+    quizListArr.push(
+      {
+        quizId: currQuizId.quizId,
+        name: currQuizId.name,
+      },
+    );
+  }
 
-    return { quizzes: [
-        {
-          quizId: 1,
-          name: 'My Quiz',
-        }
-      ]
-    };
+  return { 
+    quizzes: quizListArr,
+  };
 
 }
