@@ -41,50 +41,32 @@ function adminQuizRemove(authUserId, quizId ) {
  * @throws {Error} If an error occurs.
  */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-
   let data = getData();
-  let isUserIdValid = false;
-  let isQuizIdValid = false;
+  const isUserIdValid = data.users.find(u => u.userId === authUserId);
+  let quiz = data.quizzes.find(u => u.quizId === quizId);
 
   if (description.length > 100) {
     return {error: 'Description is more than 100 characters in length'};
-  }
-
-  for (const currentUser of data.users) {
-
-    if (currentUser.authUserId === authUserId) {
-      isUserIdValid = true;
-    }
-
   }
 
   if (!isUserIdValid) {
     return {error: 'AuthUserId is not a valid user'};
   }
 
-  for (const currentQuiz of data.quizzes) {
-
-    if (currentQuiz.quizId === quizId) {
-
-      isQuizIdValid = true;
-      
-      if (currentQuiz.authUserId !== authUserId) {
-        return {error: 'Quiz ID does not refer to a quiz that this user owns'};
-      }
-
-      currentQuiz.description = description;
-      setData(data);
-      
-    }
-
-  }
-
-  if (!isQuizIdValid) {
+  if (!quiz) {
     return {error: 'Quiz ID does not refer to a valid quiz'};
   }
   
-  return {};
+  const doesUserOwnQuiz = !!quiz.allOwners(u => u === authUserId);
 
+  if (doesUserOwnQuiz === false) {
+    return {error: 'Quiz ID does not refer to a quiz that this user owns'};
+  }
+
+  quiz.description = description;
+  setData(data);
+      
+  return {};
 }
 
 /*
