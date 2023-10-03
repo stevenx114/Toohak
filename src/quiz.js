@@ -1,3 +1,16 @@
+import { getData, setData } from './dataStore.js' 
+
+export function getUser(userId) {
+    const data = getData();
+    return data.users.find(u => u.userId === userId);
+}
+
+
+export function getQuiz(quizId) {
+    const data = getData();
+    return data.quizzes.find(q => q.quizId === quizId);
+}
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -49,30 +62,34 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 }
 
 
-/*
-Parameters:
-  ( authUserId, quizId )
-
-Return object:
-  {
-    quizId: 1,
-    name: 'My Quiz',
-    timeCreated: 1683125870,
-    timeLastEdited: 1683125871,
-    description: 'This is my quiz',
+/**
+ * 
+ * @param {Number} authUserId 
+ * @param {Number} quizId 
+ * @returns {object} quiz info
+ */
+function adminQuizInfo(authUserId, quizId) {
+  const user = getUser(authUserId);
+  const quiz = getQuiz(quizId);
+  if (!user) {
+      return { error: 'AuthUserId is not a valid user' };
   }
 
-Gets and returns all of the relevant information about the current quiz.
-*/
+  if (!quiz) {
+    return { error: 'Quiz ID does not refer to a valid quiz'};
+  }
 
-function adminQuizInfo(authUserId, quizId) {
-    return {
-        quizId: 1,
-        name: 'My Quiz',
-        timeCreated: 1683125870,
-        timeLastEdited: 1683125871,
-        description: 'This is my quiz',       
-    }
+  if (!user.quizzesOwned.includes(quizId)) {
+    return { error: 'Quiz ID does not refer to a quiz that this user owns'};
+  }
+
+  return {
+    quizId: quiz.quizId,
+    name: user.name,
+    timeCreated: user.timeCreated,
+    timeLastEdited: user.timeLastEdited,
+    description: quiz.description,
+  }
 }
 
 /*
