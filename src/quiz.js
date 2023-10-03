@@ -63,6 +63,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
 
 
 /**
+ * Get all of the relevant information about the current quiz.
  * 
  * @param {Number} authUserId 
  * @param {Number} quizId 
