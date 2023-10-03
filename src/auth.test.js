@@ -40,6 +40,7 @@ describe('adminUserDetails Test', () => {
     // Error cases for adminUserDetails function
     describe('Error cases', () => {
         test('AuthUserId is not a valid user', () => {
+            user = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
             clear();
             expect(adminUserDetails(user.userId).toEqual(ERROR));
         });
