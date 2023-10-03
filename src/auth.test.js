@@ -1,13 +1,24 @@
-import { adminAuthRegister } from './auth.js';
-import { clear } from './other.js';
+import { 
+    adminAuthRegister 
+} from './auth';
+
+import {
+    adminQuizNameUpdate, 
+    adminQuizCreate,
+} from './quiz';
+
+import { 
+    clear,
+} from './other';
 
 beforeEach(() => {
     clear();
 });
 
+// Success and fail tests for adminAuthRegister
 describe('Tests for adminAuthRegister', () => {
     test('Fails on duplicate email', () => {
-        adminAuthRegister('hello@gmail.com', 'password', 'hello', 'world');
+        let newUserId = adminAuthRegister('hello@gmail.com', 'password', 'hello', 'world');
         expect(adminAuthRegister('hello@gmail.com', 'password', 'hello', 'world')).toEqual({ error: expect.any(String) });
     });
     test('Fails on invalid email', () => {
