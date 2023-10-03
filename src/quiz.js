@@ -68,7 +68,7 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
  * @param {Number} quizId 
  * @returns {object} quiz info
  */
-function adminQuizInfo(authUserId, quizId) {
+export function adminQuizInfo(authUserId, quizId) {
   const user = getUser(authUserId);
   const quiz = getQuiz(quizId);
   if (!user) {
@@ -76,11 +76,11 @@ function adminQuizInfo(authUserId, quizId) {
   }
 
   if (!quiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz'};
+    return { error: 'Quiz ID does not refer to a valid quiz' };
   }
 
   if (!user.quizzesOwned.includes(quizId)) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns'};
+    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
   }
 
   return {
