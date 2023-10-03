@@ -1,3 +1,5 @@
+import { getData, setData } from './dataStore.js';
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -6,10 +8,38 @@
  * @param {string} description 
  * @returns {object} quiz info
  */
-function adminQuizCreate(authUserId, name, description) {
-    return {
-        quizId: 2,
+export function adminQuizCreate(authUserId, name, description) {
+  const dataBase = getData();
+
+  if (!name) {
+    return {error: "name cannot be empty"};
+  } else if (name.length < 3) {
+    return {error: "name needs to be at least 3 characters"};
+  } else if (name.length > 30) {
+    return {error: "name cannot exceed 30 characters"};
+  } else if (description.length > 100) {
+    return {error: "description cannot exceed 100 characters"};
+  }
+
+  const AuthUserIdToFind = dataBase.users.find(a => a.userId === userId);
+  if (!AuthUserIdToFind) {
+    return {error: "AuthUserId is not a valid user"};
+  }
+
+  const quizzes = (authUserId.length * name.length) + 342857;
+  dataBase.quizzes.push(
+    {
+      quizId: Quizzes,
+      name: name,
+      timeCreated: Date.now(),
+      timeLastEdited: Date.now(),
+      description: description,
     }
+  );
+
+  return {
+    quizId: quizzes,
+  }
 }
 
 /*
@@ -92,7 +122,7 @@ function adminQuizInfo(authUserId, quizId) {
  } 
 */
 
-function adminQuizList(authUserId) {
+export function adminQuizList(authUserId) {
 
     return { quizzes: [
         {
