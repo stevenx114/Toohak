@@ -9,6 +9,17 @@ import {
 
 import validator from 'validator';
 
+export function getUser(userId) {
+    const data = getData();
+    return data.users.find(u => u.userId === userId);
+}
+
+export function getQuiz(quizId) {
+    const data = getData();
+    return data.quizzes.find(q => q.quizId === quizId);
+}
+
+
 // Given a registered user's email and password returns their authUserId value.
 function adminAuthLogin(email, password) {
     return {
@@ -39,6 +50,7 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 0,
     }
+
     if (data.users.some(user => user.email === email)) {
         return {
             error: 'Email address is used by another user'
@@ -72,37 +84,38 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
             error: 'Password must contain at least one number and at least one letter'
         } 
     }
+
     data.users.push(newUser);
     setData(data);
+
     return {
         authUserId: newUserId
     }
 }
 
-// Given an admin user's authUserId, return details about the user.
-// "name" is the first and last name concatenated with a single space between them
 
-// Input Parameters: ( authUserId )
-      
-// Return object:
-//  { user:
-// {
-// userId: 1,
-// name: 'Hayden Smith',
-// email: 'hayden.smith@unsw.edu.au',
-// numSuccessfulLogins: 3,
-// numFailedPasswordsSinceLastLogin: 1,
-// }
-// 
-// }
-function adminUserDetails(authUserId) {
-    return { user:
-        {
-          userId: 1,
-          name: 'Hayden Smith',
-          email: 'hayden.smith@unsw.edu.au',
-          numSuccessfulLogins: 3,
-          numFailedPasswordsSinceLastLogin: 1,
+/**
+ * Given an admin user's authUserId, return details about the user.
+ * "name" is the first and last name concatenated with a single space between them
+ * 
+ * @param {number} // authUserId
+ * @returns {object} // user details
+ */
+export function adminUserDetails(authUserId) {
+    const user = getUser(authUserId);
+    if (!user) {
+        return { error: 'AuthUserId is not a valid user' };
+    }
+
+    return { 
+        user: {
+            userId: user.userId,
+            name: user.name,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
     }
+
 }
+
