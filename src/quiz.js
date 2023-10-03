@@ -1,3 +1,8 @@
+import {
+  getData,
+  setData,
+} from './dataStore';
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -24,7 +29,6 @@ function adminQuizRemove(authUserId, quizId ) {
     }
 }
 
-
 /**
  * Updates the description of the relevant quiz.
  *
@@ -38,6 +42,47 @@ function adminQuizRemove(authUserId, quizId ) {
  */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 
+  let data = getData();
+  let isUserIdValid = false;
+  let isQuizIdValid = false;
+
+  if (description.length > 100) {
+    return {error: 'Description is more than 100 characters in length'};
+  }
+
+  for (const currentUser of data.users) {
+
+    if (currentUser.authUserId === authUserId) {
+      isUserIdValid = true;
+    }
+
+  }
+
+  if (!isUserIdValid) {
+    return {error: 'AuthUserId is not a valid user'};
+  }
+
+  for (const currentQuiz of data.quizzes) {
+
+    if (currentQuiz.quizId === quizId) {
+
+      isQuizIdValid = true;
+      
+      if (currentQuiz.authUserId !== authUserId) {
+        return {error: 'Quiz ID does not refer to a quiz that this user owns'};
+      }
+
+      currentQuiz.description = description;
+      setData(data);
+      
+    }
+
+  }
+
+  if (!isQuizIdValid) {
+    return {error: 'Quiz ID does not refer to a valid quiz'};
+  }
+  
   return {};
 
 }
