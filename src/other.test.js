@@ -1,4 +1,3 @@
-
 import {
     clear,
 } from './other';
@@ -14,8 +13,8 @@ const ERROR = { error: expect.any(String) };
   
 describe('Clear Function implementation', () => {
 
-  let authUserId;
-  let quizId;
+  //let authUserId;
+  //let quizId;
 
 
   /*beforeEach(() => {
@@ -24,7 +23,7 @@ describe('Clear Function implementation', () => {
   });
   */
 
-  test('Just checking correct return object', () => {
+  test('Returns empty dictionary', () => {
 
     expect(clear()).toStrictEqual({});
 
