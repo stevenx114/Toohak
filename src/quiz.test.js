@@ -2,7 +2,7 @@ import {
     adminAuthRegister, 
     adminUserDetails,
     adminQuizInfo,
-} from './auth'
+} from './auth';
 
 import {
     adminQuizCreate,
@@ -12,7 +12,7 @@ import {
     clear,
 } from './other';
 
-const ERROR = { error: expect.any(String) }
+const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
     clear();
