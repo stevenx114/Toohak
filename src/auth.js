@@ -41,7 +41,6 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
     const data = getData();
     const newUserId = parseInt(uuidv4().replace(/-/g, ''), 16);
     const allowedNameChars = /^[a-zA-Z '-]+$/;
-    const allowedPassChars = /^[a-zA-Z0-9]+$/;
     const newUser = {
         userId: newUserId,
         name: `${nameFirst} ${nameLast}`,
@@ -49,6 +48,7 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
         password: password,
         numSuccessfulLogins: 1,
         numFailedPasswordsSinceLastLogin: 0,
+        quizzesOwned: [],
     }
 
     if (data.users.some(user => user.email === email)) {
@@ -79,7 +79,8 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
         return {
             error: 'Password needs to be 8 characters or longer'
         } 
-    } else if (!allowedPassChars.test(password)) {
+    } else if (!((/[a-z]/.test(password) || /[A-Z]/.test(password)) 
+                && /[0-9]/.test(password))) {
         return {
             error: 'Password must contain at least one number and at least one letter'
         } 
