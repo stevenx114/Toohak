@@ -1,6 +1,6 @@
-import { adminQuizCreate, adminQuizList } from './quiz.js';
-import { adminAuthRegister, adminAuthLogin } from './auth.js';
-import { clear } from './other.js';
+import { adminQuizCreate, adminQuizList } from './quiz';
+import { adminAuthRegister, adminAuthLogin } from './auth';
+import { clear } from './other';
 
 const ERROR = {error: expect.any(String)};
     beforeEach(() => {
@@ -8,42 +8,43 @@ const ERROR = {error: expect.any(String)};
     });
 
     describe('AdminQuizCreate', () => {
+        // Error cases for AdminQuizCreate function
+        let userId;
+        let quizzes;
         describe('error cases:', () => {
             beforeEach(() => {
-                const userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
-                const quizzes = adminQuizList(userId.authUserId);
+                userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
+            });
+            
+            test('invalid authUserId', () => {
+                clear();
+                expect(adminQuizCreate(userId.authUserId, 'human history', 'description')).toStrictEqual(ERROR);
             });
 
-            const userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
-            test('invalid AuthUserId', () => {
-                expect(adminQuizCreate(userId.authUserId + 0.003, 'human history', 'description')).toStrictEqual(ERROR);
-            })
-
-            const invalidName = [
+            test.each([
                 { name: ''}, // empty
                 { name: '!23'}, // invalid char
                 { name: '!*^&'}, // invalid char
                 { name: 'qw'}, // < 2 chars
                 { name: '12'}, // < 2 chars
                 { name: 'qwerty'.repeat(6)}, // > 30 chars
-            ];
-            test.each(invalidName) ('invalid name input: $name', ({ name }) => {
+            ])('invalid name input: $name', ({ name }) => {
                 expect(adminQuizCreate(userId.authUserId, name, 'description')).toStrictEqual(ERROR);
             });
 
-            test('existing quiz name', () => {
-                expect(adminQuizCreate(userId.authUserId, quizzes.name, 'description')).toStrictEqual(ERROR);
-            });
-
+            const longDescription = 'description'.repeat(10);
             test('description too long', () => {
-                expect(adminQuizCreate(userId.authUserId, 'games', 'description'.repeat(10))).toStrictEqual(ERROR);
+                console.log(adminQuizCreate(userId.authUserId, 'games', longDescription));
+                expect(adminQuizCreate(userId.authUserId, 'games', longDescription)).toStrictEqual(ERROR);
             });
 
         });
 
-        describe('success cases:', () => {
-            const userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
+        // Success case for adminQuizCreate function
+        describe('success case:', () => {
+            let userId;
             test('Valid input', () => {
+                userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
                 expect(adminQuizCreate(userId.authUserId, 'human history', 'description')).toStrictEqual({
                     quizId: expect.any(Number),
                 });
