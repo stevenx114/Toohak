@@ -93,3 +93,42 @@ describe('adminUserDetails', () => {
         });
     });
 }); 
+
+// Tests for function adminAuthLogin
+describe('Tests for adminAuthLogin', () => {
+    let userOne = {
+        email: 'johnsmith@gmail.com',
+        password: 'ilovecat123',
+        nameFirst: 'john',
+        nameLast: 'smith'
+    };
+    let userTwo = {
+        email: 'thomasapple@gmail.com',
+        password: 'helloworld123',
+        nameFirst: 'thomas',
+        nameLast: 'apple'
+    };
+
+    beforeEach(() => {
+        clear();
+        userIdOne = adminAuthRegister(userOne.email, userOne.password, userOne.nameFirst, userOne.nameLast); 
+        userIdTwo = adminAuthRegister(userTwo.email, userTwo.password, userTwo.nameFirst, userTwo.nameLast); 
+    })
+    describe('Success Cases', () => {
+        test('Returns userId successfully',() => {
+            expect(adminAuthLogin(userOne.email, userOne.password).toEqual({authUserId: userIdOne}));
+            expect(adminAuthLogin(userTwo.email, userTwo.password).toEqual({authUserId: userIdTwo}));
+        })
+    })
+
+    describe('Error Cases', () => {
+        let invalidEmail = 'jamesbrown@gmail.com';
+        test('Testing invalid email', () => {
+            expect(adminAuthLogin(invalidEmail, userOne.password).toEqual({error: expect.any(string)}));
+        })
+        test('Testing incorrect password', () => {
+            expect(adminAuthLogin(userOne.email, userTwo.password).toEqual({error: expect.any(string)}));
+        })
+    })
+})
+
