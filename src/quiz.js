@@ -1,8 +1,8 @@
-import { getData, setData } from './dataStore.js';
+import { getData, setData } from './dataStore';
 
-export function getUser(userId) {
+export function getUser(authUserId) {
   const data = getData();
-  return data.users.find(u => u.userId === userId);
+  return data.users.find(u => u.userId === authUserId);
 }
 
 export function getQuiz(quizId) {
@@ -20,7 +20,22 @@ export function getQuiz(quizId) {
  * @param {string} description 
  * @returns {object} quiz info
  */
-function adminQuizCreate(authUserId, name, description) {
+export function adminQuizCreate(authUserId, name, description) {
+  const data = getData();
+  const newQuizId =  name.length + 574;
+
+  data.quizzes.push(
+    {
+      quizId: newQuizId,
+      name: name,
+      timeCreated: Date.now(),
+      timeLastEdited: Date.now(),
+      description: description,
+    }
+  );
+
+  setData(data);
+
     return {
         quizId: 2,
     }
@@ -33,7 +48,7 @@ function adminQuizCreate(authUserId, name, description) {
  * @param {number} quizId of integers
  * @returns {object} empty object
  */
-function adminQuizRemove(authUserId, quizId ) {
+export function adminQuizRemove(authUserId, quizId ) {
     return { 
     }
 }
@@ -99,27 +114,30 @@ function adminQuizInfo(authUserId, quizId) {
  */
 
 export function adminQuizList(authUserId) {
+  const data = getData();
   const userId = getUser(authUserId);
-
+  let quizList = [];
   if (!userId) {
     return { error: "AuthUserId is not a valid user" };
   }
 
-  const quizList = userId.quizzesOwned;
-  let quizListArr = [];
+  for (let Id in userId.quizzesOwned) {
+    const quizList = userId.quizzesOwned[Id]; // Array of quizzesOwned
+    const QuizInfo = getQuiz(quizList); // Find relevant quiz object
 
-  for (let quizId in quizList) {
-    const currQuizId = getQuiz(quizList[quizId]);
-    quizListArr.push(
+    quizList.push(
       {
-        quizId: currQuizId.quizId,
-        name: currQuizId.name,
-      },
-    );
+        quizId: quizInfo.quizId,
+        name: quizInfo.name,
+      }
+    )
   }
 
+  data.quizzes.push(quizList);
+  setData(data);
+
   return { 
-    quizzes: quizListArr,
+    quizzes: quizList,
   };
 
 }

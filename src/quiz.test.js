@@ -1,17 +1,30 @@
+import { adminQuizCreate, adminQuizList } from './quiz';
+import { adminAuthRegister, adminAuthLogin } from './auth';
+import { clear } from './other';
+
+const ERROR = {error: expect.any(String)};
+
+beforeEach(() => {
+    clear();
+});
+
 describe('AdminQuizList', () => {
+    let userId;
+    let quiz;
     beforeEach(() => {
-        const userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
-        const quiz = adminQuizCreate(userId.authUserId, 'human history', 'description');
+        userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
     });
   
     describe('error cases:', () => {
         test('invalid AuthUserId', () => {
-            expect(adminQuizList(userId.authUserId + 0.003)).toStrictEqual(ERROR);
+            clear();
+            expect(adminQuizList(userId.authUserId)).toStrictEqual(ERROR);
         });
     });
     
     describe('success cases:', () => {
         test('valid input', () => {
+            quiz = adminQuizCreate(userId.authUserId, 'human history', 'description');
             expect(adminQuizList(userId.authUserId)).toStrictEqual({
                 quizzes: [
                     {
