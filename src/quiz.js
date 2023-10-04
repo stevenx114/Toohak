@@ -22,23 +22,31 @@ export function getQuiz(quizId) {
  */
 export function adminQuizCreate(authUserId, name, description) {
   const data = getData();
-  const newQuizId =  name.length + 574;
+  const userId = getUser(authUserId);
+  let quizList = [];
+  if (!userId) {
+    return { error: "AuthUserId is not a valid user" };
+  }
 
-  data.quizzes.push(
+  for (let Id in userId.quizzesOwned) {
+    const quizList = userId.quizzesOwned[Id]; // Array of quizzesOwned
+    const QuizInfo = getQuiz(quizList); // Find relevant quiz object
+    quizList.push(
     {
-      quizId: newQuizId,
-      name: name,
-      timeCreated: Date.now(),
-      timeLastEdited: Date.now(),
-      description: description,
+      quizId: quizInfo.quizId,
+      name: quizInfo.name,
     }
-  );
+  )
+  }
+  
 
+data.quizzes.push(quizList);
   setData(data);
 
-    return {
-        quizId: 2,
-    }
+  return { 
+    quizzes: quizList,
+  };
+
 }
 
 /*
@@ -117,6 +125,8 @@ export function adminQuizList(authUserId) {
   const data = getData();
   const userId = getUser(authUserId);
   let quizList = [];
+  console.log(authUserId);
+  console.log(data);
   if (!userId) {
     return { error: "AuthUserId is not a valid user" };
   }
@@ -124,7 +134,7 @@ export function adminQuizList(authUserId) {
   for (let Id in userId.quizzesOwned) {
     const quizList = userId.quizzesOwned[Id]; // Array of quizzesOwned
     const QuizInfo = getQuiz(quizList); // Find relevant quiz object
-
+    
     quizList.push(
       {
         quizId: quizInfo.quizId,
