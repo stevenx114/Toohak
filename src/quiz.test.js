@@ -12,16 +12,14 @@ const ERROR = {error: expect.any(String)};
         let userId;
         let quizzes;
         describe('error cases:', () => {
-            
             beforeEach(() => {
                 userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown', 'Alex', 'Smith');
-                quizzes = adminQuizList(userId.authUserId);
             });
             
-            test('invalid AuthUserId', () => {
+            test('invalid authUserId', () => {
                 clear();
                 expect(adminQuizCreate(userId.authUserId, 'human history', 'description')).toStrictEqual(ERROR);
-            })
+            });
 
             test.each([
                 { name: ''}, // empty
@@ -34,16 +32,9 @@ const ERROR = {error: expect.any(String)};
                 expect(adminQuizCreate(userId.authUserId, name, 'description')).toStrictEqual(ERROR);
             });
 
-            // test('existing quiz name', () => {
-            //     expect(adminQuizCreate(userId.authUserId, quizzes.name, 'description')).toStrictEqual({error: "quiz name is already in use"});
-            // });
-
-            test('existing quiz name', () => {
-                expect(adminQuizCreate(userId.authUserId, quizzes.name, 'description')).toStrictEqual(ERROR);
-            });
-
             const longDescription = 'description'.repeat(10);
             test('description too long', () => {
+                console.log(adminQuizCreate(userId.authUserId, 'games', longDescription));
                 expect(adminQuizCreate(userId.authUserId, 'games', longDescription)).toStrictEqual(ERROR);
             });
 

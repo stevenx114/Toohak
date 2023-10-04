@@ -1,8 +1,8 @@
 import { getData, setData } from './dataStore';
 
-export function getUser(authUserId) {
+export function getUser(userId) {
   const data = getData();
-  return data.users.find(u => u.userId === authUserId);
+  return data.users.find(u => u.userId === userId);
 }
 
 
@@ -38,15 +38,10 @@ export function adminQuizCreate(authUserId, name, description) {
   } else if (specialChar.test(name)) {
     return {error: "name can only contain alphanumeric and space characters"};
   }
-
-  // const existingQuiz = data.quizzes.find(a => a.name === name);
-  // if (existingQuiz) {
-  //   return { error: "quiz name is already in use"};
-  // }
   
-  for (let quizId in userId.quizzesOwned) {
-    let quizIdOwned = uderId.quizzesOwned[quizId];
-    const quizInfo = getQuiz[quizIdOwned];
+  for (let Id in userId.quizzesOwned) {
+    let quizIdOwned = userId.quizzesOwned[Id];
+    const quizInfo = getQuiz(quizIdOwned);
     if (quizInfo.name === name) {
       return { error: "quiz name is already in use"};
     }
@@ -63,6 +58,8 @@ export function adminQuizCreate(authUserId, name, description) {
       description: description,
     }
   );
+
+  userId.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
 
   setData(data);
 
@@ -152,13 +149,31 @@ function adminQuizInfo(authUserId, quizId) {
 */
 
 export function adminQuizList(authUserId) {
+  const data = getData();
+  const userId = getUser(authUserId);
+  let quizList = [];
+  if (!userId) {
+    return { error: "AuthUserId is not a valid user" };
+  }
 
-    return { quizzes: [
-        {
-          quizId: 1,
-          name: 'My Quiz',
-        }
-      ]
-    };
+  for (let Id in userId.quizzesOwned) {
+    const quizList = userId.quizzesOwned[Id]; // Array of quizzesOwned
+    const QuizInfo = getQuiz(quizList); // Find relevant quiz object
+  }
+  quizList.push(
+    {
+      quizId: quizInfo.quizId,
+      name: quizInfo.name,
+    }
+  )
+
+data.quizzes.push(quizList);
+  setData(data);
+
+  return { 
+    quizzes: quizList,
+  };
+
+
 
 }
