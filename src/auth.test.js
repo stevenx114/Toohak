@@ -1,15 +1,19 @@
-import { 
-    adminAuthRegister 
-} from './auth';
-
 import {
     adminQuizNameUpdate, 
     adminQuizCreate,
 } from './quiz';
 
-import { 
-    clear,
+import {
+    adminAuthRegister,
+    adminAuthLogin,
+    adminUserDetails,
+} from './auth';
+
+import {
+    clear
 } from './other';
+
+const ERROR = { error: expect.any(String) }
 
 beforeEach(() => {
     clear();
@@ -52,3 +56,40 @@ describe('Tests for adminAuthRegister', () => {
         expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'world')).toEqual({ authUserId: expect.any(Number) });
     });
 });
+
+
+// Tests for adminUserDetails function
+describe('adminUserDetails', () => {
+    let user;
+    let userDetails;
+
+    // Success cases for adminUserDetails function
+    describe('Success Cases', () => {
+        beforeEach(() => {
+            clear();
+            user = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+            userDetails = adminUserDetails(user.authUserId);
+        });
+
+        test('Successful implementation', () => {        
+            expect(adminUserDetails(user.authUserId)).toEqual({
+                user: {
+                    userId: user.authUserId,
+                    name: 'John Smith',
+                    email: 'johnsmith@gmail.com',
+                    numSuccessfulLogins: 1, 
+                    numFailedPasswordsSinceLastLogin: 0, 
+                },
+            });
+        });
+    });
+
+    // Error cases for adminUserDetails function
+    describe('Error cases', () => {
+        test('AuthUserId is not a valid user', () => {
+            user = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+            clear();
+            expect(adminUserDetails(user.authUserId)).toEqual(ERROR);
+        });
+    });
+}); 
