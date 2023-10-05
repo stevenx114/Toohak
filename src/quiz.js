@@ -96,7 +96,7 @@ function adminQuizInfo(authUserId, quizId) {
  * 
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
- * @param {*} authUserId 
+ * @param {number} authUserId 
  * @returns 
  * 
  */
@@ -110,7 +110,7 @@ export function adminQuizList(authUserId) {
     return { error: "AuthUserId is not a valid user" };
   }
   
-  for (let id in userId.quizzesOwned) {
+  for (const id in userId.quizzesOwned) {
     const quizList = userId.quizzesOwned[id]; // Array of quizzesOwned
     const quizInfo = getQuiz(quizList); // Find relevant quiz object
     quiz.push(
