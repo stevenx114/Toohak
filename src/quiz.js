@@ -160,4 +160,7 @@ export function adminQuizList(authUserId) {
       }
     )
   }
+  return {
+    quizId: newQuizId,
+  }
 }
