@@ -3,6 +3,11 @@ import {
   setData,
 } from './dataStore';
 
+import {
+  getUser,
+  getQuiz,
+} from './auth';
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -41,9 +46,10 @@ function adminQuizRemove(authUserId, quizId ) {
  * @throws {Error} If an error occurs.
  */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-  let data = getData();
-  const user = data.users.find(u => u.userId === authUserId);
-  let quiz = data.quizzes.find(u => u.quizId === quizId);
+
+  const data = getData();
+  const user = getUser(authUserId);
+  const quiz = getQuiz;
 
   if (description.length > 100) {
     return {error: 'Description is more than 100 characters in length'};
@@ -59,7 +65,7 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   
   const doesUserOwnQuiz = user.quizzesOwned(u => u === authUserId);
 
-  if (doesUserOwnQuiz === false) {
+  if (!doesUserOwnQuiz) {
     return {error: 'Quiz ID does not refer to a quiz that this user owns'};
   }
 
