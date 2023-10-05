@@ -1,29 +1,26 @@
 ```javascript
 let data = {
-    users: [
-        {
-            authUserId: 1231256,
-            userId: 1,
-            nameFirst: 'Yiru',
-            nameLast: 'Jang',
-            email: 'yirudabest@gmail.com',
-            password: 1234,
-            numSuccessfulLogins: 3,
-            numFailedPasswordsSinceLastLogin: 1,
-        }
-    ],
-    quizzes: [
-        {
-            quizId: 1,
-            name: 'My Quiz',
-            timeCreated: 1683125870,
-            timeLastEdited: 1683125871,
-            description: 'This is my quiz',
-        }
-    ]
-
-
-}
+  users: [
+    {
+      userId: 12345, 
+      name: 'John Smith',
+      email: 'johnsmith@gmail.com',
+      password: 'ilovecat123',
+      numSuccessfulLogins: 1,
+      numFailedPasswordsSinceLastLogin: 0,
+      quizzesOwned: [123],
+    }
+  ], 
+  quizzes: [
+    {
+    quizId: 123,
+    name: 'What pizza are you?',
+    timeCreated: 1683125870,
+    timeLastEdited: 1683125871,
+    description: 'This is my quiz',
+    }
+  ]
+};
 ```
 
 [Optional] short description: 
