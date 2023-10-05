@@ -160,28 +160,7 @@ export function adminQuizList(authUserId) {
       }
     )
   }
-
- Input Parameters:
- ( authUserId )
-
- Return: 
-
-{ quizzes: [
-    {
-      quizId: 1,
-      name: 'My Quiz',
-    }
-    ]
- } 
-*/
-
-export function adminQuizList(authUserId) {
   return {
-    quizzes: [
-      {
-        quizId: 123,
-        name: 'human history',
-      }
-    ]
+    quizId: newQuizId,
   }
 }
