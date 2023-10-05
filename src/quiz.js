@@ -1,4 +1,5 @@
 import { getData, setData } from './dataStore';
+import { v4 as uuidv4 } from 'uuid';
 
 export function getUser(userId) {
   const data = getData();
@@ -47,7 +48,7 @@ export function adminQuizCreate(authUserId, name, description) {
     }
   }
   
-  const newQuizId =  name.length + 574;
+  const newQuizId =  parseInt(uuidv4().replace(/-/g, ''), 16);
 
   data.quizzes.push(
     {
