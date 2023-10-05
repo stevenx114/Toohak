@@ -1,4 +1,4 @@
-import { getData, setData } from './dataStore.js' 
+import { getData, setData } from './dataStore' 
 
 export function getUser(userId) {
     const data = getData();
@@ -60,7 +60,6 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
         
     }
 }
-
 
 /**
  * Get all of the relevant information about the current quiz.
