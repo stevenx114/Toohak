@@ -16,12 +16,15 @@ import {
 
 const ERROR = { error: expect.any(String) };
 
+beforeEach(() => {
+    clear();
+});
+
 // Tests for adminQuizNameUpdate function
 describe('adminQuizNameUpdate', () => {
     let newUser;
     let newQuiz;
     beforeEach(() => {
-        clear();
         newUser = adminAuthRegister('johnsmith@gmail.com', 'ilovedog123', 'John', 'Smith');
         newQuiz = adminQuizCreate(newUser.authUserId, 'nameNew', 'descriptionNew');
     });
@@ -71,11 +74,6 @@ describe('adminQuizNameUpdate', () => {
         });
     });
 }); 
-
-beforeEach(() => {
-    clear();
-});
-
 
 // Tests for adminQuizInfo function
 describe('adminQuizInfo Test', () => {
