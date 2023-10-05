@@ -5,7 +5,6 @@ export function getUser(userId) {
   return data.users.find(u => u.userId === userId);
 }
 
-
 export function getQuiz(quizId) {
   const data = getData();
   return data.quizzes.find(q => q.quizId === quizId);
@@ -23,6 +22,7 @@ export function adminQuizCreate(authUserId, name, description) {
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;
   const userId = getUser(authUserId);
+
   if (!userId) {
     return {error: "AuthUserId is not a valid user"};
   }
@@ -40,7 +40,7 @@ export function adminQuizCreate(authUserId, name, description) {
   }
   
   for (let Id in userId.quizzesOwned) {
-    let quizIdOwned = userId.quizzesOwned[Id];
+    const quizIdOwned = userId.quizzesOwned[Id];
     const quizInfo = getQuiz(quizIdOwned);
     if (quizInfo.name === name) {
       return { error: "quiz name is already in use"};
@@ -60,7 +60,6 @@ export function adminQuizCreate(authUserId, name, description) {
   );
 
   userId.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
-
   setData(data);
 
   return {
@@ -149,31 +148,5 @@ function adminQuizInfo(authUserId, quizId) {
 */
 
 export function adminQuizList(authUserId) {
-  const data = getData();
-  const userId = getUser(authUserId);
-  let quizList = [];
-  if (!userId) {
-    return { error: "AuthUserId is not a valid user" };
-  }
-
-  for (let Id in userId.quizzesOwned) {
-    const quizList = userId.quizzesOwned[Id]; // Array of quizzesOwned
-    const QuizInfo = getQuiz(quizList); // Find relevant quiz object
-  }
-  quizList.push(
-    {
-      quizId: quizInfo.quizId,
-      name: quizInfo.name,
-    }
-  )
-
-data.quizzes.push(quizList);
-  setData(data);
-
-  return { 
-    quizzes: quizList,
-  };
-
-
-
+  
 }
