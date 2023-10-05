@@ -19,14 +19,6 @@ export function getQuiz(quizId) {
     return data.quizzes.find(q => q.quizId === quizId);
 }
 
-
-// Given a registered user's email and password returns their authUserId value.
-function adminAuthLogin(email, password) {
-    return {
-        authUserId: 1,
-    }
-}
-
 /**
 * Register a user with an email, password, and names, then returns their authUserId value.
 *
@@ -94,6 +86,40 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
 }
 
+/**
+ * Given a registered user's email and password returns their authUserId value.
+ *  
+ * @param {string} email
+ * @param {string} password
+ * @returns {object} authUserId
+ */
+export function adminAuthLogin(email, password) {
+    const data = getData();
+    if (!data.users.some(user => user.email === email)) {
+        return {
+            error: "Email address does not exist"
+        }
+    }
+    // Finds the user given their email
+    let indexOfUser;
+    for (const user in data.users) {
+        if (data.users[user].email === email) {
+            indexOfUser = user;
+        }
+    }
+    // Checks if the password matches the user's set password
+    if (password !== data.users[indexOfUser].password) {
+        data.users[indexOfUser].numFailedPasswordsSinceLastLogin += 1;
+        return {
+            error: "Password is not correct for the given email"
+        }
+    } 
+    data.users[indexOfUser].numFailedPasswordsSinceLastLogin = 0;
+    data.users[indexOfUser].numSuccessfulLogins += 1;
+    return {
+        authUserId: data.users[indexOfUser].userId
+    }
+}
 
 /**
  * Given an admin user's authUserId, return details about the user.
@@ -115,6 +141,5 @@ export function adminUserDetails(authUserId) {
         numSuccessfulLogins: user.numSuccessfulLogins,
         numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
     }
-
 }
 
