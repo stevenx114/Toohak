@@ -149,5 +149,12 @@ function adminQuizInfo(authUserId, quizId) {
 */
 
 export function adminQuizList(authUserId) {
-  
+  return {
+    quizzes: [
+      {
+        quizId: 123,
+        name: 'human history',
+      }
+    ]
+  }
 }
