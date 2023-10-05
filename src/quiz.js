@@ -100,7 +100,6 @@ function adminQuizInfo(authUserId, quizId) {
  * @returns 
  * 
  */
-
 export function adminQuizList(authUserId) {
   const data = getData();
   const userId = getUser(authUserId);
