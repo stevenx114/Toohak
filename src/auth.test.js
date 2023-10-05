@@ -73,13 +73,11 @@ describe('adminUserDetails', () => {
 
         test('Successful implementation', () => {        
             expect(adminUserDetails(user.authUserId)).toEqual({
-                user: {
-                    userId: user.authUserId,
-                    name: 'John Smith',
-                    email: 'johnsmith@gmail.com',
-                    numSuccessfulLogins: 1, 
-                    numFailedPasswordsSinceLastLogin: 0, 
-                },
+                userId: user.authUserId,
+                name: 'John Smith',
+                email: 'johnsmith@gmail.com',
+                numSuccessfulLogins: 1, 
+                numFailedPasswordsSinceLastLogin: 0, 
             });
         });
     });

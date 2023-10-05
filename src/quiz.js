@@ -12,6 +12,8 @@ export function getQuiz(quizId) {
 }
 
 /**
+ * 
+ *
  * Given basic details about a new quiz, create one for the logged in user.
  *
  * @param {number} authUserId 
@@ -75,7 +77,7 @@ export function adminQuizCreate(authUserId, name, description) {
  * @param {number} quizId of integers
  * @returns {object} empty object
  */
-function adminQuizRemove(authUserId, quizId ) {
+export function adminQuizRemove(authUserId, quizId ) {
     return { 
     }
 }
@@ -131,8 +133,33 @@ function adminQuizInfo(authUserId, quizId) {
     }
 }
 
-/*
- Provide a list of all quizzes that are owned by the currently logged in user.
+/**
+ * 
+ * Provide a list of all quizzes that are owned by the currently logged in user.
+ * 
+ * @param {number} authUserId 
+ * @returns 
+ * 
+ */
+export function adminQuizList(authUserId) {
+  const data = getData();
+  const userId = getUser(authUserId);
+  const quiz = [];
+  
+  if (!userId) {
+    return { error: "AuthUserId is not a valid user" };
+  }
+  
+  for (const id in userId.quizzesOwned) {
+    const quizList = userId.quizzesOwned[id]; // Array of quizzesOwned
+    const quizInfo = getQuiz(quizList); // Find relevant quiz object
+    quiz.push(
+      {
+        quizId: quizInfo.quizId,
+        name: quizInfo.name,
+      }
+    )
+  }
 
  Input Parameters:
  ( authUserId )
