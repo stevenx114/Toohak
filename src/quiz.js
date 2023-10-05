@@ -104,7 +104,7 @@ function adminQuizInfo(authUserId, quizId) {
 export function adminQuizList(authUserId) {
   const data = getData();
   const userId = getUser(authUserId);
-  let quiz = [];
+  const quiz = [];
   
   if (!userId) {
     return { error: "AuthUserId is not a valid user" };
