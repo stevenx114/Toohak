@@ -106,31 +106,35 @@ function adminQuizNameUpdate(authUserId, quizId, name) {
     }
 }
 
-
-/*
-Parameters:
-  ( authUserId, quizId )
-
-Return object:
-  {
-    quizId: 1,
-    name: 'My Quiz',
-    timeCreated: 1683125870,
-    timeLastEdited: 1683125871,
-    description: 'This is my quiz',
+/**
+ * Get all of the relevant information about the current quiz.
+ * 
+ * @param {Number} authUserId 
+ * @param {Number} quizId 
+ * @returns {object} quiz info
+ */
+export function adminQuizInfo(authUserId, quizId) {
+  const user = getUser(authUserId);
+  const quiz = getQuiz(quizId);
+  if (!user) {
+      return { error: 'AuthUserId is not a valid user' };
   }
 
-Gets and returns all of the relevant information about the current quiz.
-*/
+  if (!quiz) {
+    return { error: 'Quiz ID does not refer to a valid quiz' };
+  }
 
-function adminQuizInfo(authUserId, quizId) {
-    return {
-        quizId: 1,
-        name: 'My Quiz',
-        timeCreated: 1683125870,
-        timeLastEdited: 1683125871,
-        description: 'This is my quiz',       
-    }
+  if (!user.quizzesOwned.includes(quizId)) {
+    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
+  }
+
+  return {
+    quizId: quiz.quizId,
+    name: quiz.name,
+    timeCreated: quiz.timeCreated,
+    timeLastEdited: quiz.timeLastEdited,
+    description: quiz.description,
+  }
 }
 
 /**
@@ -138,7 +142,7 @@ function adminQuizInfo(authUserId, quizId) {
  * Provide a list of all quizzes that are owned by the currently logged in user.
  * 
  * @param {number} authUserId 
- * @returns 
+ * @returns {Object} quizId
  * 
  */
 export function adminQuizList(authUserId) {
