@@ -1,8 +1,9 @@
 import { getData, setData } from './dataStore';
+import { v4 as uuidv4 } from 'uuid';
 
-export function getUser(authUserId) {
+export function getUser(userId) {
   const data = getData();
-  return data.users.find(u => u.userId === authUserId);
+  return data.users.find(u => u.userId === userId);
 }
 
 export function getQuiz(quizId) {
@@ -21,12 +22,52 @@ export function getQuiz(quizId) {
  * @returns {object} quiz info
  */
 export function adminQuizCreate(authUserId, name, description) {
+  const data = getData();
+  const specialChar = /[^a-zA-Z0-9\s]/;
+  const userId = getUser(authUserId);
+
+  if (!userId) {
+    return {error: "AuthUserId is not a valid user"};
+  }
   
+  if (!name) {
+    return {error: "name cannot be empty"};
+  } else if (name.length < 3) {
+    return {error: "name needs to be at least 3 characters"};
+  } else if (name.length > 30) {
+    return {error: "name cannot exceed 30 characters"};
+  } else if (description.length > 100) {
+    return {error: "description cannot exceed 100 characters"};
+  } else if (specialChar.test(name)) {
+    return {error: "name can only contain alphanumeric and space characters"};
+  }
+  
+  for (let id in userId.quizzesOwned) {
+    const quizIdOwned = userId.quizzesOwned[id];
+    const quizInfo = getQuiz(quizIdOwned);
+    if (quizInfo.name === name) {
+      return { error: "quiz name is already in use"};
+    }
+  }
+  
+  const newQuizId =  parseInt(uuidv4().replace(/-/g, ''), 16);
+
+  data.quizzes.push(
+    {
+      quizId: newQuizId,
+      name: name,
+      timeCreated: Date.now(),
+      timeLastEdited: Date.now(),
+      description: description,
+    }
+  );
+
+  userId.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
+  setData(data);
 
   return {
-    quizId: 133,
+    quizId: newQuizId,
   }
-
 }
 
 /*
@@ -120,8 +161,27 @@ export function adminQuizList(authUserId) {
     )
   }
 
-  return { 
-    quizzes: quiz,
-  };
+ Input Parameters:
+ ( authUserId )
 
+ Return: 
+
+{ quizzes: [
+    {
+      quizId: 1,
+      name: 'My Quiz',
+    }
+    ]
+ } 
+*/
+
+export function adminQuizList(authUserId) {
+  return {
+    quizzes: [
+      {
+        quizId: 123,
+        name: 'human history',
+      }
+    ]
+  }
 }
