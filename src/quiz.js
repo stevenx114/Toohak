@@ -42,14 +42,14 @@ function adminQuizRemove(authUserId, quizId ) {
  */
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   let data = getData();
-  const isUserIdValid = data.users.find(u => u.userId === authUserId);
+  const user = data.users.find(u => u.userId === authUserId);
   let quiz = data.quizzes.find(u => u.quizId === quizId);
 
   if (description.length > 100) {
     return {error: 'Description is more than 100 characters in length'};
   }
 
-  if (!isUserIdValid) {
+  if (!user) {
     return {error: 'AuthUserId is not a valid user'};
   }
 
@@ -57,7 +57,7 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
     return {error: 'Quiz ID does not refer to a valid quiz'};
   }
   
-  const doesUserOwnQuiz = !!quiz.allOwners(u => u === authUserId);
+  const doesUserOwnQuiz = user.quizzesOwned(u => u === authUserId);
 
   if (doesUserOwnQuiz === false) {
     return {error: 'Quiz ID does not refer to a quiz that this user owns'};
