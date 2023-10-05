@@ -21,52 +21,7 @@ export function getQuiz(quizId) {
  * @returns {object} quiz info
  */
 export function adminQuizCreate(authUserId, name, description) {
-  const data = getData();
-  const specialChar = /[^a-zA-Z0-9\s]/;
-  const userId = getUser(authUserId);
-  if (!userId) {
-    return {error: "AuthUserId is not a valid user"};
-  }
   
-  if (!name) {
-    return {error: "name cannot be empty"};
-  } else if (name.length < 3) {
-    return {error: "name needs to be at least 3 characters"};
-  } else if (name.length > 30) {
-    return {error: "name cannot exceed 30 characters"};
-  } else if (description.length > 100) {
-    return {error: "description cannot exceed 100 characters"};
-  } else if (specialChar.test(name)) {
-    return {error: "name can only contain alphanumeric and space characters"};
-  }
-  
-  for (let Id in userId.quizzesOwned) {
-    let quizIdOwned = userId.quizzesOwned[Id];
-    const quizInfo = getQuiz(quizIdOwned);
-    if (quizInfo.name === name) {
-      return { error: "quiz name is already in use"};
-    }
-  }
-  
-  const newQuizId =  name.length + 574;
-
-  data.quizzes.push(
-    {
-      quizId: newQuizId,
-      name: name,
-      timeCreated: Date.now(),
-      timeLastEdited: Date.now(),
-      description: description,
-    }
-  );
-
-  userId.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
-
-  setData(data);
-
-  return {
-    quizId: newQuizId,
-  }
 
 }
 
@@ -151,8 +106,8 @@ export function adminQuizList(authUserId) {
     return { error: "AuthUserId is not a valid user" };
   }
   
-  for (let Id in userId.quizzesOwned) {
-    const quizList = userId.quizzesOwned[Id]; // Array of quizzesOwned
+  for (let id in userId.quizzesOwned) {
+    const quizList = userId.quizzesOwned[id]; // Array of quizzesOwned
     const quizInfo = getQuiz(quizList); // Find relevant quiz object
     quiz.push(
       {
