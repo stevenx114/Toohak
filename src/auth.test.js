@@ -94,39 +94,57 @@ describe('adminUserDetails', () => {
 
 // Tests for function adminAuthLogin
 describe('Tests for adminAuthLogin', () => {
-    let userOne = {
+    const userOne = {
         email: 'johnsmith@gmail.com',
         password: 'ilovecat123',
         nameFirst: 'john',
         nameLast: 'smith'
     };
-    let userTwo = {
+    const userTwo = {
         email: 'thomasapple@gmail.com',
         password: 'helloworld123',
         nameFirst: 'thomas',
         nameLast: 'apple'
     };
-
+    let userIdOne;
+    let userIdTwo;
     beforeEach(() => {
         clear();
         userIdOne = adminAuthRegister(userOne.email, userOne.password, userOne.nameFirst, userOne.nameLast); 
         userIdTwo = adminAuthRegister(userTwo.email, userTwo.password, userTwo.nameFirst, userTwo.nameLast); 
     })
+    // Success cases for adminAuthLogin
     describe('Success Cases', () => {
         test('Returns userId successfully',() => {
-            expect(adminAuthLogin(userOne.email, userOne.password).toEqual({authUserId: userIdOne}));
-            expect(adminAuthLogin(userTwo.email, userTwo.password).toEqual({authUserId: userIdTwo}));
+            expect(adminAuthLogin(userOne.email, userOne.password)).toEqual({authUserId: userIdOne.authUserId});
+            expect(adminAuthLogin(userTwo.email, userTwo.password)).toEqual({authUserId: userIdTwo.authUserId});
+        })
+        test('Updates numSuccessfulLogin for users correctly', () => {
+            adminAuthLogin(userOne.email, userOne.password);
+            adminAuthLogin(userOne.email, userOne.password);
+            adminAuthLogin(userOne.email, userOne.password);
+            expect(adminUserDetails(userIdOne.authUserId).numSuccessfulLogins).toEqual(4);
+        })
+        test('Updates FailedPasswordsSinceLastLogin for users correctly', () => {
+            adminAuthLogin(userOne.email, userTwo.password);
+            adminAuthLogin(userOne.email, userTwo.password);
+            adminAuthLogin(userOne.email, userTwo.password);
+            expect(adminUserDetails(userIdOne.authUserId).numFailedPasswordsSinceLastLogin).toEqual(3);
+            adminAuthLogin(userOne.email, userOne.password);
+            expect(adminUserDetails(userIdOne.authUserId).numSuccessfulLogins).toEqual(2);
+            expect(adminUserDetails(userIdOne.authUserId).numFailedPasswordsSinceLastLogin).toEqual(0);
         })
     })
-
+    // Error cases for adminAuthLogin
     describe('Error Cases', () => {
-        let invalidEmail = 'jamesbrown@gmail.com';
+        const invalidEmail = 'jamesbrown@gmail.com';
         test('Testing invalid email', () => {
-            expect(adminAuthLogin(invalidEmail, userOne.password).toEqual({error: expect.any(string)}));
+            expect(adminAuthLogin(invalidEmail, userOne.password)).toEqual({error: expect.any(String)});
         })
         test('Testing incorrect password', () => {
-            expect(adminAuthLogin(userOne.email, userTwo.password).toEqual({error: expect.any(string)}));
+            expect(adminAuthLogin(userOne.email, userTwo.password)).toEqual({error: expect.any(String)});
         })
     })
 })
+
 
