@@ -39,8 +39,8 @@ export function adminQuizCreate(authUserId, name, description) {
     return {error: "name can only contain alphanumeric and space characters"};
   }
   
-  for (let Id in userId.quizzesOwned) {
-    const quizIdOwned = userId.quizzesOwned[Id];
+  for (let id in userId.quizzesOwned) {
+    const quizIdOwned = userId.quizzesOwned[id];
     const quizInfo = getQuiz(quizIdOwned);
     if (quizInfo.name === name) {
       return { error: "quiz name is already in use"};
