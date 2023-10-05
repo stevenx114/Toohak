@@ -16,12 +16,14 @@ describe('AdminQuizList', () => {
         userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown1', 'Alex', 'Smith');
         quiz = adminQuizCreate(userId.authUserId, 'human history', 'description');
     });
+
     // error case
     test('invalid authUserId', () => {
         clear();
         expect(adminQuizList(userId.authUserId)).toStrictEqual(ERROR);
     });
-    // success casees:
+
+    // success cases:
     test('valid input of 1 quiz', () => {
         expect(adminQuizList(userId.authUserId)).toStrictEqual({
             quizzes: [
