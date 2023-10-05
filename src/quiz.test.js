@@ -5,7 +5,8 @@ import {
   import {
     adminAuthRegister,
     adminQuizCreate,
-    adminQuizDescriptionUpdate
+    adminQuizDescriptionUpdate,
+    adminQuizInfo
   } from './auth';
     
   const ERROR = { error: expect.any(String) };
@@ -35,31 +36,29 @@ import {
   
     describe('Invalid Input Tests', () => {
   
-      test('authUserId is invalid but all other variables are correct', () => {
+      test('authUserId is invalid', () => {
           
         expect(adminQuizDescriptionUpdate(authUserId.authUserId + 1, quizId.quizId, "")).toStrictEqual(ERROR);
           
       });
   
   
-      test('Invalid quizId but all other variables correct', () => {
+      test('Invalid quizId', () => {
           
         expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId.quizId + 1, "")).toStrictEqual(ERROR);
   
       });
   
-      test('given user inputs quizId they dont own but all other variables correct', () => {
+      test('quizId user doesnt own', () => {
   
         const authUserId2 = adminAuthRegister("testing@gmail.com", "badpassword44", "Testing", "testing");
-  
-        const quizId2 = adminQuizCreate(authUserId2.authUserId, "randomquiz", "");
           
-        expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId2.quizId, "")).toStrictEqual(ERROR);
+        expect(adminQuizDescriptionUpdate(authUserId2.authUserId, quizId.quizId, "")).toStrictEqual(ERROR);
   
       });
   
   
-      test('Invalid Description i.e description.length > 100 characters but all other variables correct', () => {
+      test('Invalid Description', () => {
   
         const longDescription = "a".repeat(105);
           
@@ -74,12 +73,16 @@ import {
       test('All inputs are valid', () => {
   
         expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId.quizId, "newDescription")).toStrictEqual({});
+
+        expect((adminQuizInfo(authUserId.authUserId, quizId.quizId)).description).toStrictEqual("newDescription");
   
       });
   
       test('All inputs are valid but description is empty string', () => {
           
         expect(adminQuizDescriptionUpdate(authUserId, quizId, "")).toStrictEqual({});
+
+        expect((adminQuizInfo(authUserId.authUserId, quizId.quizId)).description).toStrictEqual("");
   
       });
   
