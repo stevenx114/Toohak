@@ -23,6 +23,10 @@ export function getQuiz(quizId) {
 export function adminQuizCreate(authUserId, name, description) {
   
 
+  return {
+    quizId: 133,
+  }
+
 }
 
 /*

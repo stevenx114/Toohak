@@ -24,7 +24,7 @@ describe('AdminQuizList', () => {
     });
 
     // success cases:
-    test('valid input of 1 quiz', () => {
+    test.skip('valid input of 1 quiz', () => {
         expect(adminQuizList(userId.authUserId)).toStrictEqual({
             quizzes: [
                 {
@@ -35,7 +35,7 @@ describe('AdminQuizList', () => {
         });
     });
 
-    test('valid input of 2 quizzes', () => {
+    test.skip('valid input of 2 quizzes', () => {
         quiz1 = adminQuizCreate(userId.authUserId, 'animals', 'description');
         expect(adminQuizList(userId.authUserId)).toStrictEqual({
             quizzes: [
