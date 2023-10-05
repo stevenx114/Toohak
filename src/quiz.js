@@ -70,6 +70,7 @@ function adminQuizDescriptionUpdate(authUserId, quizId, description) {
   }
 
   quiz.description = description;
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
       
   return {};
