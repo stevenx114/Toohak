@@ -1,12 +1,5 @@
-import { 
-  getData, 
-  setData 
-} from './dataStore';
-
-import { 
-  v4 as uuidv4 
-} from 'uuid';
-
+import { getData, setData } from './dataStore';
+import { v4 as uuidv4 } from 'uuid';
 import validator from 'validator';
 
 export function getUser(userId) {
@@ -78,7 +71,7 @@ export function adminQuizCreate(authUserId, name, description) {
   }
 }
 
-/**
+/*
  * Given a particular quiz, permanently remove the quiz.
  *
  * @param {number} authUserId of integers
@@ -87,6 +80,14 @@ export function adminQuizCreate(authUserId, name, description) {
  */
 export function adminQuizRemove(authUserId, quizId ) {
     return { 
+    }
+}
+
+
+// Updates the description of the relevant quiz
+function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+    return {
+        // Returns empty object
     }
 }
 
