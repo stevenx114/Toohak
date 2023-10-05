@@ -86,7 +86,13 @@ export function adminAuthRegister(email, password, nameFirst, nameLast) {
     }
 }
 
-// Given a registered user's email and password returns their authUserId value.
+/**
+ * Given a registered user's email and password returns their authUserId value.
+ *  
+ * @param {string} email
+ * @param {string} password
+ * @returns {object} authUserId
+ */
 export function adminAuthLogin(email, password) {
     const data = getData();
     if (!data.users.some(user => user.email === email)) {
