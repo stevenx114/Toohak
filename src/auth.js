@@ -108,14 +108,12 @@ export function adminUserDetails(authUserId) {
         return { error: 'AuthUserId is not a valid user' };
     }
 
-    return { 
-        user: {
-            userId: user.userId,
-            name: user.name,
-            email: user.email,
-            numSuccessfulLogins: user.numSuccessfulLogins,
-            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
-        }
+    return {
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        numSuccessfulLogins: user.numSuccessfulLogins,
+        numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
     }
 
 }
