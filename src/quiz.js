@@ -1,16 +1,7 @@
+import { getUser, getQuiz } from './auth';
 import { getData, setData } from './dataStore';
 import { v4 as uuidv4 } from 'uuid';
 import validator from 'validator';
-
-export function getUser(userId) {
-  const data = getData();
-  return data.users.find(u => u.userId === userId);
-}
-
-export function getQuiz(quizId) {
-  const data = getData();
-  return data.quizzes.find(q => q.quizId === quizId);
-}
 
 /**
  * 
@@ -109,11 +100,45 @@ export function adminQuizRemove(authUserId, quizId) {
   return {};
 }
 
-// Updates the description of the relevant quiz
-function adminQuizDescriptionUpdate(authUserId, quizId, description) {
-    return {
-        // Returns empty object
-    }
+/**
+ * Updates the description of the relevant quiz.
+ *
+ * @param {string} authUserId - The ID of the user making the update.
+ * @param {string} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ *
+ * @returns {object} An empty object.
+ *
+ * @throws {Error} If an error occurs.
+ */
+export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
+  const data = getData();
+  const user = getUser(authUserId);
+  const quiz = getQuiz(quizId);
+
+  if (description.length > 100) {
+    return {error: 'Description is more than 100 characters in length'};
+  }
+
+  if (!user) {
+    return {error: 'AuthUserId is not a valid user'};
+  }
+
+  if (!quiz) {
+    return {error: 'Quiz ID does not refer to a valid quiz'};
+  }
+  
+  const doesUserOwnQuiz = user.quizzesOwned.find(u => u === quizId);
+
+  if (!doesUserOwnQuiz) {
+    return {error: 'Quiz ID does not refer to a quiz that this user owns'};
+  }
+
+  quiz.description = description;
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+      
+  return {};
 }
 
 /** 
