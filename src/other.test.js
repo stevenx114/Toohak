@@ -5,7 +5,6 @@ import {
 import {
   adminAuthRegister,
   adminUserDetails,
-
 } from './auth';
 
 import {
@@ -44,7 +43,6 @@ describe('Clear Function implementation', () => {
     expect(adminQuizList(authUserId.userId)).toStrictEqual(ERROR);
 
   });
-
 });
 
  
