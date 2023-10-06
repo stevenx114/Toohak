@@ -1,47 +1,47 @@
 import {
-    clear,
+  clear,
 } from './other';
 
 import {
   adminAuthRegister,
   adminUserDetails,
+
+} from './auth';
+
+import {
   adminQuizList,
   adminQuizCreate,
-} from './auth';
+} from './quiz';
   
 const ERROR = { error: expect.any(String) };
   
 describe('Clear Function implementation', () => {
-
-  //let authUserId;
-  //let quizId;
-
-
-  /*beforeEach(() => {
+  let authUserId;
+  
+  beforeEach(() => {
     authUserId = adminAuthRegister('sample@gmail.com', 'samplepassword1', 'firstname', 'lastname');
-    quizId = adminQuizCreate(authUserId, 'quizName', 'description');
+    adminQuizCreate(authUserId.userId, 'quizName', 'description');
   });
-  */
-
+  
   test('Returns empty dictionary', () => {
 
     expect(clear()).toStrictEqual({});
-
+    
   });
 
-  test.skip('Removing user data', () => {
+  test('Removing user data', () => {
 
     expect(clear()).toStrictEqual({});
 
-    expect(adminUserDetails(authUserId.authUserId)).toStrictEqual(ERROR);
+    expect(adminUserDetails(authUserId.userId)).toStrictEqual(ERROR);
 
   });
 
-  test.skip('Removing quiz data', ()=> {
+  test('Removing quiz data', ()=> {
 
     expect(clear()).toStrictEqual({});
 
-    expect(adminQuizList(authUserId.authUserId)).toStrictEqual(ERROR);
+    expect(adminQuizList(authUserId.userId)).toStrictEqual(ERROR);
 
   });
 
