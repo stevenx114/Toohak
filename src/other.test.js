@@ -23,24 +23,18 @@ describe('Clear Function implementation', () => {
   });
   
   test('Returns empty dictionary', () => {
-
     expect(clear()).toStrictEqual({});
-    
   });
 
   test('Removing user data', () => {
-
     expect(clear()).toStrictEqual({});
     expect(adminUserDetails(authUserId.authUserId)).toStrictEqual(ERROR);
-
   });
 
   test('Removing quiz data', ()=> {
-
     expect(clear()).toStrictEqual({});
     authUserId = adminAuthRegister('sample@gmail.com', 'samplepassword1', 'firstname', 'lastname');
     expect(adminQuizList(authUserId.authUserId)).toStrictEqual({quizzes: []});
-
   });
 });
 
