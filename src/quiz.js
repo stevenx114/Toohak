@@ -166,6 +166,6 @@ export function adminQuizList(authUserId) {
   }
 
   return {
-    quizzes,
+    quizzes: quizzes,
   }
 }
