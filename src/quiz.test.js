@@ -19,7 +19,6 @@ import {
 const ERROR = { error: expect.any(String) };
 
 describe('adminQuizDescriptionUpdate Test', () => {
-
   let authUserId;
   let quizId;
 
@@ -29,10 +28,11 @@ describe('adminQuizDescriptionUpdate Test', () => {
     quizId = adminQuizCreate(authUserId.authUserId, "quizName", "sample");
   });
 
+
   describe('Invalid Input Tests', () => {
 
     test('authUserId is invalid', () => {
-      expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId.quizId, "")).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate(authUserId.authUserId + 1, quizId.quizId, "")).toStrictEqual(ERROR);
     });
 
     test('Invalid quizId', () => {
@@ -60,7 +60,7 @@ describe('adminQuizDescriptionUpdate Test', () => {
     });
 
     test('All inputs are valid but description is empty string', () => {
-      expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId, "")).toStrictEqual({});
+      expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId.quizId, "")).toStrictEqual({});
       expect((adminQuizInfo(authUserId.authUserId, quizId.quizId)).description).toStrictEqual("");
     });
 
