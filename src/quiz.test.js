@@ -7,6 +7,7 @@ import {
     adminQuizInfo,
     adminQuizCreate,
     adminQuizList,
+    adminQuizRemove,
 } from './quiz';
 
 import {
@@ -18,7 +19,6 @@ const ERROR = { error: expect.any(String) };
 beforeEach(() => {
     clear();
 });
-
 
 // Tests for adminQuizInfo function
 describe('adminQuizInfo Test', () => {
@@ -157,3 +157,67 @@ describe('AdminQuizList', () => {
     });
 
 });
+
+describe('Tests for adminQuizRemove', () => {
+    const userOne = {
+        email: 'johnsmith@gmail.com',
+        password: 'ilovecat123',
+        nameFirst: 'john',
+        nameLast: 'smith'
+    };
+    const noQuizUser = {
+        email: 'thomasapple@gmail.com',
+        password: 'helloworld123',
+        nameFirst: 'thomas',
+        nameLast: 'apple'
+    };
+    let userIdOne;
+    let noQuizUserId;
+    let quizOne;
+    let quizTwo;
+    beforeEach(() => {
+        clear();
+        userIdOne = adminAuthRegister(userOne.email, userOne.password, userOne.nameFirst, userOne.nameLast); 
+        noQuizUserId = adminAuthRegister(noQuizUser.email, noQuizUser.password, noQuizUser.nameFirst, noQuizUser.nameLast); 
+        quizOne = adminQuizCreate(userIdOne.authUserId, 'testQuizOne', 'descriptionOne');
+        quizTwo = adminQuizCreate(userIdOne.authUserId, 'testQuizTwo', 'descriptionTwo');
+    })
+    describe('Success cases', () => {
+        test('Successful removal of quiz one', () => {
+            adminQuizRemove(userIdOne.authUserId, quizOne.quizId);
+            expect(adminQuizList(userIdOne.authUserId)).toStrictEqual({
+                quizzes: [
+                    {
+                        quizId: quizTwo.quizId,
+                        name: 'testQuizTwo'
+                    }
+                ]
+            })
+        })
+        test('Successful removal of quiz two', () => {
+            adminQuizRemove(userIdOne.authUserId, quizTwo.quizId);
+            expect(adminQuizList(userIdOne.authUserId)).toStrictEqual({
+                quizzes: [
+                    {
+                        quizId: quizOne.quizId,
+                        name: 'testQuizOne'
+                    }
+                ]
+            })
+        })
+    })
+    describe('Error Cases', () => {
+        test('Testing for invalid user Id', () => {
+            clear();
+            expect(adminQuizRemove(userIdOne.authUserId, quizOne.quizId)).toStrictEqual(ERROR);
+        })
+        test('Testing for invalid quiz Id', () => {
+            clear();
+            userIdOne = adminAuthRegister(userOne.email, userOne.password, userOne.nameFirst, userOne.nameLast); 
+            expect(adminQuizRemove(userIdOne.authUserId, quizOne.quizId)).toStrictEqual(ERROR);
+        })
+        test('Quiz Id does not refer to a quiz that this user owns', () => {
+            expect(adminQuizRemove(noQuizUserId.authUserId, quizOne.quizId)).toStrictEqual(ERROR);
+        })
+    })
+ })
