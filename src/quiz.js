@@ -71,18 +71,43 @@ export function adminQuizCreate(authUserId, name, description) {
   }
 }
 
-/*
+/** 
  * Given a particular quiz, permanently remove the quiz.
  *
  * @param {number} authUserId of integers
  * @param {number} quizId of integers
  * @returns {object} empty object
  */
-export function adminQuizRemove(authUserId, quizId ) {
-    return { 
+export function adminQuizRemove(authUserId, quizId) {
+  const data = getData();
+  const user = getUser(authUserId);
+  if (!user) {
+    return {
+      error: 'AuthUserId is not a valid user'
     }
-}
+  }
+  if (!getQuiz(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a valid quiz'
+    }
+  }
+  if (!user.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns'
+    }
+  }
+  const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    if (indexOfQuizInData !== -1) {
+      data.quizzes.splice(indexOfQuizInData, 1);
+    }
 
+  const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
+  if (indexOfQuizInUserOwned !== -1) {
+    user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
+  }
+  setData(data);
+  return {};
+}
 
 // Updates the description of the relevant quiz
 function adminQuizDescriptionUpdate(authUserId, quizId, description) {
