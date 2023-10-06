@@ -31,12 +31,13 @@ describe('adminQuizDescriptionUpdate Test', () => {
   describe('Invalid Input Tests', () => {
     test('authUserId is invalid', () => {
       clear();
-      expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId.quizId, '')).toStrictEqual(ERROR);
+      expect(adminQuizDescriptionUpdate(authUserId.authUserId + 0.1, quizId.quizId, '')).toStrictEqual(ERROR);
     });
 
     test('Invalid quizId', () => {
       clear();
-      expect(adminQuizDescriptionUpdate(authUserId.authUserId, quizId.quizId, '')).toStrictEqual(ERROR);
+      authUserId = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+      expect(adminQuizInfo(authUserId.authUserId, quizId.quizId + 0.1)).toStrictEqual(ERROR);
     });
 
     test('quizId user doesnt own', () => {
