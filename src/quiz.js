@@ -78,7 +78,6 @@ export function adminQuizCreate(authUserId, name, description) {
  * @param {number} quizId of integers
  * @returns {object} empty object
  */
-
 export function adminQuizRemove(authUserId, quizId) {
   const data = getData();
   const user = getUser(authUserId);
