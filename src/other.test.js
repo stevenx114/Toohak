@@ -16,11 +16,10 @@ const ERROR = { error: expect.any(String) };
   
 describe('Clear Function implementation', () => {
   let authUserId;
-  let quizId;
   
   beforeEach(() => {
     authUserId = adminAuthRegister('sample@gmail.com', 'samplepassword1', 'firstname', 'lastname');
-    quizId = adminQuizCreate(authUserId.userId, 'quizName', 'description');
+    adminQuizCreate(authUserId.authUserId, 'quizName', 'description');
   });
   
   test('Returns empty dictionary', () => {
@@ -32,7 +31,7 @@ describe('Clear Function implementation', () => {
   test('Removing user data', () => {
 
     expect(clear()).toStrictEqual({});
-    expect(adminUserDetails(authUserId.userId)).toStrictEqual(ERROR);
+    expect(adminUserDetails(authUserId.authUserId)).toStrictEqual(ERROR);
 
   });
 
