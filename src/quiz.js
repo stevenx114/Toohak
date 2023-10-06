@@ -96,19 +96,15 @@ export function adminQuizRemove(authUserId, quizId) {
       error: 'Quiz ID does not refer to a quiz that this user owns'
     }
   }
-  let indexOfQuiz;
-  for (const quiz in data.quizzes) {
-    if (data.quizzes[quiz].quizId === quizId) {
-      indexOfQuiz = quiz;
+  const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    if (indexOfQuizInData !== -1) {
+      data.quizzes.splice(indexOfQuizInData, 1);
     }
+
+  const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
+  if (indexOfQuizInUserOwned !== -1) {
+    user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
   }
-  data.quizzes.splice(indexOfQuiz, 1);
-  for (const quiz in user.quizzesOwned) {
-    if (user.quizzesOwned[quiz] === quizId) {
-      indexOfQuiz = quiz;
-    }
-  }
-  user.quizzesOwned.splice(indexOfQuiz, 1);
   setData(data);
   return {};
 }
