@@ -27,26 +27,26 @@ export function adminQuizCreate(authUserId, name, description) {
   const userId = getUser(authUserId);
 
   if (!userId) {
-    return {error: "AuthUserId is not a valid user"};
+    return {error: 'AuthUserId is not a valid user'};
   }
   
   if (!name) {
-    return {error: "name cannot be empty"};
+    return {error: 'name cannot be empty'};
   } else if (name.length < 3) {
-    return {error: "name needs to be at least 3 characters"};
+    return {error: 'name needs to be at least 3 characters'};
   } else if (name.length > 30) {
-    return {error: "name cannot exceed 30 characters"};
+    return {error: 'name cannot exceed 30 characters'};
   } else if (description.length > 100) {
-    return {error: "description cannot exceed 100 characters"};
+    return {error: 'description cannot exceed 100 characters'};
   } else if (specialChar.test(name)) {
-    return {error: "name can only contain alphanumeric and space characters"};
+    return {error: 'name can only contain alphanumeric and space characters'};
   }
   
   for (let id in userId.quizzesOwned) {
     const quizIdOwned = userId.quizzesOwned[id];
     const quizInfo = getQuiz(quizIdOwned);
     if (quizInfo.name === name) {
-      return { error: "quiz name is already in use"};
+      return { error: 'quiz name is already in use'};
     }
   }
   
@@ -148,23 +148,24 @@ export function adminQuizInfo(authUserId, quizId) {
 export function adminQuizList(authUserId) {
   const data = getData();
   const userId = getUser(authUserId);
-  const quiz = [];
+  const quizzes = [];
   
   if (!userId) {
-    return { error: "AuthUserId is not a valid user" };
+    return { error: 'AuthUserId is not a valid user' };
   }
   
   for (const id in userId.quizzesOwned) {
     const quizList = userId.quizzesOwned[id]; // Array of quizzesOwned
     const quizInfo = getQuiz(quizList); // Find relevant quiz object
-    quiz.push(
+    quizzes.push(
       {
         quizId: quizInfo.quizId,
         name: quizInfo.name,
       }
     )
   }
+
   return {
-    quizId: newQuizId,
+    quizzes: quizzes,
   }
 }
