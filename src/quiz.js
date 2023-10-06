@@ -148,7 +148,7 @@ export function adminQuizInfo(authUserId, quizId) {
 export function adminQuizList(authUserId) {
   const data = getData();
   const userId = getUser(authUserId);
-  const quiz = [];
+  const quizzes = [];
   
   if (!userId) {
     return { error: "AuthUserId is not a valid user" };
@@ -157,7 +157,7 @@ export function adminQuizList(authUserId) {
   for (const id in userId.quizzesOwned) {
     const quizList = userId.quizzesOwned[id]; // Array of quizzesOwned
     const quizInfo = getQuiz(quizList); // Find relevant quiz object
-    quiz.push(
+    quizzes.push(
       {
         quizId: quizInfo.quizId,
         name: quizInfo.name,
@@ -165,6 +165,6 @@ export function adminQuizList(authUserId) {
     )
   }
   return {
-    quizId: newQuizId,
+    quizzes,
   }
 }
