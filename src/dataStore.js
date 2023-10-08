@@ -1,5 +1,8 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {};
+let data = {
+  users: [], 
+  quizzes: [],
+};
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
@@ -18,13 +21,13 @@ Example usage
 */
 
 // Use get() to access the data
-function getData() {
+export function getData() {
   return data;
 }
 
 // Use set(newData) to pass in the entire data object, with modifications made
-function setData(newData) {
+export function setData(newData) {
   data = newData;
 }
 
-export { getData, setData };
+// export { getData, setData };
