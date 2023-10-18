@@ -56,8 +56,8 @@ export function adminQuizCreate(authUserId, name, description) {
     {
       quizId: newQuizId,
       name: name,
-      timeCreated: Date.now(),
-      timeLastEdited: Date.now(),
+      timeCreated: Math.floor((new Date()).getTime() / 100),
+      timeLastEdited: Math.floor((new Date()).getTime() / 100),
       description: description,
     }
   );
