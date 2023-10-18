@@ -48,8 +48,8 @@ export function adminQuizCreate(authUserId, name, description) {
     {
       quizId: newQuizId,
       name: name,
-      timeCreated: Math.floor((new Date()).getTime() / 100),
-      timeLastEdited: Math.floor((new Date()).getTime() / 100),
+      timeCreated: Math.floor((new Date()).getTime() / 1000),
+      timeLastEdited: Math.floor((new Date()).getTime() / 1000),
       description: description,
     }
   );
