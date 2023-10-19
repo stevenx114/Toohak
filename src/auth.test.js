@@ -71,14 +71,14 @@ describe('adminUserDetails', () => {
             userDetails = adminUserDetails(user.authUserId);
         });
 
-        test('Successful implementation', () => {        
-            expect(adminUserDetails(user.authUserId)).toEqual({
+        test('Successful implementation', () => {      
+            expect(adminUserDetails(user.authUserId)).toEqual({user: {
                 userId: user.authUserId,
                 name: 'John Smith',
                 email: 'johnsmith@gmail.com',
                 numSuccessfulLogins: 1, 
                 numFailedPasswordsSinceLastLogin: 0, 
-            });
+            }});
         });
     });
 
@@ -123,16 +123,16 @@ describe('Tests for adminAuthLogin', () => {
             adminAuthLogin(userOne.email, userOne.password);
             adminAuthLogin(userOne.email, userOne.password);
             adminAuthLogin(userOne.email, userOne.password);
-            expect(adminUserDetails(userIdOne.authUserId).numSuccessfulLogins).toEqual(4);
+            expect(adminUserDetails(userIdOne.authUserId).user.numSuccessfulLogins).toEqual(4);
         })
         test('Updates FailedPasswordsSinceLastLogin for users correctly', () => {
             adminAuthLogin(userOne.email, userTwo.password);
             adminAuthLogin(userOne.email, userTwo.password);
             adminAuthLogin(userOne.email, userTwo.password);
-            expect(adminUserDetails(userIdOne.authUserId).numFailedPasswordsSinceLastLogin).toEqual(3);
+            expect(adminUserDetails(userIdOne.authUserId).user.numFailedPasswordsSinceLastLogin).toEqual(3);
             adminAuthLogin(userOne.email, userOne.password);
-            expect(adminUserDetails(userIdOne.authUserId).numSuccessfulLogins).toEqual(2);
-            expect(adminUserDetails(userIdOne.authUserId).numFailedPasswordsSinceLastLogin).toEqual(0);
+            expect(adminUserDetails(userIdOne.authUserId).user.numSuccessfulLogins).toEqual(2);
+            expect(adminUserDetails(userIdOne.authUserId).user.numFailedPasswordsSinceLastLogin).toEqual(0);
         })
     })
     // Error cases for adminAuthLogin
@@ -146,5 +146,6 @@ describe('Tests for adminAuthLogin', () => {
         })
     })
 })
+
 
 
