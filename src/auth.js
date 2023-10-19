@@ -135,11 +135,14 @@ export function adminUserDetails(authUserId) {
     }
 
     return {
-        userId: user.userId,
-        name: user.name,
-        email: user.email,
-        numSuccessfulLogins: user.numSuccessfulLogins,
-        numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+        user: {
+            userId: user.userId,
+            name: user.name,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+        }
     }
 }
+
 
