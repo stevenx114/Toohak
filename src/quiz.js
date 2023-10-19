@@ -153,7 +153,8 @@ export function adminQuizDescriptionUpdate(authUserId, quizId, description) {
 export function adminQuizNameUpdate(authUserId, quizId, name) {
   let data = getData();
   const curUser = getUser(authUserId);
-  name = name.replace(/\s/g, '');
+  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
+  const curQuizzesNames = curQuizzes.map(quiz => quiz.name);
 
   if (!getUser(authUserId)) {
     return {
@@ -167,7 +168,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
     return {
       error: 'Quiz ID does not refer to a quiz that this user owns'
     }
-  } else if (!validator.isAlphanumeric(name)) {
+  } else if (!validator.isAlphanumeric(name.replace(/\s/g, ''))) {
     return {
       error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces'
     }
@@ -175,7 +176,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
     return {
       error: 'Name is either less than 3 characters long or more than 30 characters long'
     }
-  } else if (data.quizzes.some(quiz => (quiz.name === name && curUser.quizzesOwned.includes(quiz.quizId)))) {
+  } else if (curQuizzesNames.includes(name)) {
     return {
       error: 'Name is already used by the current logged in user for another quiz'
     }
@@ -185,7 +186,7 @@ export function adminQuizNameUpdate(authUserId, quizId, name) {
   setData(data);
 
   return {};
-} 
+}
 
 /**
  * Get all of the relevant information about the current quiz.
