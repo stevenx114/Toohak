@@ -237,9 +237,9 @@ describe('adminQuizNameUpdate', () => {
   // Success cases for adminQuizNameUpdate function
   describe('Success Cases', () => {
     test('Successful implementation', () => {
-      expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'nameUpdated')).toEqual({});
+      expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'name Updated')).toEqual({});
       const curQuiz = adminQuizInfo(newUser.authUserId, newQuiz.quizId);
-      expect(curQuiz.name).toEqual('nameUpdated');
+      expect(curQuiz.name).toEqual('name Updated');
     });
   });
 
@@ -247,18 +247,18 @@ describe('adminQuizNameUpdate', () => {
   describe('Error cases', () => {
     test('AuthUserId is not a valid user', () => {
       clear();
-      expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'nameUpdated')).toEqual(ERROR);
+      expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'name Updated')).toEqual(ERROR);
     });
 
     test('Quiz ID does not refer to a valid quiz', () => {
       clear();
       newUser = adminAuthRegister('johnsmith@gmail.com', 'ilovedog123', 'John', 'Smith');
-      expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'nameUpdated')).toEqual(ERROR);
+      expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'name Updated')).toEqual(ERROR);
     });
 
     test('Quiz ID does not refer to a quiz that this user owns', () => {
       const noQuizzesUser = adminAuthRegister('george@gmail.com', 'ilovedog123', 'George', 'Smith');
-      expect(adminQuizNameUpdate(noQuizzesUser.authUserId, newQuiz.quizId, 'nameUpdated')).toEqual(ERROR);
+      expect(adminQuizNameUpdate(noQuizzesUser.authUserId, newQuiz.quizId, 'name Updated')).toEqual(ERROR);
     });
 
     test('Name contains invalid characters. Valid characters are alphanumeric and spaces', () => {
