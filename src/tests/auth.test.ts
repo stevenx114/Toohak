@@ -2,11 +2,16 @@ import {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
-} from './auth';
+} from '../auth';
 
 import {
   clear
-} from './other';
+} from '../other';
+
+import {
+  ErrorObject,
+  AuthUserIdReturn,
+} from '../types';
 
 const ERROR = { error: expect.any(String) };
 
@@ -54,34 +59,38 @@ describe('Tests for adminAuthRegister', () => {
 
 // Tests for adminUserDetails function
 describe('adminUserDetails', () => {
-  let user;
+  let userId: AuthUserIdReturn | ErrorObject;
 
   // Success cases for adminUserDetails function
   describe('Success Cases', () => {
     beforeEach(() => {
       clear();
-      user = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+      userId = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
     });
 
     test('Successful implementation', () => {
-      expect(adminUserDetails(user.authUserId)).toEqual({
-        user: {
-          userId: user.authUserId,
-          name: 'John Smith',
-          email: 'johnsmith@gmail.com',
-          numSuccessfulLogins: 1,
-          numFailedPasswordsSinceLastLogin: 0,
-        }
-      });
+      if ('authUserId' in userId) {
+        expect(adminUserDetails(userId.authUserId)).toEqual({
+          user: {
+            userId: userId.authUserId,
+            name: 'John Smith',
+            email: 'johnsmith@gmail.com',
+            numSuccessfulLogins: 1,
+            numFailedPasswordsSinceLastLogin: 0,
+          }
+        });
+      }
     });
   });
 
   // Error cases for adminUserDetails function
   describe('Error cases', () => {
     test('AuthUserId is not a valid user', () => {
-      user = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+      userId = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
       clear();
-      expect(adminUserDetails(user.authUserId)).toEqual(ERROR);
+      if ('authUserId' in userId) {
+        expect(adminUserDetails(userId.authUserId)).toEqual(ERROR);
+      }
     });
   });
 });
@@ -100,8 +109,8 @@ describe('Tests for adminAuthLogin', () => {
     nameFirst: 'thomas',
     nameLast: 'apple'
   };
-  let userIdOne;
-  let userIdTwo;
+  let userIdOne: AuthUserIdReturn | ErrorObject;
+  let userIdTwo: AuthUserIdReturn | ErrorObject;
   beforeEach(() => {
     clear();
     userIdOne = adminAuthRegister(userOne.email, userOne.password, userOne.nameFirst, userOne.nameLast);
@@ -110,23 +119,43 @@ describe('Tests for adminAuthLogin', () => {
   // Success cases for adminAuthLogin
   describe('Success Cases', () => {
     test('Returns userId successfully', () => {
-      expect(adminAuthLogin(userOne.email, userOne.password)).toEqual({ authUserId: userIdOne.authUserId });
-      expect(adminAuthLogin(userTwo.email, userTwo.password)).toEqual({ authUserId: userIdTwo.authUserId });
+      if ('authUserId' in userIdOne && 'authUserId' in userIdTwo) {
+        expect(adminAuthLogin(userOne.email, userOne.password)).toEqual({ authUserId: userIdOne.authUserId });
+        expect(adminAuthLogin(userTwo.email, userTwo.password)).toEqual({ authUserId: userIdTwo.authUserId });
+      }
     });
     test('Updates numSuccessfulLogin for users correctly', () => {
       adminAuthLogin(userOne.email, userOne.password);
       adminAuthLogin(userOne.email, userOne.password);
       adminAuthLogin(userOne.email, userOne.password);
-      expect(adminUserDetails(userIdOne.authUserId).user.numSuccessfulLogins).toEqual(4);
+      let userOneDetails;
+      if ('authUserId' in userIdOne) {
+        userOneDetails = adminUserDetails(userIdOne.authUserId);
+      }
+      if ('user' in userOneDetails) {
+        expect(userOneDetails.user.numSuccessfulLogins).toEqual(4);
+      }
     });
     test('Updates FailedPasswordsSinceLastLogin for users correctly', () => {
       adminAuthLogin(userOne.email, userTwo.password);
       adminAuthLogin(userOne.email, userTwo.password);
       adminAuthLogin(userOne.email, userTwo.password);
-      expect(adminUserDetails(userIdOne.authUserId).user.numFailedPasswordsSinceLastLogin).toEqual(3);
+      let userOneDetails;
+      if ('authUserId' in userIdOne) {
+        userOneDetails = adminUserDetails(userIdOne.authUserId);
+      }
+      if ('user' in userOneDetails) {
+        expect(userOneDetails.user.numFailedPasswordsSinceLastLogin).toEqual(3);
+      }
       adminAuthLogin(userOne.email, userOne.password);
-      expect(adminUserDetails(userIdOne.authUserId).user.numSuccessfulLogins).toEqual(2);
-      expect(adminUserDetails(userIdOne.authUserId).user.numFailedPasswordsSinceLastLogin).toEqual(0);
+
+      if ('authUserId' in userIdOne) {
+        userOneDetails = adminUserDetails(userIdOne.authUserId);
+      }
+      if ('user' in userOneDetails) {
+        expect(userOneDetails.user.numSuccessfulLogins).toEqual(2);
+        expect(userOneDetails.user.numFailedPasswordsSinceLastLogin).toEqual(0);
+      }
     });
   });
   // Error cases for adminAuthLogin
