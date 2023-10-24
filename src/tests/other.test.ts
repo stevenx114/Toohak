@@ -12,9 +12,9 @@ import {
   adminQuizCreate
 } from '../quiz';
 
-import { 
+import {
   AuthUserIdReturn,
-  validDetails, 
+  validDetails,
   ErrorObject
 } from '../types';
 
@@ -49,15 +49,15 @@ describe('Clear Function implementation', () => {
     }
   });
 
-  test('Removing quiz data', ()=> {
+  test('Removing quiz data', () => {
     expect(clear()).toStrictEqual({});
     authUserId = adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
 
     if ('authUserId' in authUserId) {
-      expect(adminQuizList(authUserId.authUserId)).toStrictEqual({quizzes: []});
+      expect(adminQuizList(authUserId.authUserId)).toStrictEqual({ quizzes: [] });
     } else {
       console.error('error in adminQuizList');
       expect(false).toBe(true);
-    } 
+    }
   });
 });

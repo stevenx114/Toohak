@@ -17,14 +17,9 @@ import {
 
 import {
   validDetails,
-  getUser,
-  getQuiz,
   QuizIdReturn,
-  QuizListReturn,
   AuthUserIdReturn,
-  UserDetailsReturn,
-  ErrorObject,
-  EmptyObject
+  ErrorObject
 } from '../types';
 
 import {
@@ -86,7 +81,6 @@ describe('adminQuizDescriptionUpdate Test', () => {
       if ('description' in quizInfo) {
         expect(quizInfo.description).toStrictEqual('newDescription');
       }
-      
     });
 
     test('All inputs are valid but description is empty string', () => {
@@ -317,7 +311,7 @@ describe('adminQuizNameUpdate', () => {
         expect(adminQuizNameUpdate(newUser.authUserId, newQuiz.quizId, 'name Updated')).toEqual({});
         const curQuiz = adminQuizInfo(newUser.authUserId, newQuiz.quizId);
         if ('name' in curQuiz) {
-          expect(curQuiz.name).toEqual('name Updated');   
+          expect(curQuiz.name).toEqual('name Updated');
         }
       }
     });
