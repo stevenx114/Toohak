@@ -1,6 +1,29 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-let data = {
-  users: [], 
+export interface User {
+  userId: number;
+  name: string;
+  email: string;
+  password: string;
+  numSuccessfulLogins: number;
+  numFailedPasswordsSinceLastLogin: number;
+  quizzesOwned: number[];
+}
+
+export interface Quiz {
+  quizId: number;
+  name: string;
+  timeCreated: number;
+  timeLastEdited: number;
+  description: string;
+}
+
+export interface DataStore {
+  users: User[];
+  quizzes: Quiz[];
+}
+
+let data: DataStore = {
+  users: [],
   quizzes: [],
 };
 
@@ -21,13 +44,7 @@ Example usage
 */
 
 // Use get() to access the data
-export function getData() {
-  return data;
-}
+export const getData = (): DataStore => data;
 
 // Use set(newData) to pass in the entire data object, with modifications made
-export function setData(newData) {
-  data = newData;
-}
-
-// export { getData, setData };
+export const setData = (newData: DataStore) => { data = newData; };
