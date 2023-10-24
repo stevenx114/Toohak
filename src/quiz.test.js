@@ -1,6 +1,5 @@
 import {
   adminAuthRegister,
-  adminAuthLogin,
 } from './auth';
 
 import {
@@ -115,10 +114,10 @@ describe('adminQuizInfo Test', () => {
 // Tests for AdminQuizCreate function
 describe('AdminQuizCreate', () => {
   let userId;
-  let quiz;
+
   beforeEach(() => {
     userId = adminAuthRegister('voxekov792@estudys.com', 'quickbrown1', 'Alex', 'Smith');
-    quiz = adminQuizCreate(userId.authUserId, 'Australia', 'description');
+    adminQuizCreate(userId.authUserId, 'Australia', 'description');
   });
 
   // Error cases for AdminQuizCreate function

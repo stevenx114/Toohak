@@ -11,17 +11,17 @@ import {
   adminQuizList,
   adminQuizCreate,
 } from './quiz';
-  
+
 const ERROR = { error: expect.any(String) };
-  
+
 describe('Clear Function implementation', () => {
   let authUserId;
-  
+
   beforeEach(() => {
     authUserId = adminAuthRegister('sample@gmail.com', 'samplepassword1', 'firstname', 'lastname');
     adminQuizCreate(authUserId.authUserId, 'quizName', 'description');
   });
-  
+
   test('Returns empty dictionary', () => {
     expect(clear()).toStrictEqual({});
   });
@@ -31,11 +31,9 @@ describe('Clear Function implementation', () => {
     expect(adminUserDetails(authUserId.authUserId)).toStrictEqual(ERROR);
   });
 
-  test('Removing quiz data', ()=> {
+  test('Removing quiz data', () => {
     expect(clear()).toStrictEqual({});
     authUserId = adminAuthRegister('sample@gmail.com', 'samplepassword1', 'firstname', 'lastname');
-    expect(adminQuizList(authUserId.authUserId)).toStrictEqual({quizzes: []});
+    expect(adminQuizList(authUserId.authUserId)).toStrictEqual({ quizzes: [] });
   });
 });
-
- 
