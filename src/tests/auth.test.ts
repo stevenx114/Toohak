@@ -1,7 +1,7 @@
 import {
   adminAuthRegister,
   adminAuthLogin,
-  adminUserDetails,
+  adminUserDetails
 } from '../auth';
 
 import {
@@ -10,7 +10,7 @@ import {
 
 import {
   ErrorObject,
-  AuthUserIdReturn,
+  AuthUserIdReturn
 } from '../types';
 
 const ERROR = { error: expect.any(String) };
