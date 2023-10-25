@@ -10,6 +10,7 @@ export interface User {
 }
 
 export interface Quiz {
+  onwerId: number;
   quizId: number;
   name: string;
   timeCreated: number;
@@ -17,14 +18,21 @@ export interface Quiz {
   description: string;
 }
 
+export interface Token {
+  sessionId: number;
+  authUserId: number;
+}
+
 export interface DataStore {
   users: User[];
   quizzes: Quiz[];
+  tokens: Token[];
 }
 
 let data: DataStore = {
   users: [],
   quizzes: [],
+  tokens: []
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
