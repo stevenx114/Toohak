@@ -19,7 +19,8 @@ import {
   validDetails,
   QuizIdReturn,
   AuthUserIdReturn,
-  ErrorObject
+  ErrorObject,
+  QuestionBody,
 } from '../types';
 
 import {
