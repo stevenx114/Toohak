@@ -27,8 +27,8 @@ export interface ErrorObject {
   error: string;
 }
 
-export interface AuthUserIdReturn {
-  authUserId: number;
+export interface TokenReturn {
+  token: number;
 }
 
 export interface UserDetailsReturn {
