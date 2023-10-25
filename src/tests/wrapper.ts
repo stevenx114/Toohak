@@ -8,7 +8,7 @@ const SERVER_URL = `${url}:${port}`;
 
 // Wrapper for adminQuizCreate
 export function requestQuizCreateV1(token: string, name: string, description: string) {
-  return request(
+  const res = request(
     'POST',
     SERVER_URL + '/v1/admin/quiz',
     {
@@ -19,11 +19,12 @@ export function requestQuizCreateV1(token: string, name: string, description: st
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for adminQuizList
 export function requestQuizListV1(token: string) {
-  return request(
+  const res = request(
     'GET',
     SERVER_URL + '/v1/admin/quiz/list',
     {
@@ -32,11 +33,12 @@ export function requestQuizListV1(token: string) {
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for adminQuizRemove
 export function requestQuizRemoveV1(quizid: number, token: string) {
-  return request(
+  const res = request(
     'DELETE',
     SERVER_URL + '/v1/admin/quiz/' + quizid,
     {
@@ -45,11 +47,12 @@ export function requestQuizRemoveV1(quizid: number, token: string) {
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for adminQuizDescriptionUpdate
 export function requestQuizDescriptionUpdateV1(quizid: number, token: string, description: string) {
-  return request(
+  const res = request(
     'PUT',
     SERVER_URL + '/v1/admin/quiz/' + quizid + '/description',
     {
@@ -59,11 +62,12 @@ export function requestQuizDescriptionUpdateV1(quizid: number, token: string, de
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for adminQuizNameUpdate
 export function requestQuizNameUpdateV1(quizid: number, token: string, name: string) {
-  return request(
+  const res = request(
     'PUT',
     SERVER_URL + '/v1/admin/quiz/' + quizid + '/name',
     {
@@ -73,11 +77,12 @@ export function requestQuizNameUpdateV1(quizid: number, token: string, name: str
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for adminQuizInfo
 export function requestQuizInfo(quizid: number, token: string) {
-  return request(
+  const res = request(
     'GET',
     SERVER_URL + '/v1/admin/quiz/' + quizid,
     {
@@ -86,11 +91,12 @@ export function requestQuizInfo(quizid: number, token: string) {
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
-  return request(
+  const res = request(
     'POST',
     SERVER_URL + '/v1/admin/auth/register',
     {
@@ -102,15 +108,32 @@ export function requestAuthRegister(email: string, password: string, nameFirst: 
       }
     }
   );
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for clear
 export function requestClearV1() {
-  return request(
+  const res = request(
     'DELETE',
     SERVER_URL + '/v1/clear',
     {
       json: {}
     }
   );
+  return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminQuizQuestionCreate
+export const requestQuizQuestionCreateV1 = (quizid: number, token: string, questionBody: QuestionBody) => {
+  const res = request(
+      'POST',
+      SERVER_URL + '/v1/admin/quiz/' + quizid + '/question',
+      {
+          json: {
+              token: token,
+              questionBody: questionBody,
+          }
+      }
+  );
+  return JSON.parse(res.body.toString());
+} 
