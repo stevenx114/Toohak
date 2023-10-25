@@ -1,19 +1,20 @@
 import {
   getData,
   setData,
+  Token,
   User
 } from './dataStore';
 
-import {
-  v4 as uuidv4
-} from 'uuid';
+import { 
+  generateCustomUuid
+} from 'custom-uuid';
 
 import validator from 'validator';
 
 import {
   getUser,
   ErrorObject,
-  AuthUserIdReturn,
+  TokenReturn,
   UserDetailsReturn
 } from './types';
 
@@ -27,9 +28,10 @@ import {
 * @returns {object} authUserId
 * @returns {string} error
 */
-export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): AuthUserIdReturn | ErrorObject => {
+export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): TokenReturn | ErrorObject => {
   const data = getData();
-  const newUserId = parseInt(uuidv4().replace(/-/g, ''), 16);
+  const newUserId = parseInt(generateCustomUuid("0123456789", 12));
+  const sessionId = parseInt(generateCustomUuid("0123456789", 12));
   const allowedNameChars = /^[a-zA-Z '-]+$/;
   const newUser: User = {
     userId: newUserId,
@@ -40,6 +42,10 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
     numFailedPasswordsSinceLastLogin: 0,
     quizzesOwned: [],
   };
+  const newToken: Token = {
+    sessionId: sessionId,
+    authUserId: newUserId
+  }
 
   if (data.users.some(user => user.email === email)) {
     return {
@@ -77,10 +83,11 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
   }
 
   data.users.push(newUser);
+  data.tokens.push(newToken)
   setData(data);
 
   return {
-    authUserId: newUserId
+    token: newToken.sessionId
   };
 };
 
