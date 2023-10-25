@@ -1,19 +1,21 @@
 import {
   getData,
   setData,
+  Token,
   User
 } from './dataStore';
 
 import {
-  v4 as uuidv4
-} from 'uuid';
+  generateCustomUuid
+} from 'custom-uuid';
 
 import validator from 'validator';
 
 import {
+  getToken,
   getUser,
   ErrorObject,
-  AuthUserIdReturn,
+  TokenReturn,
   UserDetailsReturn
 } from './types';
 
@@ -24,12 +26,12 @@ import {
 * @param {number} password
 * @param {string} nameFirst
 * @param {string} nameLast
-* @returns {object} authUserId
-* @returns {string} error
+* @returns {object} token
 */
-export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): AuthUserIdReturn | ErrorObject => {
+export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): TokenReturn | ErrorObject => {
   const data = getData();
-  const newUserId = parseInt(uuidv4().replace(/-/g, ''), 16);
+  const newUserId = parseInt(generateCustomUuid('0123456789', 12));
+  const sessionId = generateCustomUuid('0123456789', 12);
   const allowedNameChars = /^[a-zA-Z '-]+$/;
   const newUser: User = {
     userId: newUserId,
@@ -39,6 +41,10 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
     quizzesOwned: [],
+  };
+  const newToken: Token = {
+    sessionId: sessionId,
+    authUserId: newUserId
   };
 
   if (data.users.some(user => user.email === email)) {
@@ -77,10 +83,11 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
   }
 
   data.users.push(newUser);
+  data.tokens.push(newToken);
   setData(data);
 
   return {
-    authUserId: newUserId
+    token: newToken.sessionId
   };
 };
 
@@ -89,9 +96,9 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
  *
  * @param {string} email
  * @param {string} password
- * @returns {object} authUserId
+ * @returns {object} TokenReturn | ErrorObject
  */
-export const adminAuthLogin = (email: string, password: string): AuthUserIdReturn | ErrorObject => {
+export const adminAuthLogin = (email: string, password: string): TokenReturn | ErrorObject => {
   const data = getData();
   if (!data.users.some(user => user.email === email)) {
     return {
@@ -99,23 +106,24 @@ export const adminAuthLogin = (email: string, password: string): AuthUserIdRetur
     };
   }
   // Finds the user given their email
-  let indexOfUser: number;
-  for (const user in data.users) {
-    if (data.users[user].email === email) {
-      indexOfUser = parseInt(user);
-    }
-  }
+  const currUser = data.users.find(user => user.email === email);
   // Checks if the password matches the user's set password
-  if (password !== data.users[indexOfUser].password) {
-    data.users[indexOfUser].numFailedPasswordsSinceLastLogin += 1;
+  if (password !== currUser.password) {
+    currUser.numFailedPasswordsSinceLastLogin += 1;
     return {
       error: 'Password is not correct for the given email'
     };
   }
-  data.users[indexOfUser].numFailedPasswordsSinceLastLogin = 0;
-  data.users[indexOfUser].numSuccessfulLogins += 1;
+  currUser.numFailedPasswordsSinceLastLogin = 0;
+  currUser.numSuccessfulLogins += 1;
+  const newToken = {
+    sessionId: generateCustomUuid('0123456789', 12),
+    authUserId: currUser.userId
+  };
+  data.tokens.push(newToken);
+  setData(data);
   return {
-    authUserId: data.users[indexOfUser].userId
+    token: newToken.sessionId
   };
 };
 
@@ -123,22 +131,25 @@ export const adminAuthLogin = (email: string, password: string): AuthUserIdRetur
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
  *
- * @param {number} // authUserId
- * @returns {object} // user details
+ * @param {Object} // userToken
+ * @returns {object} // UserdetailsReturn | ErrorObject
  */
-export const adminUserDetails = (authUserId: number): UserDetailsReturn | ErrorObject => {
-  const user = getUser(authUserId);
-  if (!user) {
-    return { error: 'AuthUserId is not a valid user' };
+export const adminUserDetails = (sessionId: string): UserDetailsReturn | ErrorObject => {
+  const curToken = getToken(sessionId);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session'
+    };
   }
-
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
   return {
     user: {
-      userId: user.userId,
-      name: user.name,
-      email: user.email,
-      numSuccessfulLogins: user.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+      userId: curUser.userId,
+      name: curUser.name,
+      email: curUser.email,
+      numSuccessfulLogins: curUser.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: curUser.numFailedPasswordsSinceLastLogin,
     }
   };
 };
