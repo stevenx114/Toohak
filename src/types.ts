@@ -14,6 +14,11 @@ export const getQuiz = (quizId: number): Quiz | undefined => {
   return data.quizzes.find(q => q.quizId === quizId);
 };
 
+export const getToken = (token: number): Token | undefined => {
+  const data = getData();
+  return data.tokens.find(q => q.sessionId === token);
+}
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
@@ -70,7 +75,7 @@ export interface QuestionBody {
 
 export interface Answer {
   answer: string;
-  correct: boolean;
+  correct: true | false;
 }
 
 export interface QuestionId {
