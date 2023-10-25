@@ -19,7 +19,7 @@ export interface Quiz {
 }
 
 export interface Token {
-  sessionId: number;
+  sessionId: string;
   authUserId: number;
 }
 

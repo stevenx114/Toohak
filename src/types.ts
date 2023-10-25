@@ -28,7 +28,7 @@ export interface ErrorObject {
 }
 
 export interface TokenReturn {
-  token: number;
+  token: string;
 }
 
 export interface UserDetailsReturn {

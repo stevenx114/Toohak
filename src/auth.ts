@@ -25,13 +25,13 @@ import {
 * @param {number} password
 * @param {string} nameFirst
 * @param {string} nameLast
-* @returns {object} authUserId
+* @returns {object} token
 * @returns {string} error
 */
 export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): TokenReturn | ErrorObject => {
   const data = getData();
   const newUserId = parseInt(generateCustomUuid("0123456789", 12));
-  const sessionId = parseInt(generateCustomUuid("0123456789", 12));
+  const sessionId = generateCustomUuid("0123456789", 12);
   const allowedNameChars = /^[a-zA-Z '-]+$/;
   const newUser: User = {
     userId: newUserId,
@@ -98,7 +98,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
  * @param {string} password
  * @returns {object} authUserId
  */
-export const adminAuthLogin = (email: string, password: string): AuthUserIdReturn | ErrorObject => {
+export const adminAuthLogin = (email: string, password: string): TokenReturn | ErrorObject => {
   const data = getData();
   if (!data.users.some(user => user.email === email)) {
     return {
@@ -106,23 +106,24 @@ export const adminAuthLogin = (email: string, password: string): AuthUserIdRetur
     };
   }
   // Finds the user given their email
-  let indexOfUser: number;
-  for (const user in data.users) {
-    if (data.users[user].email === email) {
-      indexOfUser = parseInt(user);
-    }
-  }
+  const currUser = data.users.find(user => user.email === email);
   // Checks if the password matches the user's set password
-  if (password !== data.users[indexOfUser].password) {
-    data.users[indexOfUser].numFailedPasswordsSinceLastLogin += 1;
+  if (password !== currUser.password) {
+    currUser.numFailedPasswordsSinceLastLogin += 1;
     return {
       error: 'Password is not correct for the given email'
     };
   }
-  data.users[indexOfUser].numFailedPasswordsSinceLastLogin = 0;
-  data.users[indexOfUser].numSuccessfulLogins += 1;
+  currUser.numFailedPasswordsSinceLastLogin = 0;
+  currUser.numSuccessfulLogins += 1;
+  const newToken = {
+    sessionId: generateCustomUuid("0123456789", 12),
+    authUserId: currUser.userId
+  }
+  data.tokens.push(newToken);
+  setData(data);
   return {
-    authUserId: data.users[indexOfUser].userId
+    token: newToken.sessionId
   };
 };
 

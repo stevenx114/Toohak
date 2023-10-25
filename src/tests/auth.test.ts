@@ -10,7 +10,7 @@ import {
 
 import {
   ErrorObject,
-  AuthUserIdReturn,
+  TokenReturn,
   validDetails
 } from '../types';
 
@@ -20,41 +20,33 @@ beforeEach(() => {
   clear();
 });
 
-// Success and fail tests for adminAuthRegister
+// Success and error tests for adminAuthRegister
 describe('Tests for adminAuthRegister', () => {
-  test('Existing email', () => {
-    adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('Invalid email', () => {
-    expect(adminAuthRegister('hello', validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('First name has forbidden characters', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, 'hello!', validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('First name too short', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, 'h', validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('First name too long', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, 'hellohellohellohellohello', validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('Last name has forbidden characters', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'world!')).toEqual({ error: expect.any(String) });
-  });
-  test('Last name too short', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'w')).toEqual({ error: expect.any(String) });
-  });
-  test('Last name too long', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'worldworldworldworldworld')).toEqual({ error: expect.any(String) });
-  });
-  test('Password less than 8 characters', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, 'pass', validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('Password does not contain at least one number and at least one letter', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, 'password', validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
-  });
-  test('Valid email, password, first name and last name', () => {
-    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ authUserId: expect.any(Number) });
+
+  describe('Success Cases', () => {
+    test('Valid email, password, first name and last name', () => {
+      expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ token: expect.any(String) });
+    });
+  })
+
+  describe('Error Cases', () => {
+    test.each([
+      ['Existing email', validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME],
+      ['Invalid email', 'hello', validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME],
+      ['First name has forbidden characters', validDetails.EMAIL, validDetails.PASSWORD, 'hello!', validDetails.LAST_NAME],
+      ['First name too short', validDetails.EMAIL, validDetails.PASSWORD, 'h', validDetails.LAST_NAME],
+      ['First name too long', validDetails.EMAIL, validDetails.PASSWORD, 'hellohellohellohellohello', validDetails.LAST_NAME],
+      ['Last name has forbidden characters', validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'world!'],
+      ['Last name too short', validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'w'],
+      ['Last name too long', validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'worldworldworldworldworld'],
+      ['Password less than 8 characters', validDetails.EMAIL, 'pass', validDetails.FIRST_NAME, validDetails.LAST_NAME],
+      ['Password does not contain at least one number and at least one letter', validDetails.EMAIL, 'password', validDetails.FIRST_NAME, validDetails.LAST_NAME],
+    ])('%s', (testName, email, password, firstName, lastName) => {
+      if (testName === 'Existing email') {
+        adminAuthRegister(email, password, firstName, lastName);
+      }
+      expect(adminAuthRegister(email, password, firstName, lastName)).toEqual(ERROR);
+    });
   });
 });
 
