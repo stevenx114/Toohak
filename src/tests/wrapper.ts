@@ -112,7 +112,7 @@ export function requestAuthRegister(email: string, password: string, nameFirst: 
 }
 
 // Wrapper for clear
-export function requestClearV1() {
+export function requestClear() {
   const res = request(
     'DELETE',
     SERVER_URL + '/v1/clear',
@@ -124,7 +124,7 @@ export function requestClearV1() {
 }
 
 // Wrapper for adminQuizQuestionCreate
-export const requestQuizQuestionCreateV1 = (quizid: number, token: string, questionBody: QuestionBody) => {
+export const requestQuizQuestionCreate = (quizid: number, token: string, questionBody: QuestionBody) => {
   const res = request(
       'POST',
       SERVER_URL + '/v1/admin/quiz/' + quizid + '/question',
