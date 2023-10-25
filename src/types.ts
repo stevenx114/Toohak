@@ -73,6 +73,14 @@ export interface QuestionBody {
   answers: Answer[];
 }
 
+export interface Question {
+  questionid: number;
+  question: string; 
+  duration: number;
+  points: number; 
+  answers: Answer[];
+}
+
 export interface Answer {
   answer: string;
   correct: true | false;
