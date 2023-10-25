@@ -14,8 +14,12 @@ import {
   QuizIdReturn,
   ErrorObject,
   QuizListReturn,
-  EmptyObject
+  EmptyObject,
+  QuestionBody,
+  QuestionId,
+  getToken,
 } from './types';
+
 
 /**
  *
@@ -264,3 +268,65 @@ export const adminQuizList = (authUserId: number): QuizListReturn | ErrorObject 
     quizzes: quizzes,
   };
 };
+
+const duplicateAnswers = (questionBody: QuestionBody): boolean => {
+  const set = new Set<string();
+  return question.answers.some((element) => {
+    if (set.has(element.answer)) {
+      return true; 
+    } else {
+      set.add(element.answer);
+      return false;
+    }
+  });
+}
+
+/**
+ * 
+ * @param quizid 
+ * @param token 
+ * @param questionBody 
+ */
+export const adminQuizQuestionCreate = (quizid: number, authuserId: number, token: string, questionBody: QuestionBody): QuestionId | ErrorObject => {
+  const data: DataStore = getData();
+  const quiz = getQuiz(quizid);
+  const findToken = getToken(token);
+  const minAnswerLength = questionBody.answers.every((element) => element.answer.length >= 1); // checks if every asnwer is at least 1
+  const maxAnswerLength = questionBody.answers.every((element) => element.answer.length <= 10); // checks if every answer is at most 10
+  const noCorrectAnswer = questionBody.answers.some((element) => element.correct !== true); // checks if there are no correct answers
+
+  if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    return { error: 'Invalid question length'};
+  } else if (questionBody.duration <= 0) {
+    return { error: 'Question duration cannot be smaller than 0'};
+  } else if (questionBody.points < 1 || questionBody.points > 10) {
+    return { error: 'Invalid number of points'};
+  } else if (questionBody.answers.length > 6 || questionBody.answers.length < 2) {
+    return { error: 'Invalid number of answers'};
+  } else if (!maxAnswerLength || !minAnswerLength) {
+    return { error: 'Invalid string length of answers'}; 
+  } else if (duplicateAnswers) {
+    return { error: 'Question answers cannot have duplicate tests'};
+  } else if (noCorrectAnswer) {
+    return { error: 'Question must have a correct answer'};
+  } else if (!token) {
+    return { error: 'Token cannot be empty'};
+  } else if (questionBody.duration + quiz.duration > 180) {
+    return { error: 'Quiz duration cannot be longer than 3 minutes'};
+  } else if (!findToken) {
+    return { error: 'Invalid token'};
+  } else if (token.sessionId != quiz.ownerId) { 
+    return { error: 'Token does not belong to quiz owner'};
+  } 
+
+
+
+
+  
+
+
+
+
+};
+
+
