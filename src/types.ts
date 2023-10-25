@@ -52,14 +52,18 @@ export interface QuizListReturn {
 
 export type EmptyObject = Record<string, string>;
 
-export type QuestionBody = {
-  question: string, 
-  duration: number,
-  points: number, 
-  answers: Answer[]
+export interface QuestionBody {
+  question: string; 
+  duration: number;
+  points: number; 
+  answers: Answer[];
 }
 
-export type Answer = {
-  answer: string,
-  correct: boolean,
+export interface Answer {
+  answer: string;
+  correct: boolean;
+}
+
+export interface QuestionId {
+  questionId: number;
 }
