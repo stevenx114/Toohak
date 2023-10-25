@@ -28,6 +28,24 @@ import {
 
 const ERROR = { error: expect.any(String) };
 
+const NUMBER = expect.any(Number);
+
+const VALID_Q_BODY: QuestionBody = {
+  question: 'question',
+  duration: 3,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ]
+}
+
 describe('adminQuizDescriptionUpdate Test', () => {
   let authUserId: AuthUserIdReturn | ErrorObject;
   let quizId: QuizIdReturn | ErrorObject;
@@ -420,4 +438,280 @@ describe('AdminQuizList', () => {
       }
     }
   });
+});
+
+describe('Tests for adminQuizQuestionCreate', () => {
+  let registerReturn: Token | ErrorObject;
+  let quizCreateReturn: Quizid | ErrorObject;
+  let user1;
+  let quizId;
+  beforeEach(() => {
+    requestClearV1(); // Clear the data to make each test independent from one another
+    registerReturn = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    user1 = registerReturn as Token;
+    quizCreateReturn = requestQuizCreateV1(user1.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    quiz1 = quizCreateReturn as QuizId;
+  })
+
+  // Error tests
+  // Tests for invalid token structure
+  test.each([
+    { token: ''},
+    { token: user1.token + 1 },
+  ])("Invalid token structure: '$token'", ({ token }) => {
+    expect(requestQuizQuestionCreateV1(token, quiz1.quzId, VALID_Q_BODY)).toStrictEqual(ERROR);
+  })
+
+  // Tests for valid token but does not refer to valid logged in user session
+  test("Valid token but not for logged in user", () => {
+    // Create a second user and store their token into another variable, then log them out. 
+    const user2 = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    const token2 = user2 as Token;
+    requestLogoutV1(token2.token); // [Havent imported this function yet]
+
+    // Valid token but the user is already logged out
+    expect(requestQuizQuestionCreateV1(token2.token, quiz1.quizId, VALID_Q_BODY)).toStrictEqual(ERROR);
+  });
+
+  // Tests for valid token provided but user is not the owner of quiz
+  test("valid token but not the correct quiz owner", () => {
+    // Create a second user and a quiz. 
+    const user2 = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    const token2 = user2 as Token;
+    requestQuizCreateV1(user1.token, TEST_QUIZ_NAME, TEST_DESCRIPTION);
+
+    // Try to add question into another quiz from the second user.
+    expect(requestQuizQuestionCreateV1(token2.token, quiz1.quizId, VALID_Q_BODY)).toStrictEqual(ERROR);
+  });
+
+  // Tests for invalid question body 
+  test.each([
+    {
+      questionBody: {
+        question: 'ques',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    }, // Question string < 5 chars
+    {
+      questionBody: {
+        question: 'question'.repeat(6),
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    },  // Question string > 50 chars
+    {
+      questionBody: {
+        question: 'question',
+        duration: -3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    },  // Question duration < 0
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3 * 1000,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    }, // Question duration > 3 mins
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          },
+          {
+            answer: 'answer3',
+            correct: false
+          },
+          {
+            answer: 'answer4',
+            correct: true
+          },
+          {
+            answer: 'answer5',
+            correct: false
+          },
+          {
+            answer: 'answer6',
+            correct: true
+          }
+        ]
+      }
+    }, // Question has > 6 answers
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+        ]
+      }
+    }, // Question has < 2 answers
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 0,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    }, // Question points < 1
+    {
+      questionBody: {
+        question: 'question',
+        duration: 11,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    }, // Question points > 10
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: '',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    }, // Question answer < 1 char
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1'.repeat(10),
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: true
+          }
+        ]
+      }
+    }, // Question answer > 30 chars
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer1',
+            correct: true
+          }
+        ]
+      }
+    }, // Question has duplicate answers
+    {
+      questionBody: {
+        question: 'question',
+        duration: 3,
+        points: 3,
+        answers: [
+          {
+            answer: 'answer1',
+            correct: false
+          },
+          {
+            answer: 'answer2',
+            correct: false
+          }
+        ]
+      }
+    }, // Question has no correct answers
+  ])("Invalid question body: '$questionBody'", ({ questionBody }) => {
+    expect(requestQuizQuestionCreateV1(user1.token, quiz1.quizId, questionBody)).toStrictEqual(ERROR);
+  });
+
+  // Success test
+  // Tests for the successful creation of questionId
+  test("Valid output of questionId", () => {
+    const newQuestion = requestCreateQuestionV1(user1.token, quiz.quizId, VALID_Q_BODY);
+    const question = newQuestion.questionId as QuestionId;
+    expect(question.questionId).toStictEqual(NUMBER);
+  });
+  // Also have to test for timeCreated - do it later
 });
