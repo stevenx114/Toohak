@@ -15,18 +15,41 @@ export interface Quiz {
   timeCreated: number;
   timeLastEdited: number;
   description: string;
+  numQuestions: number;
+  questions: Question[];
+}
+
+export interface Token {
+  sessionId: number;
+  authUserId: number;
+}
+
+export interface Question {
+  questionId: number;
+  question: string;
+  duration: number;
+  points: number,
+  answers: Answer[];
+}
+
+export interface Answer {
+    answerId: number;
+    answer: string;
+    colour: string;
+    correct: boolean;
 }
 
 export interface DataStore {
   users: User[];
   quizzes: Quiz[];
+  tokens: Token[];
 }
 
 let data: DataStore = {
   users: [],
   quizzes: [],
+  tokens: []
 };
-
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
 /*
