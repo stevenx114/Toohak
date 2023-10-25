@@ -635,4 +635,5 @@ describe('Tests for adminQuizQuestionCreate', () => {
     const question = newQuestion.questionId as QuestionId;
     expect(question.questionId).toStictEqual(NUMBER);
   });
+  // Also have to test for timeCreated - do it later
 });
