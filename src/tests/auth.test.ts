@@ -11,6 +11,7 @@ import {
 import {
   ErrorObject,
   AuthUserIdReturn,
+  validDetails
 } from '../types';
 
 const ERROR = { error: expect.any(String) };
@@ -22,38 +23,38 @@ beforeEach(() => {
 // Success and fail tests for adminAuthRegister
 describe('Tests for adminAuthRegister', () => {
   test('Existing email', () => {
-    adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'world');
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'world')).toEqual({ error: expect.any(String) });
+    adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('Invalid email', () => {
-    expect(adminAuthRegister('hello', 'password1', 'hello', 'world')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister('hello', validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('First name has forbidden characters', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello!', 'world')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, 'hello!', validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('First name too short', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'h', 'world')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, 'h', validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('First name too long', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hellohellohellohellohello', 'world')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, 'hellohellohellohellohello', validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('Last name has forbidden characters', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'world!')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'world!')).toEqual({ error: expect.any(String) });
   });
   test('Last name too short', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'w')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'w')).toEqual({ error: expect.any(String) });
   });
   test('Last name too long', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'worldworldworldworldworld')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'worldworldworldworldworld')).toEqual({ error: expect.any(String) });
   });
   test('Password less than 8 characters', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'pass', 'hello', 'world')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, 'pass', validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('Password does not contain at least one number and at least one letter', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password', 'hello', 'world')).toEqual({ error: expect.any(String) });
+    expect(adminAuthRegister(validDetails.EMAIL, 'password', validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ error: expect.any(String) });
   });
   test('Valid email, password, first name and last name', () => {
-    expect(adminAuthRegister('hello@gmail.com', 'password1', 'hello', 'world')).toEqual({ authUserId: expect.any(Number) });
+    expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ authUserId: expect.any(Number) });
   });
 });
 
@@ -65,7 +66,7 @@ describe('adminUserDetails', () => {
   describe('Success Cases', () => {
     beforeEach(() => {
       clear();
-      userId = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+      userId = adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     });
 
     test('Successful implementation', () => {
@@ -73,8 +74,8 @@ describe('adminUserDetails', () => {
         expect(adminUserDetails(userId.authUserId)).toEqual({
           user: {
             userId: userId.authUserId,
-            name: 'John Smith',
-            email: 'johnsmith@gmail.com',
+            name: 'firstname lastname',
+            email: validDetails.EMAIL,
             numSuccessfulLogins: 1,
             numFailedPasswordsSinceLastLogin: 0,
           }
@@ -86,7 +87,7 @@ describe('adminUserDetails', () => {
   // Error cases for adminUserDetails function
   describe('Error cases', () => {
     test('AuthUserId is not a valid user', () => {
-      userId = adminAuthRegister('johnsmith@gmail.com', 'ilovecat123', 'John', 'Smith');
+      userId = adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
       clear();
       if ('authUserId' in userId) {
         expect(adminUserDetails(userId.authUserId)).toEqual(ERROR);
