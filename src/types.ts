@@ -14,6 +14,15 @@ export const getQuiz = (quizId: number): Quiz | undefined => {
   return data.quizzes.find(q => q.quizId === quizId);
 };
 
+export enum validDetails {
+  EMAIL = 'sample@gmail.com',
+  PASSWORD = 'samplepassword1',
+  FIRST_NAME = 'firstname',
+  LAST_NAME = 'lastname',
+  QUIZ_NAME = 'quizName',
+  DESCRIPTION = 'description',
+}
+
 export interface ErrorObject {
   error: string;
 }
