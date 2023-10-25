@@ -34,11 +34,7 @@ export interface ErrorObject {
 }
 
 export interface TokenReturn {
-<<<<<<< HEAD
-  token: string;
-=======
   sessionId: string;
->>>>>>> 777c5eabb329b82d19f89f252a914b8e974a29ec
 }
 
 export interface UserDetailsReturn {
