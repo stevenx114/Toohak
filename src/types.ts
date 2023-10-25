@@ -18,6 +18,11 @@ export interface ErrorObject {
   error: string;
 }
 
+export interface Token {
+  token: string,
+  userId: number
+}
+
 export interface AuthUserIdReturn {
   authUserId: number;
 }
