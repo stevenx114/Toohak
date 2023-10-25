@@ -1,4 +1,8 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
+import {
+  Token,
+} from './types';
+
 export interface User {
   userId: number;
   name: string;
@@ -7,24 +11,29 @@ export interface User {
   numSuccessfulLogins: number;
   numFailedPasswordsSinceLastLogin: number;
   quizzesOwned: number[];
+  question: number[];
 }
 
 export interface Quiz {
+  ownerId: number;
   quizId: number;
   name: string;
   timeCreated: number;
   timeLastEdited: number;
   description: string;
+  duration: number;
 }
 
 export interface DataStore {
   users: User[];
   quizzes: Quiz[];
+  tokens: Token[];
 }
 
 let data: DataStore = {
   users: [],
   quizzes: [],
+  tokens: [],
 };
 
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
