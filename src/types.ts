@@ -1,7 +1,8 @@
 import {
   getData,
   Quiz,
-  User
+  User,
+  Token
 } from './dataStore';
 
 export const getUser = (userId: number): User | undefined => {
@@ -12,6 +13,11 @@ export const getUser = (userId: number): User | undefined => {
 export const getQuiz = (quizId: number): Quiz | undefined => {
   const data = getData();
   return data.quizzes.find(q => q.quizId === quizId);
+};
+
+export const getToken = (sessionId: string): Token | undefined => {
+  const data = getData();
+  return data.tokens.find(t => t.sessionId === sessionId);
 };
 
 export enum validDetails {
@@ -28,7 +34,11 @@ export interface ErrorObject {
 }
 
 export interface TokenReturn {
+<<<<<<< HEAD
   token: string;
+=======
+  sessionId: string;
+>>>>>>> 777c5eabb329b82d19f89f252a914b8e974a29ec
 }
 
 export interface UserDetailsReturn {

@@ -5,13 +5,14 @@ import {
   User
 } from './dataStore';
 
-import { 
+import {
   generateCustomUuid
 } from 'custom-uuid';
 
 import validator from 'validator';
 
 import {
+  getToken,
   getUser,
   ErrorObject,
   TokenReturn,
@@ -26,12 +27,11 @@ import {
 * @param {string} nameFirst
 * @param {string} nameLast
 * @returns {object} token
-* @returns {string} error
 */
 export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): TokenReturn | ErrorObject => {
   const data = getData();
-  const newUserId = parseInt(generateCustomUuid("0123456789", 12));
-  const sessionId = generateCustomUuid("0123456789", 12);
+  const newUserId = parseInt(generateCustomUuid('0123456789', 12));
+  const sessionId = generateCustomUuid('0123456789', 12);
   const allowedNameChars = /^[a-zA-Z '-]+$/;
   const newUser: User = {
     userId: newUserId,
@@ -45,7 +45,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
   const newToken: Token = {
     sessionId: sessionId,
     authUserId: newUserId
-  }
+  };
 
   if (data.users.some(user => user.email === email)) {
     return {
@@ -83,7 +83,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
   }
 
   data.users.push(newUser);
-  data.tokens.push(newToken)
+  data.tokens.push(newToken);
   setData(data);
 
   return {
@@ -96,7 +96,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
  *
  * @param {string} email
  * @param {string} password
- * @returns {object} authUserId
+ * @returns {object} TokenReturn | ErrorObject
  */
 export const adminAuthLogin = (email: string, password: string): TokenReturn | ErrorObject => {
   const data = getData();
@@ -117,9 +117,9 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
   currUser.numFailedPasswordsSinceLastLogin = 0;
   currUser.numSuccessfulLogins += 1;
   const newToken = {
-    sessionId: generateCustomUuid("0123456789", 12),
+    sessionId: generateCustomUuid('0123456789', 12),
     authUserId: currUser.userId
-  }
+  };
   data.tokens.push(newToken);
   setData(data);
   return {
@@ -131,22 +131,25 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
  *
- * @param {number} // authUserId
- * @returns {object} // user details
+ * @param {Object} // userToken
+ * @returns {object} // UserdetailsReturn | ErrorObject
  */
-export const adminUserDetails = (authUserId: number): UserDetailsReturn | ErrorObject => {
-  const user = getUser(authUserId);
-  if (!user) {
-    return { error: 'AuthUserId is not a valid user' };
+export const adminUserDetails = (sessionId: string): UserDetailsReturn | ErrorObject => {
+  const curToken = getToken(sessionId);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session'
+    };
   }
-
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
   return {
     user: {
-      userId: user.userId,
-      name: user.name,
-      email: user.email,
-      numSuccessfulLogins: user.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
+      userId: curUser.userId,
+      name: curUser.name,
+      email: curUser.email,
+      numSuccessfulLogins: curUser.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: curUser.numFailedPasswordsSinceLastLogin,
     }
   };
 };
