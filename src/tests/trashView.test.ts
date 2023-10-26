@@ -27,7 +27,8 @@ describe("tests for view Trash", () => {
     });
   
     test("Owns a trashed Quiz", () => {
-        requestQuizRemove(quizId.quizId, token.sessionId);
+
+        requestQuizRemove(token.sessionId, quizId.quizId);
         const res = requestTrashView(token.sessionId);
 
         expect(res.statusCode).toBe(200);
