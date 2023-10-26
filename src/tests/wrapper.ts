@@ -109,5 +109,5 @@ export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {
     qs: { }
   });
-  return res;
+  return JSON.parse(res.body.toString());
 }
