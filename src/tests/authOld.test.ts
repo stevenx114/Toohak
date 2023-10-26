@@ -10,7 +10,7 @@ import {
 
 import {
   ErrorObject,
-  TokenReturn,
+  AuthUserIdReturn,
   validDetails
 } from '../types';
 
