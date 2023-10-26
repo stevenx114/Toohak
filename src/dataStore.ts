@@ -1,8 +1,4 @@
 // YOU SHOULD MODIFY THIS OBJECT BELOW
-import {
-  Token,
-} from './types';
-
 export interface User {
   userId: number;
   name: string;
@@ -11,17 +7,36 @@ export interface User {
   numSuccessfulLogins: number;
   numFailedPasswordsSinceLastLogin: number;
   quizzesOwned: number[];
-  question: number[];
 }
 
 export interface Quiz {
-  ownerId: number;
   quizId: number;
   name: string;
   timeCreated: number;
   timeLastEdited: number;
   description: string;
+  numQuestions: number;
+  questions: Question[];
+}
+
+export interface Token {
+  sessionId: number;
+  authUserId: number;
+}
+
+export interface Question {
+  questionId: number;
+  question: string;
   duration: number;
+  points: number,
+  answers: Answer[];
+}
+
+export interface Answer {
+    answerId: number;
+    answer: string;
+    colour: string;
+    correct: boolean;
 }
 
 export interface DataStore {
@@ -33,9 +48,8 @@ export interface DataStore {
 let data: DataStore = {
   users: [],
   quizzes: [],
-  tokens: [],
+  tokens: []
 };
-
 // YOU SHOULDNT NEED TO MODIFY THE FUNCTIONS BELOW IN ITERATION 1
 
 /*
