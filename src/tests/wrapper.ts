@@ -39,7 +39,7 @@ export function requestClear() {
 }
 
 // Wrapper for adminAuthLogout
-export function requestAuthLogout(token: string) {
+export function requestLogout(token: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
     json: { token: token }
   });
