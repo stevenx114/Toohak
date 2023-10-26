@@ -8,10 +8,15 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import {
+  clear
+} from './other';
 
 import {
-  adminQuizNameUpdate
-} from './quiz';
+  adminAuthRegister,
+  adminUserDetails,
+  adminAuthLogin
+} from './auth';
 
 // Set up web app
 const app = express();
@@ -43,6 +48,39 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+// adminAuthRegister
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminAuthLogin
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminUserDetails
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+
+  const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
 // adminQuizNameUpdate
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -54,6 +92,11 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   }
 
   res.json(result);
+});
+
+// clear
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
 });
 
 // ====================================================================
