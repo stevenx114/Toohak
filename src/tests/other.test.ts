@@ -1,16 +1,16 @@
 import {
   clear
-} from '../other';
+} from '../otherOld';
 
 import {
   adminAuthRegister,
   adminUserDetails
-} from '../auth';
+} from '../authOld';
 
 import {
   adminQuizList,
   adminQuizCreate
-} from '../quiz';
+} from '../quizOld';
 
 import {
   AuthUserIdReturn,
