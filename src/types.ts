@@ -1,7 +1,9 @@
 import {
   getData,
   Quiz,
-  User
+  User,
+  Token,
+  Answer
 } from './dataStore';
 
 export const getUser = (userId: number): User | undefined => {
@@ -14,6 +16,11 @@ export const getQuiz = (quizId: number): Quiz | undefined => {
   return data.quizzes.find(q => q.quizId === quizId);
 };
 
+export const getToken = (sessionId: string): Token | undefined => {
+  const data = getData();
+  return data.tokens.find(t => t.sessionId === sessionId);
+};
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
@@ -23,24 +30,13 @@ export enum validDetails {
   DESCRIPTION = 'description',
 }
 
-export interface questionAnswer {
-  answer: string;
-  correct: boolean;
-}
-
-export interface questionBody {
-  question: string;
-  duration: number;
-  points: number,
-  answers: questionAnswer[];
-}
-
 export interface ErrorObject {
   error: string;
+  statusCode: number;
 }
 
-export interface AuthUserIdReturn {
-  authUserId: number;
+export interface TokenReturn {
+  token: string;
 }
 
 export interface UserDetailsReturn {
@@ -67,3 +63,16 @@ export interface QuizListReturn {
 }
 
 export type EmptyObject = Record<string, string>;
+
+
+export interface questionAnswer {
+  answer: string;
+  correct: boolean;
+}
+
+export interface questionBody {
+  question: string;
+  duration: number;
+  points: number,
+  answers: questionAnswer[];
+}

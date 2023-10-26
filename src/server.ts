@@ -1,6 +1,6 @@
 import express, { json, Request, Response } from 'express';
 import { echo } from './newecho';
-import morgan from 'morgan';
+import morgan, { token } from 'morgan';
 import config from './config.json';
 import cors from 'cors';
 import YAML from 'yaml';
@@ -18,7 +18,8 @@ import {
   adminQuizInfo,
   adminQuizDescriptionUpdate,
   adminQuizNameUpdate,
-  adminQuizList
+  adminQuizList,
+  adminUpdateQuiz
 } from './quiz'
 
 import {
@@ -164,11 +165,12 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);
   const questionId = parseInt(req.params.questionid as string);
+  const { token, questionBody } = req.body;
 
-  const result;// = quizUpdate(...);
+  const result = adminUpdateQuiz(quizId, questionId, token, questionBody);
 
   if ('error' in result) {
-      return res.status(result.error).json;
+      return res.status(Number(result.error)).json;
   }
 
   res.json(result);

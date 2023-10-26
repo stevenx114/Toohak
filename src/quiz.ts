@@ -1,7 +1,8 @@
 import {
   getData,
   setData,
-  Quiz
+  Quiz,
+  Answer
 } from './dataStore';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -14,8 +15,11 @@ import {
   QuizIdReturn,
   ErrorObject,
   QuizListReturn,
-  EmptyObject
+  EmptyObject,
+  questionBody
 } from './types';
+
+import { getToken } from './types';
 
 /**
  *
@@ -264,3 +268,129 @@ export const adminQuizList = (authUserId: number): QuizListReturn | ErrorObject 
     quizzes: quizzes,
   };
 };
+
+export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: questionBody): EmptyObject | ErrorObject => {
+  const data = getData();
+  const quiz = getQuiz(quizId);
+  const token = (getToken(sessionId));
+    
+  if (!token) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      status: '401',
+    };
+  }
+
+
+  const user = getUser(token.authUserId);
+  
+  if (!user) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      status: '401',
+    };
+  }
+
+  const question = quiz?.questions.find(question => question.questionId === questionId);
+
+  if (!quiz || !question) {
+    return {
+      error: 'Question Id does not refer to a valid question within this quiz',
+      status: '400',
+    };
+  }
+
+  if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    return {
+      error: 'Valid token is provided, but user is unauthorised to complete this action',
+      status: '401',
+    };
+  }
+
+  if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    return {
+      error: 'Question Id does not refer to a valid question within this quiz',
+      status: '400',
+    };
+  }
+
+  if (questionBody.answers.length < 2 || questionBody.answers.length > 6) {
+    return {
+      error: 'The question has more than 6 answers or less than 2 answers',
+      status: '400',
+    };
+  }
+
+  if (questionBody.duration <= 0) {
+    return {
+      error: 'The question duration is not a positive number',
+      status: '400',
+    };
+  }
+
+  const sum = quiz.questions.reduce((a, b) => {
+    if (a === 0) return b;
+    return a.duration + b.duration;
+  },0) - question.duration + questionBody.duration;
+
+  if (sum > 180) {
+    return {
+      error: 'If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes',
+      status: '400',
+    };
+  }
+
+  if (questionBody.points < 1 || questionBody.points > 10) {
+    return {
+      error: 'The points awarded for the question are less than 1 or greater than 10',
+      status: '400',
+    };
+  }
+
+  if (questionBody.answers.find(answer => answer.answer.length < 1) || questionBody.answers.find(answer => answer.answer.length > 30)) {
+    return {
+      error: 'The length of any answer is shorter than 1 character long, or longer than 30 characters long',
+      status: '400',
+    };
+  }
+
+  for (let i = 0; i < questionBody.answers.length; i++) {
+
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        return {
+          error: 'Any answer strings are duplicates of one another (within the same question)',
+          status: '400',
+        };
+      }
+
+    }
+  }
+
+  if (!questionBody.answers.find(answer => answer.correct === true)) {
+    return {
+      error: 'There are no correct answers',
+      status: '400',
+    };
+  }
+  const colour = ['red', 'green', 'blue'];
+
+  const answers: Answer[] = [];
+
+  for (const index in questionBody.answers) {
+    answers[index].answerId = Number(index);
+    answers[index].answer = questionBody.answers[index].answer;
+    answers[index].colour = colour[Math.floor(Math.random()) % 3];
+    answers[index].correct = questionBody.answers[index].correct;
+  }
+
+  question.answers = answers;
+  question.duration = questionBody.duration;
+  question.points = questionBody.points;
+  question.question = questionBody.question;
+
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+  return{}
+}
