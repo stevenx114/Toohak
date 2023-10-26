@@ -8,8 +8,25 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import {
+  clear, 
+} from './other'
 
-// Set up web app
+import {
+  adminQuizCreate, 
+  adminQuizRemove,
+  adminQuizInfo,
+  adminQuizDescriptionUpdate,
+  adminQuizNameUpdate,
+  adminQuizList
+} from './quiz'
+
+import {
+  adminUserDetails,
+  adminAuthRegister
+} from './auth'
+
+// Set up web app 
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
 app.use(json());
@@ -37,6 +54,124 @@ app.get('/echo', (req: Request, res: Response) => {
     res.status(400);
   }
   return res.json(ret);
+});
+
+// adminAuthRegister
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.error).json;
+  }
+  res.json(result);
+});
+// adminUserDetails
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = parseInt(req.query.token);
+
+  const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.error).json;
+  }
+  res.json(result);
+});
+
+
+// adminQuizCreate
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description);
+
+  if ('error' in result) {
+    return res.status(result.error).json;
+  }
+  res.json(result);
+});
+
+// adminQuizRemove
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+
+  const result = adminQuizRemove(quizId);
+
+  if ('error' in result) {
+      return res.status(result.error).json;
+  }
+
+  res.json(result);
+});
+
+// adminQuizInfo
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+
+  const token = req.query.token as string;
+  const result = adminQuizInfo(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.error).json;
+  } 
+  res.json(result);
+});
+
+// adminQuizDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+  if ('error' in result) {
+      return res.status(result.error).json;
+  }
+
+  res.json(result);
+});
+
+// adminQuizNameUpdate
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
+
+  if ('error' in result) {
+      return res.status(result.error).json;
+  }
+
+  res.json(result);
+});
+
+// adminQuizList
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const token = parseInt(req.query.token);
+
+  const result = adminQuizList(token);
+
+  if ('error' in result) {
+      return res.status(result.error).json;
+  }
+
+  res.json(result);
+});
+
+// clear
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
+});
+
+// Quiz Update
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const questionId = parseInt(req.params.questionid as string);
+
+  const result;// = quizUpdate(...);
+
+  if ('error' in result) {
+      return res.status(result.error).json;
+  }
+
+  res.json(result);
 });
 
 // ====================================================================
