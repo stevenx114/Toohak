@@ -1,13 +1,6 @@
 import {
-  validDetails,
-  TokenReturn,
-} from '../types';
-
-import {
   requestClear,
 } from './wrapper';
-
-const ERROR = expect.any(String);
 
 describe('Clear Function implementation', () => {
   // let token: TokenReturn;
