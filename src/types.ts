@@ -23,6 +23,18 @@ export enum validDetails {
   DESCRIPTION = 'description',
 }
 
+export interface questionAnswer {
+  answer: string;
+  correct: boolean;
+}
+
+export interface questionBody {
+  question: string;
+  duration: number;
+  points: number,
+  answers: questionAnswer[];
+}
+
 export interface ErrorObject {
   error: string;
 }
