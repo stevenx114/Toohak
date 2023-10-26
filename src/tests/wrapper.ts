@@ -1,5 +1,6 @@
 import request from 'sync-request-curl';
 import config from '../config.json';
+import { questionBody } from '../types';
 
 const port = config.port;
 const url = config.url;
