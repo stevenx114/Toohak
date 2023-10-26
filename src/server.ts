@@ -15,6 +15,7 @@ import {
 import {
   adminAuthRegister,
   adminUserDetails,
+  adminAuthLogin
 } from './auth';
 
 // Set up web app
@@ -52,6 +53,16 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   const result = adminAuthRegister(email, password, nameFirst, nameLast);
 
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminAuthLogin
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password);
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }

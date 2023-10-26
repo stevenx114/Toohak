@@ -100,6 +100,45 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
 };
 
 /**
+ * Given a registered user's email and password returns their authUserId value.
+ *
+ * @param {string} email
+ * @param {string} password
+ * @returns {object} TokenReturn | ErrorObject
+ */
+export const adminAuthLogin = (email: string, password: string): TokenReturn | ErrorObject => {
+  const data = getData();
+  if (!data.users.some(user => user.email === email)) {
+    return {
+      error: 'Email address does not exist',
+      statusCode: 400,
+
+    };
+  }
+  // Finds the user given their email
+  const currUser = data.users.find(user => user.email === email);
+  // Checks if the password matches the user's set password
+  if (password !== currUser.password) {
+    currUser.numFailedPasswordsSinceLastLogin += 1;
+    return {
+      error: 'Password is not correct for the given email',
+      statusCode: 400,
+    };
+  }
+  currUser.numFailedPasswordsSinceLastLogin = 0;
+  currUser.numSuccessfulLogins += 1;
+  const newToken = {
+    sessionId: generateCustomUuid('0123456789', 12),
+    authUserId: currUser.userId
+  };
+  data.tokens.push(newToken);
+  setData(data);
+  return {
+    token: newToken.sessionId
+  };
+};
+
+/**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
  *
