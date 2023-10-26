@@ -117,3 +117,15 @@ export function requestClear() {
     statusCode: res.statusCode,
   }
 }
+
+export function requestQuizRestore(quizId: number, token: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
+    json: {
+      token: token,
+    }
+  });
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
+}
