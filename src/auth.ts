@@ -38,6 +38,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
     quizzesOwned: [],
+    previousPasswords: [password]
   };
   const newToken: Token = {
     sessionId: sessionId,
