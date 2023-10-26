@@ -14,6 +14,10 @@ import {
   adminAuthRegister
 } from './auth';
 
+import {
+  requestQuizQuestionMove
+} from './quiz';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -58,6 +62,19 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
 // clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
   res.json(clear());
+});
+
+// adminQuizQuestionMove
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token, newPosition } = req.body;
+  const result = requestQuizQuestionMove(token, quizId, questionId, newPosition);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
 });
 
 // ====================================================================
