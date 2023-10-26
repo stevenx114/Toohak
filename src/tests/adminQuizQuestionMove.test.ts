@@ -10,17 +10,11 @@ import {
   requestAuthRegister,
   requestQuizCreate,
   requestQuizInfo,
-  requestClear,
-  requestQuizDescriptionUpdate,
-  requestQuizRemove,
-  requestQuizList,
-  requestQuizNameUpdate,
   requestLogout,
+  requestQuizQuestionMove,
+  requestQuestionCreate,
+  requestClear
 } from './wrapper';
-
-import {
-  Quiz,
-} from '../dataStore';
 
 const ERROR = expect.any(String);
 
@@ -28,7 +22,7 @@ beforeEach(() => {
   requestClear();
 });
 
-describe('PUT /v1/admin/quiz/{quizid}/question/{questionId}/move', () => {
+describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;
   let questionId1: QuestionIdReturn;
@@ -52,7 +46,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionId}/move', () => {
       expect(quizQuestionIds.indexOf(questionId3.questionId)).toEqual(0);
       expect(quizQuestionIds.indexOf(questionId1.questionId)).toEqual(1);
       expect(quizQuestionIds.indexOf(questionId2.questionId)).toEqual(2);
-    })
+    });
   });
 
   describe('Error Cases', () => {
@@ -67,7 +61,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionId}/move', () => {
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(400);
     });
-    
+
     test('NewPosition is greater than n-1 where n is the number of questions', () => {
       errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 4);
       expect(errorReturn.error).toEqual(ERROR);
@@ -83,8 +77,8 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionId}/move', () => {
     test.skip('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
       errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 0);
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(401);
+      expect(errorReturn.error).toEqual(ERROR);
+      expect(errorReturn.statusCode).toEqual(401);
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
