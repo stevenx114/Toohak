@@ -16,6 +16,7 @@ export const clear = (): EmptyObject => {
   const data: DataStore = {
     users: [],
     quizzes: [],
+    tokens: []
   };
 
   setData(data);

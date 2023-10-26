@@ -8,6 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { viewQuizTrash } from './quiz';
 
 // Set up web app
 const app = express();
@@ -37,6 +38,17 @@ app.get('/echo', (req: Request, res: Response) => {
     res.status(400);
   }
   return res.json(ret);
+});
+
+app.put('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = viewQuizTrash(token);
+
+  if ('error' in result) {
+      return res.status(401).json;
+  }
+
+  res.json(result);
 });
 
 // ====================================================================
