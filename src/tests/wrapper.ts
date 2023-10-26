@@ -14,6 +14,14 @@ export function requestAuthRegister(email: string, password: string, nameFirst: 
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminUserDetails
+export function requestUserDetails(token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
+    qs: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for clear
 export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {
