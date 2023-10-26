@@ -48,7 +48,7 @@ describe('quizRestore test', () => {
       test('Valid token is provided, but user is not an owner of this quiz', () => {
         requestQuizRemove(token.sessionId, quizId.quizId);
         const token2 = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
-        
+
         const res = requestQuizRestore(quizId.quizId, token2.sessionId);
         expect(res.statusCode).toBe(403);
         expect(res.body).toStrictEqual(ERROR);
@@ -58,6 +58,7 @@ describe('quizRestore test', () => {
     describe('Valid Input test', () => {
       test('All inputs are valid', () => {
         requestQuizRemove(token.sessionId, quizId.quizId);
+        
         const res = requestQuizRestore(quizId.quizId, token.sessionId);
         expect(res.statusCode).toBe(200);
         expect(res.body).toStrictEqual({});
