@@ -13,7 +13,10 @@ import validator from 'validator';
 
 import {
   ErrorObject,
-  TokenReturn
+  TokenReturn,
+  UserDetailsReturn,
+  getToken,
+  getUser,
 } from './types';
 
 /**
@@ -93,5 +96,35 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
   setData(data);
   return {
     token: newToken.sessionId
+  };
+};
+
+/**
+ * Given an admin user's authUserId, return details about the user.
+ * "name" is the first and last name concatenated with a single space between them
+ *
+ * @param {Object} // userToken
+ * @returns {object} // UserdetailsReturn | ErrorObject
+ */
+export const adminUserDetails = (token: string): UserDetailsReturn | ErrorObject => {
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+
+  return {
+    user: {
+      userId: curUser.userId,
+      name: curUser.name,
+      email: curUser.email,
+      numSuccessfulLogins: curUser.numSuccessfulLogins,
+      numFailedPasswordsSinceLastLogin: curUser.numFailedPasswordsSinceLastLogin,
+    }
   };
 };
