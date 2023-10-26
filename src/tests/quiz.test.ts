@@ -1,6 +1,6 @@
 import {
   adminAuthRegister
-} from '../auth';
+} from '../authOld';
 
 import {
   adminQuizInfo,
@@ -9,11 +9,11 @@ import {
   adminQuizNameUpdate,
   adminQuizRemove,
   adminQuizDescriptionUpdate
-} from '../quiz';
+} from '../quizOld';
 
 import {
   clear
-} from '../other';
+} from '../otherOld';
 
 import {
   validDetails,
