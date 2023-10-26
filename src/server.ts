@@ -40,6 +40,18 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+  if ('error' in result) {
+      return res.status(result.error).json;
+  }
+
+  res.json(result);
+});
+
 app.delete('/v1/clear', (req: Request, res: Response) => {
   return res.json(clear());
 });
