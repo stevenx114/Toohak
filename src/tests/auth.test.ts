@@ -2,11 +2,11 @@ import {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
-} from '../auth';
+} from '../authOld';
 
 import {
   clear
-} from '../other';
+} from '../otherOld';
 
 import {
   ErrorObject,
