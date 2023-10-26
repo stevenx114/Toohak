@@ -4,7 +4,8 @@ import {
 } from '../types';
 
 import {
-  requestAuthRegister
+  requestAuthRegister,
+  requestClear
 } from './wrapper';
 
 const ERROR = expect.any(String);
