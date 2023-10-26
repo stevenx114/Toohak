@@ -1,22 +1,34 @@
 import {
+  validDetails,
+  TokenReturn,
+} from '../types';
+
+import {
   requestClear,
+  requestUserDetails,
+  requestAuthRegister
 } from './wrapper';
 
-describe('Clear Function implementation', () => {
-  // let token: TokenReturn;
 
-  // beforeEach(() => {
-  //   token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-  //   requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-  // });
+const ERROR = expect.any(String);
+
+describe('Clear Function implementation', () => {
+  let token: TokenReturn;
+
+  beforeEach(() => {
+    token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    // requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+  });
 
   test('Returns empty dictionary', () => {
     expect(requestClear()).toStrictEqual({});
   });
 
-  test.skip('Removing user data', () => {
-    // expect(requestClear()).toStrictEqual({});
-    // expect(requestUserDetails(token.token).error).toStrictEqual(ERROR);
+  test('Removing user data', () => {
+    expect(requestClear()).toStrictEqual({});
+    const res = requestUserDetails(token.token);
+    expect(res.error).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
   });
 
   test.skip('Removing quiz data', () => {
