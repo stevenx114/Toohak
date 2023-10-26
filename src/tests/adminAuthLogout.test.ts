@@ -1,25 +1,14 @@
 import {
   validDetails,
-  QuizIdReturn,
   TokenReturn,
   ErrorObject
 } from '../types';
 
 import {
   requestAuthRegister,
-  requestQuizCreate,
-  requestQuizInfo,
   requestClear,
-  requestQuizDescriptionUpdate,
-  requestQuizRemove,
-  requestQuizList,
-  requestQuizNameUpdate,
   requestLogout
 } from './wrapper';
-
-import {
-  Quiz,
-} from '../dataStore';
 
 const ERROR = expect.any(String);
 
