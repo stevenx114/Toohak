@@ -305,3 +305,4 @@ export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject  =
     quizzes: quizzesInTrash,
   };
 }
+
