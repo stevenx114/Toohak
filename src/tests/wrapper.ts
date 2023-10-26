@@ -1,5 +1,6 @@
 import request from 'sync-request-curl';
 import config from '../config.json';
+import { Question } from '../dataStore';
 
 const port = config.port;
 const url = config.url;
@@ -117,3 +118,17 @@ export function requestClear() {
     statusCode: res.statusCode,
   }
 }
+
+// Wrapper for quizUpdate
+export function quizUpdate(quizId: number, questionId: number, token: string, questionBody: Question) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId, {
+    json: { 
+      token: token, 
+      questionBody: questionBody,
+    }
+  });
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
+} 
