@@ -14,7 +14,8 @@ import {
   QuizIdReturn,
   ErrorObject,
   QuizListReturn,
-  EmptyObject
+  EmptyObject,
+  getToken,
 } from './types';
 
 /**
@@ -264,3 +265,49 @@ export const adminQuizList = (authUserId: number): QuizListReturn | ErrorObject 
     quizzes: quizzes,
   };
 };
+
+export const quizRestore = (quizId: number, sessionId: string): EmptyObject | ErrorObject => {
+  const user = getUser(getToken(sessionId).authUserId);
+  
+  if (!user) {
+    return { 
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      status: '401',
+    };
+  }
+
+  if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    return { 
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+      status: '403',
+    };
+  }
+
+  const data = getData();
+
+  const index = data.trash.findIndex(quiz => quiz.quizId === quizId);
+
+  if (index != -1) {
+    
+    if (data.quizzes.find(quiz => quiz.name === data.trash[index].name)) {
+      return {
+        error: 'Quiz name of the restored quiz is already used by another active quiz',
+        status: '400',
+      };
+    }
+
+    const deletedQuiz = data.trash.splice(index, 1)[0];
+    data.quizzes.push(deletedQuiz);
+  } 
+  
+  else {
+    return {
+      error: 'Quiz ID refers to a quiz that is not currently in the trash',
+      status: '400',
+    };
+  } 
+  
+  setData(data);
+
+  return {};
+}
