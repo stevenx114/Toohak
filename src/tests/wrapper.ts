@@ -6,12 +6,49 @@ const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
 
+
+// Wrapper for adminAuthRegister
+export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
+    json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast }
+  });
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
+}
+
+// Wrapper for adminAuthLogin
+export function requestAuthLogin(email: string, password: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/auth/login', {
+    json: { email: email, password: password }
+  });
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
+}
+
+// Wrapper for adminUserDetails
+export function requestUserDetails(token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
+    qs: { token: token }
+  });
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
+}
+
 // Wrapper for adminQuizCreate
 export function requestQuizCreate(token: string, name: string, description: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
-      json: { token: token, name: name, description: description } 
+    json: { token: token, name: name, description: description } 
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
  
 }
 
@@ -20,78 +57,65 @@ export function requestQuizList(token: string) {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
     qs: { token: token }
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
 }
 
 // Wrapper for adminQuizRemove
-export function requestQuizRemove(quizid: number, token: string) {
+export function requestQuizRemove(token: string, quizid: number) {
   const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token }
+    qs: { token: token, quizid: quizid }
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
 }
 
 // Wrapper for adminQuizDescriptionUpdate
-export function requestQuizDescriptionUpdate(quizid: number, token: string, description: string) {
+export function requestQuizDescriptionUpdate(token: string, quizid: number, description: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
-    json: { token: token, description: description }
+    json: { token: token, quizid: quizid, description: description }
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
 }
 
 // Wrapper for adminQuizNameUpdate
-export function requestQuizNameUpdate(quizid: number, token: string, name: string) {
+export function requestQuizNameUpdate(token: string, quizid: number, name: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/name', {
-    json: { token: token, name: name }
+    json: { token: token, quizid: quizid, name: name }
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
 }
 
 // Wrapper for adminQuizInfo
-export function requestQuizInfo(quizid: number, token: string) {
+export function requestQuizInfo(token: string, quizid: number) {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token }
+    qs: { token: token, quizid: quizid }
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
 }
-
-// Wrapper for adminAuthRegister
-export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
-    json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast }
-  });
-  return JSON.parse(res.body.toString());
-}
-
-// Wrapper for adminAuthLogin
-export function requestAuthLogin(email: string, password: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/auth/login', {
-    json: { token: token }
-  });
-  return JSON.parse(res.body.toString());
-}
-
-// Wrapper for adminUserDetails
-export function requestUserDetails(token: string) {
-  const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
-    qs: { user: {
-      userId: user.userId,
-      name: user.name,
-      email: user.email,
-      numSuccessfulLogins: user.numSuccessfulLogins,
-      numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
-    }}
-  });
-  return JSON.parse(res.body.toString());
-}
-
 
 // Wrapper for clear
 export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {
-    qs: { token: token }
+    qs: { }
   });
-  return JSON.parse(res.body.toString());
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: res.statusCode,
+  }
 }
 
 // Wrapper for trashview
