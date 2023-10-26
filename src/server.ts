@@ -25,6 +25,30 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docE
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
 
+import {
+  clear, 
+} from './other'
+
+import {
+  adminQuizCreate, 
+  adminQuizRemove,
+  adminQuizInfo,
+  adminQuizDescriptionUpdate,
+  adminQuizNameUpdate,
+  adminQuizList
+} from './quiz'
+
+import {
+  adminUserDetails,
+  adminAuthRegister
+} from './auth'
+
+
+
+import {
+  adminQuizQuestionCreate
+} from './quiz';
+
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
@@ -37,6 +61,122 @@ app.get('/echo', (req: Request, res: Response) => {
     res.status(400);
   }
   return res.json(ret);
+});
+
+// adminAuthRegister
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+// adminUserDetails
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = parseInt(req.query.token as string);
+
+  const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+
+// adminQuizCreate
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizRemove
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = parseInt(req.query.token as string);
+  const result = adminQuizRemove(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizInfo
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+
+  const token = parseInt(req.query.token);
+  const result = adminQuizInfo(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  } 
+  res.json(result);
+});
+
+// adminQuizDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizNameUpdate
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizId = req.params.quizid;
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
+
+  if ('error' in result) {
+      return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizList
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.query.token;
+  console.log(token);
+  const result = adminQuizList(token);
+
+  if ('error' in result) {
+      return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// clear
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
+});
+
+app.post('/v1/admin/quiz/{quizid}/question', (req: Request, res: Response) => {
+  const { token, questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizQuestionCreate(token, quizId, questionBody);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
 });
 
 // ====================================================================
