@@ -162,8 +162,8 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
   res.json(clear());
 });
 
-app.post('/v1/admin/quiz/{quizid}/restore', (req: Request, res: Response) => {
-  const quizId = req.params.quizid;
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
   const { token } = req.body;
 
   const result = quizRestore(quizId, token);
