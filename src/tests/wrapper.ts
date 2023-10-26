@@ -30,6 +30,14 @@ export function requestUserDetails(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizInfo
+export function requestQuizInfo(token: string, quizid: number) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
+    qs: { token: token, quizid: quizid }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for clear
 export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {

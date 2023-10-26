@@ -18,6 +18,10 @@ import {
   adminAuthLogin
 } from './auth';
 
+import {
+  adminQuizInfo
+} from './quiz';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -74,6 +78,19 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
 
   const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizInfo
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.query.token as string;
+  const result = adminQuizInfo(token, quizId);
 
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
