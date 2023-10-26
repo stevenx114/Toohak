@@ -2,11 +2,11 @@ import {
   adminAuthRegister,
   adminAuthLogin,
   adminUserDetails,
-} from '../auth';
+} from '../authOld';
 
 import {
   clear
-} from '../other';
+} from '../otherOld';
 
 import {
   ErrorObject,
@@ -22,12 +22,11 @@ beforeEach(() => {
 
 // Success and error tests for adminAuthRegister
 describe('Tests for adminAuthRegister', () => {
-
   describe('Success Cases', () => {
     test('Valid email, password, first name and last name', () => {
       expect(adminAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME)).toEqual({ token: expect.any(String) });
     });
-  })
+  });
 
   describe('Error Cases', () => {
     test.each([

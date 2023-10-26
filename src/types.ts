@@ -27,14 +27,25 @@ export enum validDetails {
   LAST_NAME = 'lastname',
   QUIZ_NAME = 'quizName',
   DESCRIPTION = 'description',
+  EMAIL_2 = 'sample2@gmail.com',
+  PASSWORD_2 = 'password2',
+  FIRST_NAME_2 = 'first',
+  LAST_NAME_2 = 'last',
+  QUIZ_NAME_2 = 'quiz',
+  DESCRIPTION_2 = 'description2',
 }
 
 export interface ErrorObject {
   error: string;
+  statusCode?: number;
+}
+
+export interface AuthUserIdReturn {
+  authUserId: number;
 }
 
 export interface TokenReturn {
-  sessionId: string;
+  token: string;
 }
 
 export interface UserDetailsReturn {

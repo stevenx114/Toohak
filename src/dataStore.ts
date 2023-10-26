@@ -29,27 +29,28 @@ export interface Quiz {
   timeCreated: number;
   timeLastEdited: number;
   description: string;
-  numQuestions: number;
-  questions: Question[];
+  numQuestions?: number;
+  questions?: Question[];
+  duration?: number;
 }
 
 export interface Token {
-  sessionId: number;
+  sessionId: string;
   authUserId: number;
 }
 
 export interface DataStore {
   users: User[];
   quizzes: Quiz[];
-  tokens: Token[];
-  trash: Quiz[];
+  tokens?: Token[];
+  trash?: Quiz[];
 }
 
 let data: DataStore = {
   users: [],
   quizzes: [],
   tokens: [],
-  trash: []
+  trash: [],
 };
 
 // Use get() to access the data
