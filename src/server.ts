@@ -8,6 +8,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { clear } from './other';
 
 import {
   adminAuthRegister
@@ -52,6 +53,11 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
     return res.status(result.statusCode).json(result);
   }
   res.json(result);
+});
+
+// clear
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
 });
 
 // ====================================================================

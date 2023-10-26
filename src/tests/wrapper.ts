@@ -13,3 +13,11 @@ export function requestAuthRegister(email: string, password: string, nameFirst: 
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for clear
+export function requestClear() {
+  const res = request('DELETE', SERVER_URL + '/v1/clear', {
+    qs: { }
+  });
+  return JSON.parse(res.body.toString());
+}
