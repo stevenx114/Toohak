@@ -1,5 +1,5 @@
 import request from 'sync-request-curl';
-import config from '../src/config.json';
+import config from '../config.json';
 
 const port = config.port;
 const url = config.url;
@@ -105,12 +105,9 @@ export function requestAuthRegister(email: string, password: string, nameFirst: 
 }
 
 // Wrapper for clear
-export function requestClearV1() {
-  return request(
-    'DELETE',
-    SERVER_URL + '/v1/clear',
-    {
-      json: {}
-    }
-  );
+export function requestClear() {
+  const res = request('DELETE', SERVER_URL + '/v1/clear', {
+    qs: { }
+  });
+  return res;
 }
