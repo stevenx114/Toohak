@@ -195,6 +195,18 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// viewTrash
+app.put('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = viewQuizTrash(token);
+
+  if ('error' in result) {
+      return res.status(401).json;
+  }
+
+  res.json(result);
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
