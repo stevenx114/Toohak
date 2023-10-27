@@ -25,7 +25,8 @@ import {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-  adminQuizDescriptionUpdate
+  adminQuizDescriptionUpdate,
+  adminQuizQuestionDuplicate
 } from './quiz';
 
 // Set up web app
@@ -175,6 +176,18 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminAuthLogout(token);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizQuestionDuplicate
+app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  const result = adminQuizQuestionDuplicate(token, quizId, questionId);
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
