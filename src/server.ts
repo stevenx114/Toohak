@@ -21,7 +21,8 @@ import {
 import {
   adminQuizInfo,
   adminQuizCreate,
-  adminQuizList
+  adminQuizList,
+  adminQuizRemove
 } from './quiz';
 
 // Set up web app
@@ -107,6 +108,19 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
+  res.json(result);
+});
+
+// adminQuizRemove
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.query.token as string;
+  const result = adminQuizRemove(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
   res.json(result);
 });
 
