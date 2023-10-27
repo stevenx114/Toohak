@@ -10,8 +10,7 @@ import {
   requestQuizCreate,
   requestQuizInfo,
   requestClear,
-  requestQuizNameUpdate,
-  requestLogout
+  requestQuizNameUpdate
 } from './wrapper';
 
 const ERROR = expect.any(String);
@@ -49,13 +48,6 @@ describe('PUT /v1/admin/quiz/{quizid}/description', () => {
 
     test('Token is invalid', () => {
       errorResult = requestQuizNameUpdate(newUser.token + 1, newQuiz.quizId, 'name Updated');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(401);
-    });
-
-    test.skip('Token does not refer to valid logged in user session', () => {
-      requestLogout(newUser.token);
-      errorResult = requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'name Updated');
       expect(errorResult.error).toEqual(ERROR);
       expect(errorResult.statusCode).toEqual(401);
     });
