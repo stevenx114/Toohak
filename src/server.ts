@@ -27,7 +27,8 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizNameUpdate,
   adminQuizList,
-  viewQuizTrash
+  viewQuizTrash,
+  adminQuizTransfer
 } from './quiz';
 
 import { quizRestore } from './quiz';
@@ -222,6 +223,19 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
 
   res.json(result);
 });
+
+// adminQuizTransfer
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, userEmail } = req.body;  
+  const result = adminQuizTransfer(token, quizId, userEmail);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+})
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

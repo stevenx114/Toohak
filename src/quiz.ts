@@ -19,6 +19,7 @@ import {
   QuizListReturn,
   EmptyObject,
   trashedQuizReturn,
+  getUserByEmail
 } from './types';
 
 /**
@@ -392,4 +393,68 @@ export const quizRestore = (quizId: number, token: string): EmptyObject | ErrorO
   setData(data);
 
   return {};
+};
+
+/**
+ * 
+ * @param {string} token 
+ * @param {number} quizId
+ * @param {string} userEmail
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizTransfer = (token: string, quizId: number, userEmail: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  console.log(data);
+  const curToken = getToken(token);
+  
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const userId = curToken.authUserId;
+  const curUser = getUser(userId);
+
+  if (!curUser.quizzesOwned.includes(quizId)) {
+      return {
+        error: 'Quiz ID does not refer to a quiz that this user owns',
+        statusCode: 403,
+      };
+  }
+  
+  const curQuiz = getQuiz(quizId);
+  const getQuizByName = data.quizzes.find(quiz => quiz.name === curQuiz.name);
+  const userToTransfer = getUserByEmail(userEmail);
+  if (!userToTransfer) {
+      return {
+          error: 'userEmail is not a real user',
+          statusCode: 400,
+      };
+  } else if (curUser.email === userEmail) {
+      return {
+          error: 'userEmail is the current logged in user',
+          statusCode: 400,
+      };
+  } else if (userToTransfer.quizzesOwned.includes(getQuizByName.quizId)) {
+      return {
+          error: 'Quiz ID refers to a quiz that has a name that is already used by the target user',
+          statusCode: 400,
+      };
+  }
+  
+  userToTransfer.quizzesOwned.push(quizId);
+
+  const indexToRemove = curUser.quizzesOwned.indexOf(quizId);
+  if (indexToRemove !== -1) {
+    curUser.quizzesOwned.splice(indexToRemove, 1);
+  }
+  console.log(data);
+  console.log(userToTransfer.quizzesOwned);
+  console.log(curUser.quizzesOwned);
+
+
+  setData();
+  return { };
 };

@@ -20,6 +20,11 @@ export const getToken = (sessionId: string): Token | undefined => {
   return data.tokens.find(t => t.sessionId === sessionId);
 };
 
+export const getUserByEmail = (email: string): User | undefined => {
+  const data = getData();
+  return data.users.find(u => u.email === email);
+};
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
