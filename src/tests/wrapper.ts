@@ -109,8 +109,5 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
       questionBody: questionBody,
     }
   });
-  return {
-    body: JSON.parse(res.body.toString()),
-    statusCode: res.statusCode,
-  }
+  return {JSON.parse(res.body.toString())};
 } 
