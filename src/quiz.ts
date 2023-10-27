@@ -404,7 +404,6 @@ export const quizRestore = (quizId: number, token: string): EmptyObject | ErrorO
  */
 export const adminQuizTransfer = (token: string, quizId: number, userEmail: string): EmptyObject | ErrorObject => {
   const data = getData();
-  console.log(data);
   const curToken = getToken(token);
   
   if (!curToken) {
@@ -450,10 +449,6 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
   if (indexToRemove !== -1) {
     curUser.quizzesOwned.splice(indexToRemove, 1);
   }
-  console.log(data);
-  console.log(userToTransfer.quizzesOwned);
-  console.log(curUser.quizzesOwned);
-
 
   setData();
   return { };
