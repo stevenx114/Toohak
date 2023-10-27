@@ -8,8 +8,26 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminUpdateUserPassword } from './auth';
-import { clear } from './other';
+import {
+  clear
+} from './other';
+
+import {
+  adminAuthRegister,
+  adminUserDetails,
+  adminAuthLogin,
+  adminAuthLogout,
+  adminUpdateUserPassword
+} from './auth';
+
+import {
+  adminQuizInfo,
+  adminQuizCreate,
+  adminQuizList,
+  adminQuizNameUpdate,
+  adminQuizRemove,
+  adminQuizDescriptionUpdate
+} from './quiz';
 
 // Set up web app
 const app = express();
@@ -41,18 +59,128 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
-app.delete('/v1/clear', (req: Request, res: Response) => {
-  return res.json(clear());
-});
+// adminAuthRegister
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
 
-app.put('/v1/admin/user/password', (req: Request, res: Response) => {
-  const { token, oldPassword, newPassword } = req.body;
-  const result = adminUpdateUserPassword(token, oldPassword, newPassword);
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
   res.json(result);
-})
+});
+
+// adminAuthLogin
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminUserDetails
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+
+  const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizList
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = adminQuizList(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizCreate
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizRemove
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.query.token as string;
+  const result = adminQuizRemove(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizInfo
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.query.token as string;
+  const result = adminQuizInfo(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizNameUpdate
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// clear
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  res.json(clear());
+});
+
+// adminAuthLogout
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminAuthLogout(token);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
@@ -83,3 +211,4 @@ const server = app.listen(PORT, HOST, () => {
 process.on('SIGINT', () => {
   server.close(() => console.log('Shutting down server gracefully.'));
 });
+
