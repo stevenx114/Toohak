@@ -21,6 +21,7 @@ export interface User {
   numSuccessfulLogins: number;
   numFailedPasswordsSinceLastLogin: number;
   quizzesOwned: number[];
+  previousPasswords?: string[];
 }
 
 export interface Quiz {
@@ -29,8 +30,9 @@ export interface Quiz {
   timeCreated: number;
   timeLastEdited: number;
   description: string;
-  numQuestions: number;
-  questions: Question[];
+  numQuestions?: number;
+  questions?: Question[];
+  duration?: number;
 }
 
 export interface Token {
@@ -41,15 +43,15 @@ export interface Token {
 export interface DataStore {
   users: User[];
   quizzes: Quiz[];
-  tokens: Token[];
-  trash: Quiz[];
+  tokens?: Token[];
+  trash?: Quiz[];
 }
 
 let data: DataStore = {
   users: [],
   quizzes: [],
   tokens: [],
-  trash: []
+  trash: [],
 };
 
 // Use get() to access the data

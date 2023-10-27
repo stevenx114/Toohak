@@ -12,22 +12,23 @@ import {
 import validator from 'validator';
 
 import {
+  ErrorObject,
+  EmptyObject,
+  TokenReturn,
+  UserDetailsReturn,
   getToken,
   getUser,
-  ErrorObject,
-  TokenReturn,
-  UserDetailsReturn
 } from './types';
 
 /**
-* Register a user with an email, password, and names, then returns their authUserId value.
-*
-* @param {string} email
-* @param {number} password
-* @param {string} nameFirst
-* @param {string} nameLast
-* @returns {object} token
-*/
+  * Register a user with an email, password, and names, then returns their authUserId value.
+  *
+  * @param {string} email
+  * @param {number} password
+  * @param {string} nameFirst
+  * @param {string} nameLast
+  * @returns {object} token
+  */
 export const adminAuthRegister = (email: string, password: string, nameFirst: string, nameLast: string): TokenReturn | ErrorObject => {
   const data = getData();
   const newUserId = parseInt(generateCustomUuid('0123456789', 12));
@@ -41,6 +42,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
     quizzesOwned: [],
+    previousPasswords: [password]
   };
   const newToken: Token = {
     sessionId: sessionId,
@@ -49,43 +51,50 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
 
   if (data.users.some(user => user.email === email)) {
     return {
-      error: 'Email address is used by another user'
+      error: 'Email address is used by another user',
+      statusCode: 400
     };
   } else if (!validator.isEmail(email)) {
     return {
-      error: 'Email address is invalid'
+      error: 'Email address is invalid',
+      statusCode: 400
     };
   } else if (!allowedNameChars.test(nameFirst)) {
     return {
-      error: 'First name contains forbidden characters'
+      error: 'First name contains forbidden characters',
+      statusCode: 400
     };
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
     return {
-      error: 'First name must be between 2 and 20 characters long'
+      error: 'First name must be between 2 and 20 characters long',
+      statusCode: 400
     };
   } else if (!allowedNameChars.test(nameLast)) {
     return {
-      error: 'Last name contains forbidden characters'
+      error: 'Last name contains forbidden characters',
+      statusCode: 400
     };
   } else if (nameLast.length < 2 || nameLast.length > 20) {
     return {
-      error: 'Last name must be between 2 and 20 characters long'
+      error: 'Last name must be between 2 and 20 characters long',
+      statusCode: 400
     };
   } else if (password.length < 8) {
     return {
-      error: 'Password needs to be 8 characters or longer'
+      error: 'Password needs to be 8 characters or longer',
+      statusCode: 400
     };
   } else if (!((/[a-z]/.test(password) || /[A-Z]/.test(password)) &&
-                /[0-9]/.test(password))) {
+                  /[0-9]/.test(password))) {
     return {
-      error: 'Password must contain at least one number and at least one letter'
+      error: 'Password must contain at least one number and at least one letter',
+      statusCode: 400
     };
   }
 
   data.users.push(newUser);
   data.tokens.push(newToken);
   setData(data);
-
   return {
     token: newToken.sessionId
   };
@@ -102,7 +111,9 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
   const data = getData();
   if (!data.users.some(user => user.email === email)) {
     return {
-      error: 'Email address does not exist'
+      error: 'Email address does not exist',
+      statusCode: 400,
+
     };
   }
   // Finds the user given their email
@@ -111,7 +122,8 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
   if (password !== currUser.password) {
     currUser.numFailedPasswordsSinceLastLogin += 1;
     return {
-      error: 'Password is not correct for the given email'
+      error: 'Password is not correct for the given email',
+      statusCode: 400,
     };
   }
   currUser.numFailedPasswordsSinceLastLogin = 0;
@@ -134,15 +146,18 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
  * @param {Object} // userToken
  * @returns {object} // UserdetailsReturn | ErrorObject
  */
-export const adminUserDetails = (sessionId: string): UserDetailsReturn | ErrorObject => {
-  const curToken = getToken(sessionId);
+export const adminUserDetails = (token: string): UserDetailsReturn | ErrorObject => {
+  const curToken = getToken(token);
+
   if (!curToken) {
     return {
-      error: 'Token does not refer to valid logged in user session'
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
     };
   }
   const curUserId = curToken.authUserId;
   const curUser = getUser(curUserId);
+
   return {
     user: {
       userId: curUser.userId,
@@ -152,4 +167,28 @@ export const adminUserDetails = (sessionId: string): UserDetailsReturn | ErrorOb
       numFailedPasswordsSinceLastLogin: curUser.numFailedPasswordsSinceLastLogin,
     }
   };
+};
+
+/**
+ * Logs out an admin user who has an active session.
+ *
+ * @param {string} sessionId
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminAuthLogout = (sessionId: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(sessionId);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const indexOfToken = data.tokens.indexOf(curToken);
+  data.tokens.splice(indexOfToken, 1);
+  setData(data);
+
+  return {};
 };
