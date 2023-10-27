@@ -4,60 +4,79 @@ import {
   Quiz
 } from './dataStore';
 
-import { v4 as uuidv4 } from 'uuid';
-
 import validator from 'validator';
 
 import {
+  generateCustomUuid
+} from 'custom-uuid';
+
+import {
   getUser,
+  getToken,
   getQuiz,
-  QuizIdReturn,
   ErrorObject,
+  QuizIdReturn,
   QuizListReturn,
   EmptyObject,
-  getToken,
+  trashedQuizReturn,
 } from './types';
 
 /**
- *
- *
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {number} authUserId
+ * @param {string} token
  * @param {string} name
  * @param {string} description
- * @returns {object} quiz info
+ * @returns {object} QuizIdReturn | ErrorObject
  */
-export const adminQuizCreate = (authUserId: number, name: string, description: string): QuizIdReturn | ErrorObject => {
+export const adminQuizCreate = (token: string, name: string, description: string): QuizIdReturn | ErrorObject => {
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;
-  const userId = getUser(authUserId);
+  const curToken = getToken(token);
 
-  if (!userId) {
-    return { error: 'AuthUserId is not a valid user' };
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
   }
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
+  const curQuizzesNames = curQuizzes.map(quiz => quiz.name);
+  const newQuizId = parseInt(generateCustomUuid('0123456789', 12));
 
   if (!name) {
-    return { error: 'name cannot be empty' };
+    return {
+      error: 'name cannot be empty',
+      statusCode: 400,
+    };
   } else if (name.length < 3) {
-    return { error: 'name needs to be at least 3 characters' };
+    return {
+      error: 'name needs to be at least 3 characters',
+      statusCode: 400,
+    };
   } else if (name.length > 30) {
-    return { error: 'name cannot exceed 30 characters' };
+    return {
+      error: 'name cannot exceed 30 characters',
+      statusCode: 400,
+    };
   } else if (description.length > 100) {
-    return { error: 'description cannot exceed 100 characters' };
+    return {
+      error: 'description cannot exceed 100 characters',
+      statusCode: 400,
+    };
   } else if (specialChar.test(name)) {
-    return { error: 'name can only contain alphanumeric and space characters' };
+    return {
+      error: 'name can only contain alphanumeric and space characters',
+      statusCode: 400,
+    };
+  } else if (curQuizzesNames.includes(name)) {
+    return {
+      error: 'Name is already used by the current logged in user for another quiz',
+      statusCode: 400,
+    };
   }
-
-  for (const id in userId.quizzesOwned) {
-    const quizIdOwned = userId.quizzesOwned[id];
-    const quizInfo = getQuiz(quizIdOwned);
-    if (quizInfo.name === name) {
-      return { error: 'quiz name is already in use' };
-    }
-  }
-
-  const newQuizId = parseInt(uuidv4().replace(/-/g, ''), 16);
 
   data.quizzes.push(
     {
@@ -66,136 +85,168 @@ export const adminQuizCreate = (authUserId: number, name: string, description: s
       timeCreated: Math.floor((new Date()).getTime() / 1000),
       timeLastEdited: Math.floor((new Date()).getTime() / 1000),
       description: description,
+      numQuestions: 0,
+      questions: []
     }
   );
 
-  userId.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
+  curUser.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
   setData(data);
 
   return {
-    quizId: newQuizId,
+    quizId: newQuizId
   };
 };
 
 /**
  * Given a particular quiz, permanently remove the quiz.
  *
- * @param {number} authUserId of integers
- * @param {number} quizId of integers
- * @returns {object} empty object
+ * @param {string} token
+ * @param {number} quizId
+ * @returns {object} EmptyObject | ErrorObject
  */
-export const adminQuizRemove = (authUserId: number, quizId: number): EmptyObject | ErrorObject => {
+export const adminQuizRemove = (token: string, quizId: number): EmptyObject | ErrorObject => {
   const data = getData();
-  const user = getUser(authUserId);
-  if (!user) {
+  const curToken = getToken(token);
+  if (!curToken) {
     return {
-      error: 'AuthUserId is not a valid user'
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
     };
   }
-  if (!getQuiz(quizId)) {
-    return {
-      error: 'Quiz ID does not refer to a valid quiz'
-    };
-  }
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
+
   if (!user.quizzesOwned.includes(quizId)) {
     return {
-      error: 'Quiz ID does not refer to a quiz that this user owns'
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403
     };
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   if (indexOfQuizInData !== -1) {
+    data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+    data.trash.push(data.quizzes[indexOfQuizInData]);
     data.quizzes.splice(indexOfQuizInData, 1);
   }
 
-  const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
-  if (indexOfQuizInUserOwned !== -1) {
-    user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
-  }
   setData(data);
   return {};
 };
 
 /**
- * Updates the description of the relevant quiz.
+ * Get all of the relevant information about the current quiz.
  *
- * @param {string} authUserId - The ID of the user making the update.
- * @param {string} quizId - The ID of the quiz to be updated.
- * @param {string} description - The new description for the quiz.
- *
- * @returns {object} An empty object.
- *
- * @throws {Error} If an error occurs.
+ * @param {String} token
+ * @param {Number} quizId
+ * @returns {object} Quiz
  */
-export const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, description: string): EmptyObject | ErrorObject => {
-  const data = getData();
-  const user = getUser(authUserId);
+export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject => {
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
   const quiz = getQuiz(quizId);
 
-  if (description.length > 100) {
-    return { error: 'Description is more than 100 characters in length' };
+  const userId = curToken.authUserId;
+  const curUser = getUser(userId);
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
   }
+  return {
+    quizId: quiz.quizId,
+    name: quiz.name,
+    timeCreated: quiz.timeCreated,
+    timeLastEdited: quiz.timeLastEdited,
+    description: quiz.description,
+    numQuestions: quiz.numQuestions,
+    questions: quiz.questions
+  };
+};
 
-  if (!user) {
-    return { error: 'AuthUserId is not a valid user' };
+/**
+ *
+ * Provide a list of all quizzes that are owned by the currently logged in user.
+ *
+ * @param {String} token
+ * @returns {Object} quizId
+ *
+ */
+export const adminQuizList = (token: string): QuizListReturn | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
   }
-
-  if (!quiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz' };
-  }
-
-  const doesUserOwnQuiz = user.quizzesOwned.find(u => u === quizId);
-
-  if (!doesUserOwnQuiz) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
-  }
-
-  quiz.description = description;
-  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
-  setData(data);
-
-  return {};
+  const userId = curToken.authUserId;
+  const curUser = getUser(userId);
+  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
+  const quizInfo = curQuizzes.map(quiz => ({ quizId: quiz.quizId, name: quiz.name }));
+  return {
+    quizzes: quizInfo
+  };
 };
 
 /**
  * Update the name of the relevant quiz.
  *
- * @param {number} authUserId
+ * @param {string} token
  * @param {number} quizId
  * @param {string} name
- * @returns {} empty
- * @returns {string} error
+ * @returns {object} EmptyObject | ErrorObject
  */
-export const adminQuizNameUpdate = (authUserId: number, quizId: number, name: string): EmptyObject | ErrorObject => {
+export const adminQuizNameUpdate = (token: string, quizId: number, name: string): EmptyObject | ErrorObject => {
   const data = getData();
-  const curUser = getUser(authUserId);
-  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
-  const curQuizzesNames = curQuizzes.map(quiz => quiz.name);
-
-  if (!getUser(authUserId)) {
+  const curToken = getToken(token);
+  if (!curToken) {
     return {
-      error: 'AuthUserId is not a valid user'
-    };
-  } else if (!getQuiz(quizId)) {
-    return {
-      error: 'Quiz ID does not refer to a valid quiz'
-    };
-  } else if (!curUser.quizzesOwned.includes(quizId)) {
-    return {
-      error: 'Quiz ID does not refer to a quiz that this user owns'
-    };
-  } else if (!validator.isAlphanumeric(name.replace(/\s/g, ''))) {
-    return {
-      error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces'
-    };
-  } else if (name.length < 3 || name.length > 30) {
-    return {
-      error: 'Name is either less than 3 characters long or more than 30 characters long'
-    };
-  } else if (curQuizzesNames.includes(name)) {
-    return {
-      error: 'Name is already used by the current logged in user for another quiz'
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401
     };
   }
+
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
+  const curQuizzesNames = curQuizzes.map(quiz => quiz.name);
+  if (!validator.isAlphanumeric(name.replace(/\s/g, ''))) {
+    return {
+      error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces',
+      statusCode: 400
+    };
+  }
+
+  if (name.length < 3 || name.length > 30) {
+    return {
+      error: 'Name is either less than 3 characters long or more than 30 characters long',
+      statusCode: 400
+    };
+  }
+
+  if (curQuizzesNames.includes(name)) {
+    return {
+      error: 'Name is already used by the current logged in user for another quiz',
+      statusCode: 400
+    };
+  }
+
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403
+    };
+  }
+
   getQuiz(quizId).name = name;
   getQuiz(quizId).timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
@@ -204,68 +255,100 @@ export const adminQuizNameUpdate = (authUserId: number, quizId: number, name: st
 };
 
 /**
- * Get all of the relevant information about the current quiz.
+ * Updates the description of the relevant quiz.
  *
- * @param {Number} authUserId
- * @param {Number} quizId
- * @returns {object} quiz info
+ * @param {string} token - The ID of the current user session.
+ * @param {number} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ * @returns {object} EmptyObject | ErrorObject
  */
-export const adminQuizInfo = (authUserId: number, quizId: number): Quiz | ErrorObject => {
-  const user = getUser(authUserId);
+export const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  if (description.length > 100) {
+    return {
+      error: 'Description is more than 100 characters in length',
+      statusCode: 400,
+    };
+  }
+
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
   const quiz = getQuiz(quizId);
-  if (!user) {
-    return { error: 'AuthUserId is not a valid user' };
+
+  const doesUserOwnQuiz = user.quizzesOwned.includes(quizId);
+
+  if (doesUserOwnQuiz === false) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
   }
 
-  if (!quiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz' };
-  }
+  quiz.description = description;
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
 
-  if (!user.quizzesOwned.includes(quizId)) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
+  return { };
+};
+
+/**
+
+Retrieve a list of trashed quizzes associated with the user identified by the provided token.*
+@param {string} token - The authentication token for the user.
+*
+@returns {trashedQuizReturn|ErrorObject} An object containing trashed quizzes or an error object.
+*/
+export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject => {
+  const tokenObject = getToken(token);
+
+  if (!tokenObject) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+  const user = getUser(tokenObject.authUserId);
+
+  const data = getData();
+
+  const quizzesInTrash = [];
+
+  for (const quizzesOwned of user.quizzesOwned) {
+    const currTrashedQuiz = data.trash.find(quiz => quiz.quizId === quizzesOwned);
+
+    if (currTrashedQuiz) {
+      const trashQuizData = {
+        quizId: currTrashedQuiz.quizId,
+        name: currTrashedQuiz.name,
+      };
+
+      quizzesInTrash.push(trashQuizData);
+    }
   }
 
   return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
+    quizzes: quizzesInTrash,
   };
 };
 
 /**
+ * Restores a quiz from the trash for a given user if certain conditions are met.
  *
- * Provide a list of all quizzes that are owned by the currently logged in user.
+ * @param {number} quizId - The ID of the quiz to be restored.
+ * @param {string} sessionId - The session ID used to authenticate the user.
  *
- * @param {number} authUserId
- * @returns {Object} quizId
- *
+ * @returns {EmptyObject | ErrorObject} An empty object if the quiz is successfully restored,
+ * or an ErrorObject with details if the restoration encounters an error.
  */
-export const adminQuizList = (authUserId: number): QuizListReturn | ErrorObject => {
-  const userId = getUser(authUserId);
-  const quizzes = [];
-
-  if (!userId) {
-    return { error: 'AuthUserId is not a valid user' };
-  }
-
-  for (const id in userId.quizzesOwned) {
-    const quizList = userId.quizzesOwned[id]; // Array of quizzesOwned
-    const quizInfo = getQuiz(quizList); // Find relevant quiz object
-    quizzes.push(
-      {
-        quizId: quizInfo.quizId,
-        name: quizInfo.name,
-      }
-    );
-  }
-
-  return {
-    quizzes: quizzes,
-  };
-};
-
 export const quizRestore = (quizId: number, sessionId: string): EmptyObject | ErrorObject => {
   const user = getUser(getToken(sessionId).authUserId);
   
