@@ -26,7 +26,8 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizNameUpdate,
   adminQuizList,
-  viewQuizTrash
+  viewQuizTrash,
+  adminQuizEmptyTrash
 } from './quiz';
 
 // Set up web app
@@ -193,6 +194,17 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   }
   res.json(result);
 });
+
+// adminQuizEmptyTrash
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.params.token;
+  const quizIds = req.params.quizIds;
+  const result = adminQuizEmptyTrash(token, quizIds);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
