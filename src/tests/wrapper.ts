@@ -54,14 +54,12 @@ export function requestQuizCreate(token: string, name: string, description: stri
   return JSON.parse(res.body.toString());
 }
 
-export function requestQuizDescriptionUpdateV1(quizid: number, token: string, description: string) {
+// Wrapper for adminQuizDescriptionUpdate
+export function requestQuizDescriptionUpdate(token: string, quizid: number, description: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
-    json: { 
-      token: token,
-      description: description,
-     }
+    json: { token: token, description: description }
   });
-  return res;
+  return JSON.parse(res.body.toString());
 }
 
 // Wrapper for clear

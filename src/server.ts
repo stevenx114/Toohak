@@ -24,7 +24,6 @@ import {
   adminQuizList,
   adminQuizDescriptionUpdate
 } from './quiz';
-import { getToken } from './types';
 
 // Set up web app
 const app = express();
@@ -125,19 +124,18 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   res.json(result);
 });
 
-app.put('v1/admin/quiz/:quizid/description'), (req: Request, res: Response) => {
-  const quizid = parseInt(req.params.quizid as string);
+// adminQuizDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
   const { token, description } = req.body;
-
-  const authUserId = getToken(token);
-  const result = adminQuizDescriptionUpdate(authUserId.authUserId, quizid, description);
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
 
   if ('error' in result) {
-    return res.status(Number(result.statusCode)).json(result);
+    return res.status(result.statusCode).json(result);
   }
 
   res.json(result);
-}
+});
 
 // clear
 app.delete('/v1/clear', (req: Request, res: Response) => {

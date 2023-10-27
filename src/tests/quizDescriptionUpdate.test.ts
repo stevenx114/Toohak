@@ -1,72 +1,60 @@
-import { requestAuthRegister, requestClear, requestQuizDescriptionUpdateV1 } from "./wrapper";
-import { QuizIdReturn, validDetails } from "../types";
-import { Quiz, Token } from "../dataStore";
+import { Quiz } from '../dataStore';
+import { ErrorObject, QuizIdReturn, TokenReturn, validDetails } from '../types';
+import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizDescriptionUpdate, requestQuizInfo } from './wrapper';
 
-const ERROR = {error: expect.any(String)};
+const ERROR = expect.any(String);
 
+// Tests for adminQuizDescriptionUpdate
+describe('PUT /v1/admin/quiz/{quizid}/description', () => {
+  let ownsQuizUser: TokenReturn;
+  let quizId: QuizIdReturn;
+  let errorResult: ErrorObject;
+  beforeEach(() => {
+    requestClear();
+    ownsQuizUser = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    quizId = requestQuizCreate(ownsQuizUser.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+  });
 
-describe('adminQuizDescriptionUpdate Test', () => {
-    let token: Token = {
-        sessionId: "12312321",
-        authUserId: -42,
-    };
-    let quizId: QuizIdReturn = {
-        quizId: -42,
-    };
-  
-    beforeEach(() => {
-        requestClear();
-        token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
-        //quizId = requestQuizCreate(authUserId.authUserId, validDetails.QUIZ_NAME, validDetails.DESCRIPTION).body;
-      
+  describe('Invalid Input Tests', () => {
+    test('Token is empty', () => {
+      errorResult = requestQuizDescriptionUpdate('', quizId.quizId, '');
+      expect(errorResult.error).toStrictEqual(ERROR);
+      expect(errorResult.statusCode).toStrictEqual(401);
     });
-  
-    describe('Invalid Input Tests', () => {
 
-      test('authUserId is invalid', () => {
-        const res = (requestQuizDescriptionUpdateV1(quizId.quizId, token.sessionId + '1', ''))
-        expect(res.statusCode).toBe(400);
-        //expect(JSON.parse(res.body as string)).toStrictEqual(ERROR);
-      });
-  
-      test.skip('Invalid quizId', () => {
-        expect(requestQuizDescriptionUpdateV1(quizId.quizId + 0.5, token.sessionId, '')).toStrictEqual(ERROR);
-      });
-  
-      test.skip('quizId user doesnt own', () => {
-        //const token2 = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
-        //expect(requestQuizDescriptionUpdateV1(token2.sessionId, quizId.quizId, '')).toStrictEqual(ERROR);
-      });
-  
-      test.skip('Invalid Description', () => {
-        //const longDescription = 'a'.repeat(105);
-        //expect(requestQuizDescriptionUpdateV1(token.sessionId, quizId.quizId, longDescription)).toStrictEqual(ERROR);
-      });
+    test('Token is invalid', () => {
+      errorResult = requestQuizDescriptionUpdate(ownsQuizUser.token + 1, quizId.quizId, '');
+      expect(errorResult.error).toStrictEqual(ERROR);
+      expect(errorResult.statusCode).toStrictEqual(401);
     });
-  
-    describe('Valid Input test', () => {
 
-      test.skip('Correct Return Value', () => {
-        //expect(requestQuizDescriptionUpdateV1(token.sessionId, quizId.quizId, '')).toStrictEqual({});
-      });
+    test('Invalid Description', () => {
+      const longDescription = 'a'.repeat(105);
+      errorResult = requestQuizDescriptionUpdate(ownsQuizUser.token, quizId.quizId, longDescription);
+      expect(errorResult.error).toStrictEqual(ERROR);
+      expect(errorResult.statusCode).toStrictEqual(400);
+    });
 
-      test.skip('All inputs are valid', () => {
-        //let quizInfo: Quiz;
-
-        //expect(requestQuizDescriptionUpdateV1(token.sessionId, quizId.quizId, validDetails.DESCRIPTION + 'a')).toStrictEqual({});
-        //quizInfo = requestQuizInfo(token.sessionId, quizId.quizId).body;
-      
-        //expect(quizInfo.description).toStrictEqual(validDetails.DESCRIPTION + 'a');
-      });
-  
-      test.skip('All inputs are valid but description is empty string', () => {
-        //let quizInfo: Quiz;
-
-        //expect(requestQuizDescriptionUpdateV1(token.sessionId, quizId.quizId, '')).toStrictEqual({});
-        //quizInfo = requestQuizInfo(token.sessionId, quizId.quizId).body;
-      
-        //expect(quizInfo.description).toStrictEqual('');
-      });
+    test('quizId user doesnt own', () => {
+      const noQuizUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
+      errorResult = requestQuizDescriptionUpdate(noQuizUserToken.token, quizId.quizId, '');
+      expect(errorResult.error).toStrictEqual(ERROR);
+      expect(errorResult.statusCode).toStrictEqual(403);
     });
   });
-  
+
+  describe('Valid Input test', () => {
+    let quizInfo: Quiz;
+    test('All inputs are valid', () => {
+      expect(requestQuizDescriptionUpdate(ownsQuizUser.token, quizId.quizId, 'newDescription')).toStrictEqual({});
+      quizInfo = requestQuizInfo(ownsQuizUser.token, quizId.quizId);
+      expect(quizInfo.description).toStrictEqual('newDescription');
+    });
+
+    test('All inputs are valid but description is empty string', () => {
+      expect(requestQuizDescriptionUpdate(ownsQuizUser.token, quizId.quizId, '')).toStrictEqual({});
+      quizInfo = requestQuizInfo(ownsQuizUser.token, quizId.quizId);
+      expect(quizInfo.description).toStrictEqual('');
+    });
+  });
+});

@@ -158,39 +158,42 @@ export const adminQuizList = (token: string): QuizListReturn | ErrorObject => {
   };
 };
 
-// Paste in js doc again
-export const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, description: string): EmptyObject | ErrorObject => {
+/**
+ * Updates the description of the relevant quiz.
+ *
+ * @param {string} token - The ID of the current user session.
+ * @param {number} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string): EmptyObject | ErrorObject => {
   const data = getData();
-  const user = getUser(authUserId);
-  const quiz = getQuiz(quizId);
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
 
   if (description.length > 100) {
-    return { 
+    return {
       error: 'Description is more than 100 characters in length',
       statusCode: 400,
-     };
+    };
   }
 
-  if (!user) {
-    return { 
-      error: 'AuthUserId is not a valid user',
-      statusCode: 401,
-     };
-  }
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
+  const quiz = getQuiz(quizId);
 
-  if (!quiz) {
-    return { 
-      error: 'Quiz ID does not refer to a valid quiz',
-      statusCode: 401
-     };
-  }
+  const doesUserOwnQuiz = user.quizzesOwned.includes(quizId);
 
-  const doesUserOwnQuiz = user.quizzesOwned.find(u => u === quizId);
-
-  if (!doesUserOwnQuiz) {
-    return { 
+  if (doesUserOwnQuiz === false) {
+    return {
       error: 'Quiz ID does not refer to a quiz that this user owns',
-      statusCode: 403
+      statusCode: 403,
     };
   }
 
@@ -198,5 +201,5 @@ export const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, d
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
 
-  return {};
+  return { };
 };
