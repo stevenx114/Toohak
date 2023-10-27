@@ -20,12 +20,13 @@ import {
 } from './auth';
 
 import {
-  adminQuizInfo,
   adminQuizCreate,
-  adminQuizList,
-  adminQuizNameUpdate,
   adminQuizRemove,
+  adminQuizInfo,
   adminQuizDescriptionUpdate,
+  adminQuizNameUpdate,
+  adminQuizList,
+  viewQuizTrash,
   adminQuizQuestionDuplicate
 } from './quiz';
 
@@ -123,6 +124,18 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// viewTrash
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = viewQuizTrash(token);
+
+  if ('error' in result) {
+    return res.status(401).json(result);
   }
 
   res.json(result);

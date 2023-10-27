@@ -94,6 +94,14 @@ export function requestLogout(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for trashview
+export function requestTrashView(token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
+    qs: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminQuizQuestionDuplicate
 export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question' + questionId + '/duplicate', {
