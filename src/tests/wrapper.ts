@@ -46,6 +46,14 @@ export function requestQuizList(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizRemove
+export function requestQuizRemove(token: string, quizid: number) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid, {
+    qs: { token: token, quizid: quizid }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminQuizCreate
 export function requestQuizCreate(token: string, name: string, description: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
