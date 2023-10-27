@@ -93,3 +93,11 @@ export function requestLogout(token: string) {
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminUserDetailsUpdate
+export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
+    json: { token: token, email: email, nameFirst: nameFirst, nameLast: nameLast }
+  });
+  return JSON.parse(res.body.toString());
+}
