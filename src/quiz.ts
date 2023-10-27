@@ -90,7 +90,8 @@ export const adminQuizCreate = (token: string, name: string, description: string
       timeLastEdited: Math.floor((new Date()).getTime() / 1000),
       description: description,
       numQuestions: 0,
-      questions: []
+      questions: [],
+      duration: 0
     }
   );
 
