@@ -91,7 +91,6 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   const result = adminQuizCreate(token, name, description);
 
-
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }

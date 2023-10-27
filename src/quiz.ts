@@ -1,6 +1,7 @@
 import {
   getData,
   setData,
+  Quiz
 } from './dataStore';
 
 import {
@@ -10,6 +11,7 @@ import {
 import {
   getUser,
   getToken,
+  getQuiz,
   ErrorObject,
   QuizIdReturn,
 } from './types';
@@ -90,7 +92,6 @@ export const adminQuizCreate = (token: string, name: string, description: string
     quizId: newQuizId
   };
 };
-
 
 /**
  * Get all of the relevant information about the current quiz.
