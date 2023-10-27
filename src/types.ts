@@ -77,6 +77,10 @@ export interface QuizListReturn {
   quizzes: QuizSimple[];
 }
 
+export interface QuestionIdReturn {
+  questionId: number;
+}
+
 export interface QuestionDuplicateReturn {
   newQuestionId: number;
 }
