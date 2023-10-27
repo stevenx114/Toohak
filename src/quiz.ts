@@ -14,10 +14,12 @@ import {
   getUser,
   getToken,
   getQuiz,
+  getQuestion,
   ErrorObject,
   QuizIdReturn,
   QuizListReturn,
-  EmptyObject
+  EmptyObject,
+  QuestionDuplicateReturn
 } from './types';
 
 /**
@@ -300,4 +302,51 @@ export const adminQuizDescriptionUpdate = (token: string, quizId: number, descri
   setData(data);
 
   return { };
+};
+
+/**
+ * Duplicates a question to immediately after where the source question is
+ *
+ * @param token
+ * @param quizId
+ * @param questionId
+ * @param newPosition
+ * @returns
+ */
+export const adminQuizQuestionDuplicate = (token: string, quizId: number, questionId: number): QuestionDuplicateReturn | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+  const curQuiz = getQuiz(quizId);
+  const curQuestion = getQuestion(quizId, questionId);
+  const curQuestions = curQuiz.questions;
+  const curQuestionIds = curQuestions.map(q => q.questionId);
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
+  }
+
+  if (!curQuestionIds.includes(questionId)) {
+    return {
+      error: 'Question Id does not refer to a valid question within this quiz',
+      statusCode: 400,
+    };
+  }
+
+  const initialIndex = curQuestions.indexOf(curQuestion);
+  curQuestions.splice(initialIndex, 0, curQuestion);
+  curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
+  return {};
 };
