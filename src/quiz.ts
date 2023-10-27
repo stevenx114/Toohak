@@ -19,21 +19,33 @@ export const adminQuizDescriptionUpdate = (authUserId: number, quizId: number, d
   const quiz = getQuiz(quizId);
 
   if (description.length > 100) {
-    return { error: 'Description is more than 100 characters in length' };
+    return { 
+      error: 'Description is more than 100 characters in length',
+      statusCode: 400,
+     };
   }
 
   if (!user) {
-    return { error: 'AuthUserId is not a valid user' };
+    return { 
+      error: 'AuthUserId is not a valid user',
+      statusCode: 401,
+     };
   }
 
   if (!quiz) {
-    return { error: 'Quiz ID does not refer to a valid quiz' };
+    return { 
+      error: 'Quiz ID does not refer to a valid quiz',
+      statusCode: 401
+     };
   }
 
   const doesUserOwnQuiz = user.quizzesOwned.find(u => u === quizId);
 
   if (!doesUserOwnQuiz) {
-    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
+    return { 
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403
+    };
   }
 
   quiz.description = description;

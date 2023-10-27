@@ -8,9 +8,20 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { clear } from './other';
+import {
+  clear
+} from './other';
+
+import {
+  adminAuthRegister,
+  adminUserDetails,
+  adminAuthLogin
+} from './auth';
+
 import { adminQuizDescriptionUpdate } from './quiz';
-import { getToken } from './types'
+import { getToken } from './types';
+
+
 
 // Set up web app
 const app = express();
@@ -42,21 +53,56 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(ret);
 });
 
-app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid as string);
-  const { token, description } = req.body;
-  const authUserId = getToken(token).authUserId;
-  const result = adminQuizDescriptionUpdate(authUserId, quizId, description);
-  
-  if ('error' in result) {
-      return res.status(400).json(result);
-  }
+// adminAuthRegister
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
 
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
   res.json(result);
 });
 
+// adminAuthLogin
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminUserDetails
+app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+
+  const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+app.put('v1/admin/quiz/:quizid/description'), (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid as string);
+  const { token, description } = req.body;
+
+  const authUserId = getToken(token);
+  const result = adminQuizDescriptionUpdate(authUserId.authUserId, quizid, description);
+
+  if ('error' in result) {
+    return res.status(Number(result.statusCode)).json(result);
+  }
+
+  res.json(result);
+}
+
+// clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
-  return res.json(clear());
+  res.json(clear());
 });
 
 // ====================================================================

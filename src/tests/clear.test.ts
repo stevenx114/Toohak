@@ -1,31 +1,27 @@
-import { requestClear } from './wrapper'; // requestQuizCreateV1, requestUserDetails, requestQuizList } from './wrapper';
-// import { validDetails } from '../types';
+import {
+  requestClear,
+} from './wrapper';
 
-// const ERROR = { error: expect.any(String) };
+describe('Clear Function implementation', () => {
+  // let token: TokenReturn;
 
-describe('/v1/clear tests', () => {
-  // let token;
+  // beforeEach(() => {
+  //   token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+  //   requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+  // });
 
-  test('Correct Return Value', () => {
-    const res = requestClear();
-    expect(res.statusCode).toBe(200);
-    expect((JSON.parse(res.body as string))).toStrictEqual({});
+  test('Returns empty dictionary', () => {
+    expect(requestClear()).toStrictEqual({});
   });
 
   test.skip('Removing user data', () => {
-    // token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
-    // const res = requestClear();
-    // expect(res.statusCode).toBe(200);
-    // expect(res.body).toStrictEqual({});
-    // expect(requestUserDetails(token.sessionId)).toStrictEqual(ERROR);
+    // expect(requestClear()).toStrictEqual({});
+    // expect(requestUserDetails(token.token).error).toStrictEqual(ERROR);
   });
 
   test.skip('Removing quiz data', () => {
+    // expect(requestClear()).toStrictEqual({});
     // token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    // requestQuizCreate(token.body.sessionId, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    // const res = requestClear();
-    // expect(res.statusCode).toBe(200);
-    // expect(res.body).toStrictEqual({});
-    // expect(requestQuizList(token.body.sessionId));
+    // expect(requestQuizList(token.token)).toStrictEqual({ quizzes: [] });
   });
 });

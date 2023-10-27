@@ -1,4 +1,4 @@
-import { requestAuthRegister, requestClear, requestQuizCreateV1, requestQuizDescriptionUpdateV1, requestQuizInfo } from "./wrapper";
+import { requestClear, requestQuizDescriptionUpdateV1 } from "./wrapper";
 import { QuizIdReturn, validDetails } from "../types";
 import { Quiz, Token } from "../dataStore";
 
