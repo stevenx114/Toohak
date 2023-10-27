@@ -1,5 +1,6 @@
 import { getData, setData } from "./dataStore";
 import { getUser, getQuiz } from "./types";
+import { EmptyObject, ErrorObject } from "./types";
 
 /**
  * Updates the description of the relevant quiz.

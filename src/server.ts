@@ -9,6 +9,8 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { clear } from './other';
+import { adminQuizDescriptionUpdate } from './quiz';
+import { getToken } from './types'
 
 // Set up web app
 const app = express();
@@ -43,10 +45,11 @@ app.get('/echo', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);
   const { token, description } = req.body;
-  const result = adminQuizDescriptionUpdate(token, quizId, description);
-
+  const authUserId = getToken(token).authUserId;
+  const result = adminQuizDescriptionUpdate(authUserId, quizId, description);
+  
   if ('error' in result) {
-      return res.status(result.error).json;
+      return res.status(400).json(result);
   }
 
   res.json(result);
