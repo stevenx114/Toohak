@@ -255,3 +255,49 @@ export const adminQuizNameUpdate = (token: string, quizId: number, name: string)
 
   return {};
 };
+
+/**
+ * Updates the description of the relevant quiz.
+ *
+ * @param {string} token - The ID of the current user session.
+ * @param {number} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  if (description.length > 100) {
+    return {
+      error: 'Description is more than 100 characters in length',
+      statusCode: 400,
+    };
+  }
+
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
+  const quiz = getQuiz(quizId);
+
+  const doesUserOwnQuiz = user.quizzesOwned.includes(quizId);
+
+  if (doesUserOwnQuiz === false) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
+  }
+
+  quiz.description = description;
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
+  return { };
+};
