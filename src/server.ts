@@ -197,7 +197,7 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 
 // viewTrash
 app.put('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const { token } = req.body;
+  const { token } = req.query;
   const result = viewQuizTrash(token);
 
   if ('error' in result) {
