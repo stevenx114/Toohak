@@ -14,20 +14,20 @@ describe("tests for view Trash", () => {
     
     // Error cases
     test("Invalid token", () => {
-        const res = requestTrashView(token.sessionId + 'a')
+        const res = requestTrashView(token.token + 'a')
         expect(res.statusCode).toBe(401);
         expect(res.error).toStrictEqual(ERROR);
     });
     
     // Success cases
     test("Doesnt own a trashed Quiz", () => {
-        const res = requestTrashView(token.sessionId)
+        const res = requestTrashView(token.token)
         expect(res).toStrictEqual({ quizzes: [] });
     });
   
     test.skip("Owns a trashed Quiz", () => {
-        requestQuizRemove(token.sessionId, quizId.quizId);
-        const res = requestTrashView(token.sessionId);
+        requestQuizRemove(token.token, quizId.quizId);
+        const res = requestTrashView(token.token);
 
         const expectedResult = [{
             quizId: quizId.quizId,
