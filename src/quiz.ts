@@ -1,7 +1,9 @@
 import {
   getData,
   setData,
-  Quiz
+  Quiz,
+  Token,
+  Answer
 } from './dataStore';
 
 import validator from 'validator';
@@ -19,6 +21,8 @@ import {
   QuizListReturn,
   EmptyObject,
   trashedQuizReturn,
+  QuestionBody,
+  QuestionIdReturn
 } from './types';
 
 /**
@@ -438,4 +442,118 @@ export const adminQuizEmptyTrash = (token: string, quizIds: string): EmptyObject
   }
   setData(data);
   return {};
+};
+
+/**
+ * Create a new stub question for a particular quiz.
+ *
+ * @param {number} quizid
+ * @param {string} token
+ * @param {object} questionBody
+ * @returns {QuestionIdReturn | ErrorObject} QuestionIdReturn if the question is successfully created,
+ * or an ErrorObject with details if the restoration encounters an error.
+ */
+export const adminQuizQuestionCreate = (quizid: number, token: string, questionBody: QuestionBody): QuestionIdReturn | ErrorObject => {
+  const data = getData();
+  const quiz = getQuiz(quizid);
+  const findToken = getToken(token) as Token;
+
+  if (!findToken) {
+    return {
+      error: 'Invalid token',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(findToken.authUserId);
+  const hasQuizId = user.quizzesOwned.find(quiz => quiz === quizid);
+  const CorrectAnswer = questionBody.answers.some(ans => ans.correct === true);
+
+  if (!hasQuizId) {
+    return {
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+      statusCode: 403,
+    };
+  } else if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    return {
+      error: 'Invalid question length',
+      statusCode: 400,
+    };
+  } else if (questionBody.answers.length < 2 || questionBody.answers.length > 6) {
+    return {
+      error: 'The question has more than 6 answers or less than 2 answers',
+      statusCode: 400,
+    };
+  } else if (questionBody.duration <= 0) {
+    return {
+      error: 'Question duration must be positive',
+      statusCode: 400,
+    };
+  } else if (questionBody.duration + quiz.duration > 180) {
+    return {
+      error: 'Quiz duration cannot be longer than 3 minutes',
+      statusCode: 400,
+    };
+  } else if (questionBody.points < 1 || questionBody.points > 10) {
+    return {
+      error: 'The points awarded for the question are less than 1 or greater than 10',
+      statusCode: 400,
+    };
+  } else if (questionBody.answers.find(ans => ans.answer.length < 1 || ans.answer.length > 30)) {
+    return {
+      error: 'The length of an answer is shorter than 1 character long, or longer than 30 characters long',
+      statusCode: 400,
+    };
+  } else if (!CorrectAnswer) {
+    return {
+      error: 'Question must have a correct answer',
+      statusCode: 400,
+    };
+  }
+  const seenAnswers: string[] = [];
+  for (const answer of questionBody.answers) {
+    if (seenAnswers.includes(answer.answer)) {
+      return {
+        error: 'Cannot have duplicate answers.',
+        statusCode: 400,
+      };
+    }
+    seenAnswers.push(answer.answer);
+  }
+
+  quiz.duration += questionBody.duration; // Update duration of quiz
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000); // Update timeLastEdited of quiz
+
+  const colourArray = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
+  const newQuestionId = parseInt(generateCustomUuid('0123456789', 12));
+  const answers: Answer[] = [];
+
+  for (const answer of questionBody.answers) {
+    const createAnswerId = parseInt(generateCustomUuid('0123456789', 10));
+    const randomElement = Math.floor(Math.random() * colourArray.length);
+    const newColour = colourArray[randomElement];
+    const answerObject = {
+      answerId: createAnswerId,
+      answer: answer.answer,
+      colour: newColour,
+      correct: answer.correct,
+    };
+    answers.push(answerObject);
+  }
+
+  const newQuestion = {
+    questionId: newQuestionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answers,
+  };
+
+  quiz.questions.push(newQuestion);
+
+  setData(data);
+
+  return {
+    questionId: newQuestionId
+  };
 };

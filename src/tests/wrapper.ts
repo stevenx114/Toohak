@@ -6,6 +6,10 @@ const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
 
+import {
+  QuestionBody
+} from '../types';
+
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
@@ -123,6 +127,17 @@ export function requestQuizRestore(quizId: number, token: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
     json: {
       token: token,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionCreate
+export function requestQuizQuestionCreate(token: string, quizid: number, questionBody: QuestionBody) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question', {
+    json: {
+      token: token,
+      questionBody: questionBody,
     }
   });
   return JSON.parse(res.body.toString());

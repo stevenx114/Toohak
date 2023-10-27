@@ -29,7 +29,8 @@ import {
   adminQuizList,
   viewQuizTrash,
   quizRestore,
-  adminQuizEmptyTrash
+  adminQuizEmptyTrash,
+  adminQuizQuestionCreate
 } from './quiz';
 
 // Set up web app
@@ -228,6 +229,18 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token;
   const quizIds = req.query.quizIds;
   const result = adminQuizEmptyTrash(token, quizIds);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizQuestionCreate
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const { token, questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizQuestionCreate(quizId, token, questionBody);
+
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
