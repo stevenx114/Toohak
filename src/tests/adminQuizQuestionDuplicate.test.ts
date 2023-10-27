@@ -16,6 +16,10 @@ import {
   requestQuizQuestionDuplicate
 } from './wrapper';
 
+import {
+  Question
+} from '../dataStore'
+
 const ERROR = expect.any(String);
 
 beforeEach(() => {
@@ -28,6 +32,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let questionId1: QuestionIdReturn;
   let questionId2: QuestionIdReturn;
   let errorReturn: ErrorObject;
+  let quizQuestions: Question[];
 
   beforeEach(() => {
     userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
@@ -42,7 +47,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
       const questionIdNew = requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId);
       expect(questionIdNew).toEqual({ newQuestionId: expect.any(Number) });
       const timeLastEdited = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
-      const quizQuestions = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
+      quizQuestions = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
       const quizQuestionIds = quizQuestions.map(q => q.questionId);
       expect(quizQuestionIds.indexOf(questionId1.questionId)).toEqual(0);
       expect(quizQuestionIds.indexOf(questionIdNew.newQuestionId)).toEqual(1);
