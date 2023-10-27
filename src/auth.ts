@@ -13,6 +13,7 @@ import validator from 'validator';
 
 import {
   ErrorObject,
+  EmptyObject,
   TokenReturn,
   UserDetailsReturn,
   getToken,
@@ -100,6 +101,45 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
 };
 
 /**
+ * Given a registered user's email and password returns their authUserId value.
+ *
+ * @param {string} email
+ * @param {string} password
+ * @returns {object} TokenReturn | ErrorObject
+ */
+export const adminAuthLogin = (email: string, password: string): TokenReturn | ErrorObject => {
+  const data = getData();
+  if (!data.users.some(user => user.email === email)) {
+    return {
+      error: 'Email address does not exist',
+      statusCode: 400,
+
+    };
+  }
+  // Finds the user given their email
+  const currUser = data.users.find(user => user.email === email);
+  // Checks if the password matches the user's set password
+  if (password !== currUser.password) {
+    currUser.numFailedPasswordsSinceLastLogin += 1;
+    return {
+      error: 'Password is not correct for the given email',
+      statusCode: 400,
+    };
+  }
+  currUser.numFailedPasswordsSinceLastLogin = 0;
+  currUser.numSuccessfulLogins += 1;
+  const newToken = {
+    sessionId: generateCustomUuid('0123456789', 12),
+    authUserId: currUser.userId
+  };
+  data.tokens.push(newToken);
+  setData(data);
+  return {
+    token: newToken.sessionId
+  };
+};
+
+/**
  * Given an admin user's authUserId, return details about the user.
  * "name" is the first and last name concatenated with a single space between them
  *
@@ -127,4 +167,90 @@ export const adminUserDetails = (token: string): UserDetailsReturn | ErrorObject
       numFailedPasswordsSinceLastLogin: curUser.numFailedPasswordsSinceLastLogin,
     }
   };
+};
+
+/**
+ * Logs out an admin user who has an active session.
+ *
+ * @param {string} token
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const indexOfToken = data.tokens.indexOf(curToken);
+  data.tokens.splice(indexOfToken, 1);
+  setData(data);
+
+  return {};
+};
+
+/**
+ * Given a set of properties, update those properties of this logged in admin user.
+ *
+ * @param {string} token
+ * @param {string} email
+ * @param {string} nameFirst
+ * @param {string} nameLast
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string, nameLast: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  const allowedNameChars = /^[a-zA-Z '-]+$/;
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  if (data.users.some(user => user.email === email)) {
+    return {
+      error: 'Email address is used by another user',
+      statusCode: 400
+    };
+  } else if (!validator.isEmail(email)) {
+    return {
+      error: 'Email address is invalid',
+      statusCode: 400
+    };
+  } else if (!allowedNameChars.test(nameFirst)) {
+    return {
+      error: 'First name contains forbidden characters',
+      statusCode: 400
+    };
+  } else if (nameFirst.length < 2 || nameFirst.length > 20) {
+    return {
+      error: 'First name must be between 2 and 20 characters long',
+      statusCode: 400
+    };
+  } else if (!allowedNameChars.test(nameLast)) {
+    return {
+      error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
+      statusCode: 400
+    };
+  } else if (nameLast.length < 2 || nameLast.length > 20) {
+    return {
+      error: 'NameLast is less than 2 characters or more than 20 characters',
+      statusCode: 400
+    };
+  }
+  const curUser = getUser(curToken.authUserId);
+
+  curUser.email = email;
+  curUser.name = `${nameFirst} ${nameLast}`;
+
+  setData(data);
+
+  return { };
 };
