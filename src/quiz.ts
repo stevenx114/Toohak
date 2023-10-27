@@ -98,6 +98,45 @@ export const adminQuizCreate = (token: string, name: string, description: string
 };
 
 /**
+ * Given a particular quiz, permanently remove the quiz.
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizRemove = (token: string, quizId: number): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
+
+  if (!user.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403
+    };
+  }
+  const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  if (indexOfQuizInData !== -1) {
+    data.trash.push(data.quizzes[indexOfQuizInData]);
+    data.quizzes.splice(indexOfQuizInData, 1);
+  }
+
+  const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
+  if (indexOfQuizInUserOwned !== -1) {
+    user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
+  }
+  setData(data);
+  return {};
+};
+
+/**
  * Get all of the relevant information about the current quiz.
  *
  * @param {String} token
