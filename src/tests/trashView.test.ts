@@ -9,7 +9,7 @@ describe("tests for view Trash", () => {
     beforeEach(() => {
         requestClear();
         token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-        quizId = requestQuizCreate(token.sessionId, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+        quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     });
     
     // Error cases
@@ -21,11 +21,11 @@ describe("tests for view Trash", () => {
     
     // Success cases
     test("Doesnt own a trashed Quiz", () => {
-        const res = requestTrashView(token.token)
+        const res = requestTrashView(token.token);
         expect(res).toStrictEqual({ quizzes: [] });
     });
   
-    test.skip("Owns a trashed Quiz", () => {
+    test("Owns a trashed Quiz", () => {
         requestQuizRemove(token.token, quizId.quizId);
         const res = requestTrashView(token.token);
 

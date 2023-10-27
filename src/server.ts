@@ -142,6 +142,18 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// viewTrash
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = viewQuizTrash(token);
+
+  if ('error' in result) {
+      return res.status(401).json(result);
+  }
+
+  res.json(result);
+});
+
 // adminQuizInfo
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -196,17 +208,6 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
-// viewTrash
-app.put('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const { token } = req.query;
-  const result = viewQuizTrash(token);
-
-  if ('error' in result) {
-      return res.status(401).json(result);
-  }
-
-  res.json(result);
-});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
