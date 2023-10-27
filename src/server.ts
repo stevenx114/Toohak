@@ -16,7 +16,8 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminAuthLogin,
-  adminAuthLogout
+  adminAuthLogout,
+  adminUserDetailsUpdate
 } from './auth';
 
 import {
@@ -191,6 +192,18 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
+  res.json(result);
+});
+
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
   res.json(result);
 });
 
