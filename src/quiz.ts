@@ -124,10 +124,10 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   if (indexOfQuizInData !== -1) {
+    data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
     data.trash.push(data.quizzes[indexOfQuizInData]);
     data.quizzes.splice(indexOfQuizInData, 1);
   }
-
   const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
   if (indexOfQuizInUserOwned !== -1) {
     user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
