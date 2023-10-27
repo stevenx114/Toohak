@@ -16,7 +16,8 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminAuthLogin,
-  adminAuthLogout
+  adminAuthLogout,
+  adminUserDetailsUpdate
 } from './auth';
 
 import {
@@ -27,6 +28,7 @@ import {
   adminQuizNameUpdate,
   adminQuizList,
   viewQuizTrash,
+  quizRestore,
   adminQuizEmptyTrash
 } from './quiz';
 
@@ -195,6 +197,32 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// quizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.body.token;
+
+  const result = quizRestore(quizId, token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
 // adminQuizEmptyTrash
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const token = req.query.token;
@@ -204,7 +232,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
     return res.status(result.statusCode).json(result);
   }
   res.json(result);
-})
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
