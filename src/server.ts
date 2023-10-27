@@ -21,7 +21,8 @@ import {
 import {
   adminQuizInfo,
   adminQuizCreate,
-  adminQuizList
+  adminQuizList,
+  adminQuizNameUpdate
 } from './quiz';
 
 // Set up web app
@@ -120,6 +121,19 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
+  res.json(result);
+});
+
+// adminQuizNameUpdate
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
   res.json(result);
 });
 
