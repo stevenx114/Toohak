@@ -6,7 +6,9 @@ import {
 import {
   requestClear,
   requestUserDetails,
-  requestAuthRegister
+  requestAuthRegister,
+  requestQuizCreate,
+  requestQuizList
 } from './wrapper';
 
 
@@ -17,7 +19,7 @@ describe('Clear Function implementation', () => {
 
   beforeEach(() => {
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    // requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   test('Returns empty dictionary', () => {
@@ -31,9 +33,9 @@ describe('Clear Function implementation', () => {
     expect(res.statusCode).toStrictEqual(401);
   });
 
-  test.skip('Removing quiz data', () => {
-    // expect(requestClear()).toStrictEqual({});
-    // token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    // expect(requestQuizList(token.token)).toStrictEqual({ quizzes: [] });
+  test('Removing quiz data', () => {
+    expect(requestClear()).toStrictEqual({});
+    token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    expect(requestQuizList(token.token)).toStrictEqual({ quizzes: [] });
   });
 });
