@@ -30,6 +30,30 @@ export function requestUserDetails(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizInfo
+export function requestQuizInfo(token: string, quizid: number) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
+    qs: { token: token, quizid: quizid }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizList
+export function requestQuizList(token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
+    qs: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizCreate
+export function requestQuizCreate(token: string, name: string, description: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
+    json: { token: token, name: name, description: description }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 export function requestQuizDescriptionUpdateV1(quizid: number, token: string, description: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
     json: { 

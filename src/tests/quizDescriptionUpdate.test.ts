@@ -1,4 +1,4 @@
-import { requestClear, requestQuizDescriptionUpdateV1 } from "./wrapper";
+import { requestAuthRegister, requestClear, requestQuizDescriptionUpdateV1 } from "./wrapper";
 import { QuizIdReturn, validDetails } from "../types";
 import { Quiz, Token } from "../dataStore";
 
@@ -16,7 +16,7 @@ describe('adminQuizDescriptionUpdate Test', () => {
   
     beforeEach(() => {
         requestClear();
-        //token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
+        token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
         //quizId = requestQuizCreate(authUserId.authUserId, validDetails.QUIZ_NAME, validDetails.DESCRIPTION).body;
       
     });
@@ -24,7 +24,7 @@ describe('adminQuizDescriptionUpdate Test', () => {
     describe('Invalid Input Tests', () => {
 
       test('authUserId is invalid', () => {
-        const res = (requestQuizDescriptionUpdateV1(quizId.quizId, token.sessionId + 'a', ''))
+        const res = (requestQuizDescriptionUpdateV1(quizId.quizId, token.sessionId + '1', ''))
         expect(res.statusCode).toBe(400);
         //expect(JSON.parse(res.body as string)).toStrictEqual(ERROR);
       });

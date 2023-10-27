@@ -18,10 +18,13 @@ import {
   adminAuthLogin
 } from './auth';
 
-import { adminQuizDescriptionUpdate } from './quiz';
+import {
+  adminQuizInfo,
+  adminQuizCreate,
+  adminQuizList,
+  adminQuizDescriptionUpdate
+} from './quiz';
 import { getToken } from './types';
-
-
 
 // Set up web app
 const app = express();
@@ -79,6 +82,42 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
 
   const result = adminUserDetails(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizList
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = adminQuizList(token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizCreate
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizInfo
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+
+  const token = req.query.token as string;
+  const result = adminQuizInfo(token, quizId);
 
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
