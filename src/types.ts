@@ -40,12 +40,17 @@ export interface ErrorObject {
   statusCode?: number;
 }
 
-export interface AuthUserIdReturn {
-  authUserId: number;
-}
-
 export interface TokenReturn {
   token: string;
+}
+
+export interface trashQuizData {
+  quizId: number,
+  name: string,
+}
+
+export interface trashedQuizReturn {
+  quizzes: trashQuizData[];
 }
 
 export interface UserDetailsReturn {

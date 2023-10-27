@@ -16,17 +16,21 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminAuthLogin,
-  adminAuthLogout
+  adminAuthLogout,
+  adminUserDetailsUpdate
 } from './auth';
 
 import {
-  adminQuizInfo,
   adminQuizCreate,
-  adminQuizList,
-  adminQuizNameUpdate,
   adminQuizRemove,
-  adminQuizDescriptionUpdate
+  adminQuizInfo,
+  adminQuizDescriptionUpdate,
+  adminQuizNameUpdate,
+  adminQuizList,
+  viewQuizTrash
 } from './quiz';
+
+import { quizRestore } from './quiz';
 
 // Set up web app
 const app = express();
@@ -103,6 +107,20 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// quizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.body.token;
+
+  const result = quizRestore(quizId, token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
 // adminUserDetails
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = req.query.token as string;
@@ -146,6 +164,18 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// viewTrash
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.query.token as string;
+  const result = viewQuizTrash(token);
+
+  if ('error' in result) {
+    return res.status(401).json(result);
   }
 
   res.json(result);
@@ -205,12 +235,20 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
+<<<<<<< HEAD
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   console.log("hello\n");
   const { token, questionBody } = req.body;
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizQuestionCreate(quizId, token, questionBody);
   console.log("this is server" + token, quizId);
+=======
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+
+>>>>>>> a54a6eecd308cf8731828b23eb7ac3043c6c9aca
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
@@ -218,8 +256,11 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   res.json(result);
 });
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a54a6eecd308cf8731828b23eb7ac3043c6c9aca
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
