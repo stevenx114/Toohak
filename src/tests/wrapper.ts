@@ -38,6 +38,14 @@ export function requestQuizInfo(token: string, quizid: number) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizCreate
+export function requestQuizCreate(token: string, name: string, description: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
+    json: { token: token, name: name, description: description }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for clear
 export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {
