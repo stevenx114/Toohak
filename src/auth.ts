@@ -172,12 +172,12 @@ export const adminUserDetails = (token: string): UserDetailsReturn | ErrorObject
 /**
  * Logs out an admin user who has an active session.
  *
- * @param {string} sessionId
+ * @param {string} token
  * @returns {object} EmptyObject | ErrorObject
  */
-export const adminAuthLogout = (sessionId: string): EmptyObject | ErrorObject => {
+export const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   const data = getData();
-  const curToken = getToken(sessionId);
+  const curToken = getToken(token);
 
   if (!curToken) {
     return {
