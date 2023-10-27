@@ -48,6 +48,15 @@ export interface TokenReturn {
   token: string;
 }
 
+export interface trashQuizData {
+  quizId: Number,
+  name: string,
+}
+
+export interface trashedQuizReturn {
+  quizzes: trashQuizData[];
+}
+
 export interface UserDetailsReturn {
   user: {
       userId: number,
