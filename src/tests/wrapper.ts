@@ -93,3 +93,11 @@ export function requestLogout(token: string) {
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminQuizQuestionDuplicate
+export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question' + questionId + '/duplicate', {
+    json: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
