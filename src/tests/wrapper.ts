@@ -102,6 +102,14 @@ export function requestTrashView(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizTrashEmpty
+export function requestEmptyTrash(token: string, quizIds: string) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/trash/empty', {
+    qs: { token: token, quizIds: quizIds }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminUserDetailsUpdate
 export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
