@@ -25,7 +25,8 @@ import {
   adminQuizList,
   adminQuizNameUpdate,
   adminQuizRemove,
-  adminQuizDescriptionUpdate
+  adminQuizDescriptionUpdate,
+  viewQuizTrash
 } from './quiz';
 
 import {
@@ -201,7 +202,7 @@ app.put('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const result = viewQuizTrash(token);
 
   if ('error' in result) {
-      return res.status(401).json;
+      return res.status(401).json(result);
   }
 
   res.json(result);

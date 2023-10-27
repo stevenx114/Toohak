@@ -1,6 +1,6 @@
 import { requestAuthRegister, requestClear, requestQuizCreate, requestTrashView, requestQuizRemove } from "./wrapper";
 import { validDetails, TokenReturn, QuizIdReturn } from "../types";
-const ERROR = {error: expect.any(String)};
+const ERROR = expect.any(String);
 
 describe("tests for view Trash", () => {
     let token: TokenReturn;
