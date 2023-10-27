@@ -27,7 +27,7 @@ import {
  * @param {string} name
  * @param {string} description
  * @returns {object} QuizIdReturn | ErrorObject
- */ 
+ */
 export const adminQuizCreate = (token: string, name: string, description: string): QuizIdReturn | ErrorObject => {
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;
