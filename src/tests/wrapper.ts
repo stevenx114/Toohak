@@ -70,6 +70,14 @@ export function requestQuizNameUpdate(token: string, quizid: number, name: strin
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizDescriptionUpdate
+export function requestQuizDescriptionUpdate(token: string, quizid: number, description: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
+    json: { token: token, description: description }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for clear
 export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {

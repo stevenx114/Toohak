@@ -23,7 +23,8 @@ import {
   adminQuizCreate,
   adminQuizList,
   adminQuizNameUpdate,
-  adminQuizRemove
+  adminQuizRemove,
+  adminQuizDescriptionUpdate
 } from './quiz';
 
 // Set up web app
@@ -143,6 +144,19 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { token, name } = req.body;
   const result = adminQuizNameUpdate(token, quizId, name);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizId, description);
 
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
