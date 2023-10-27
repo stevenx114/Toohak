@@ -18,7 +18,7 @@ import {
 
 import {
   Question
-} from '../dataStore'
+} from '../dataStore';
 
 const ERROR = expect.any(String);
 
