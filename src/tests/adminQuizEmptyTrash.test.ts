@@ -34,7 +34,7 @@ describe("Tests for adminQuizEmptyTrash", () => {
         requestQuizRemove(token.token, quiz.quizId);
         expect(requestTrashView(token.token)).toStrictEqual( {
             quizzes: [{
-                quiz: quiz.quizId,
+                quizId: quiz.quizId,
                 name: validDetails.QUIZ_NAME,
             }]
         })
@@ -47,15 +47,14 @@ describe("Tests for adminQuizEmptyTrash", () => {
 
     describe("Error cases for adminQuizEmptyTrash", () => {
         test("Trying to empty quizzes not in trash", () => {
-            quizNew = requestQuizCreate(token.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION_2);
-            arrayOfIds = ('[' + quizNew.quizId + ']').toString();
+            arrayOfIds = '[' + quiz.quizId.toString() + ']';
             res = requestEmptyTrash(token.token, arrayOfIds);
             expect(res.error).toStrictEqual(ERROR);
             expect(res.statusCode).toStrictEqual(400);
         })
         test("Testing for invalid token", () => {
             requestQuizRemove(token.token, quiz.quizId);
-            arrayOfIds = ('[' + quiz.quizId + ']').toString();
+            arrayOfIds = '[' + quiz.quizId.toString() + ']';
             res = requestEmptyTrash(token.token + 1, arrayOfIds);
             expect(res.error).toStrictEqual(ERROR);
             expect(res.statusCode).toStrictEqual(401);
@@ -63,7 +62,8 @@ describe("Tests for adminQuizEmptyTrash", () => {
         test("Quiz ID refers to a quiz that current user does not own", () => {
             const noQuizzes = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
             requestQuizRemove(token.token, quiz.quizId);
-            arrayOfIds = ('[' + quiz.quizId + ']').toString();
+            arrayOfIds = '[' + quiz.quizId.toString() + ']'
+            ;
             res = requestEmptyTrash(noQuizzes.token, arrayOfIds);
             expect(res.error).toStrictEqual(ERROR);
             expect(res.statusCode).toStrictEqual(403);
