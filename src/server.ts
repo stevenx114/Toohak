@@ -20,30 +20,16 @@ import {
 } from './auth';
 
 import {
-  adminQuizInfo,
   adminQuizCreate,
-  adminQuizList,
-  adminQuizNameUpdate,
   adminQuizRemove,
+  adminQuizInfo,
   adminQuizDescriptionUpdate,
+  adminQuizNameUpdate,
+  adminQuizList,
   viewQuizTrash
 } from './quiz';
 
-import {
-  adminQuizCreate, 
-  adminQuizRemove,
-  adminQuizInfo,
-  adminQuizDescriptionUpdate,
-  adminQuizNameUpdate,
-  adminQuizList
-} from './quiz'
-
-import {
-  adminUserDetails,
-  adminAuthRegister
-} from './auth'
-
-// Set up web app 
+// Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
 app.use(json());
@@ -148,7 +134,7 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const result = viewQuizTrash(token);
 
   if ('error' in result) {
-      return res.status(401).json(result);
+    return res.status(401).json(result);
   }
 
   res.json(result);
@@ -207,7 +193,6 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   }
   res.json(result);
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

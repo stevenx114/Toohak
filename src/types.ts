@@ -41,15 +41,11 @@ export interface ErrorObject {
 }
 
 export interface TokenReturn {
-  sessionId: string;
-}
-
-export interface TokenReturn {
   token: string;
 }
 
 export interface trashQuizData {
-  quizId: Number,
+  quizId: number,
   name: string,
 }
 
@@ -78,15 +74,6 @@ export interface QuizSimple {
 
 export interface QuizListReturn {
   quizzes: QuizSimple[];
-}
-
-export interface trashQuizData {
-  quizId: Number,
-  name: string,
-}
-
-export interface trashedQuizReturn {
-  quizzes: trashQuizData[];
 }
 
 export type EmptyObject = Record<string, string>;
