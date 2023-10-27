@@ -394,7 +394,7 @@ export const adminQuizQuestionMove = (token: string, quizId: number, questionId:
     };
   }
 
-  const initialIndex = curQuestions.indexOf(curQuestion);
+  const initialIndex = curQuestionIds.indexOf(curQuestion.questionId);
   curQuestions.splice(initialIndex, 1);
   curQuestions.splice(newPosition, 0, curQuestion);
   curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
