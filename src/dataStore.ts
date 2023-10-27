@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 export interface Answer {
   answerId: number;
   answer: string;

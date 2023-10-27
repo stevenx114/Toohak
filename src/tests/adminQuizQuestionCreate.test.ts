@@ -76,10 +76,9 @@ const VALID_Q_BODY: QuestionBody = {
     });
   
     test("valid token but not the correct quiz owner", () => {
-      const user2 = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+      const user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
       const token2 = user2 as TokenReturn;
-      requestQuizCreate(user1.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
-  
+      console.log(token2.token);
       // Try to add question into another quiz from the second user.
       const errorResult = requestQuizQuestionCreate(token2.token, quiz1.quizId, VALID_Q_BODY);
       expect(errorResult.error).toStrictEqual(ERROR);
@@ -90,7 +89,7 @@ const VALID_Q_BODY: QuestionBody = {
     test.each([
       {
         questionBody: {
-          question: 'ques',
+          question: 'pog',
           duration: 3,
           points: 3,
           answers: [
@@ -125,7 +124,7 @@ const VALID_Q_BODY: QuestionBody = {
       {
         questionBody: {
           question: 'question',
-          duration: -3,
+          duration: 0,
           points: 3,
           answers: [
             {
@@ -142,7 +141,7 @@ const VALID_Q_BODY: QuestionBody = {
       {
         questionBody: {
           question: 'question',
-          duration: 3 * 1000,
+          duration: 3000,
           points: 3,
           answers: [
             {
@@ -223,7 +222,7 @@ const VALID_Q_BODY: QuestionBody = {
         questionBody: {
           question: 'question',
           duration: 11,
-          points: 3,
+          points: 11,
           answers: [
             {
               answer: 'answer1',
@@ -240,7 +239,7 @@ const VALID_Q_BODY: QuestionBody = {
         questionBody: {
           question: 'question',
           duration: 3,
-          points: 3,
+          points: 0,
           answers: [
             {
               answer: '',

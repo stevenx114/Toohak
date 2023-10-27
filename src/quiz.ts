@@ -343,17 +343,9 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
   } 
   const user = getUser(findToken.authUserId);
   const hasQuizId = user.quizzesOwned.find(element => element === quizid);
-  console.log(hasQuizId);
-  const minPoints = questionBody.answers.every((element) => element.answer.length >= 1); 
-  const maxPoints = questionBody.answers.every((element) => element.answer.length <= 10); 
   const CorrectAnswer = questionBody.answers.some((element) => element.correct === true); 
 
-  if (token === '') {
-    return { 
-      error: 'Token cannot be empty',
-      statusCode: 401,
-    };
-  } else if (!hasQuizId) { 
+  if (!hasQuizId) { 
     return { 
       error: 'Token does not belong to quiz owner',
       statusCode: 403,
@@ -378,12 +370,26 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
       error: 'Question must have a correct answer', 
       statusCode: 400,
     };
-  }  else if (questionBody.duration + quiz.duration > 180) {
+  }  else if (questionBody.duration > 180) {
     return { 
       error: 'Quiz duration cannot be longer than 3 minutes',
       statusCode: 400,
     };
   } 
+
+  if (questionBody.answers.length > 6) {
+    return {
+      error: 'Quiz duration cannot be longer than 3 minutes',
+      statusCode: 400,
+    }
+  } else if (questionBody.answers.length < 2) {
+    return {
+      error: 'Quiz duration cannot be longer than 3 minutes',
+      statusCode: 400,
+    }
+  }
+
+  console.log(questionBody.duration + quiz.duration > 180);
 
   for (const choice of questionBody.answers) {
     if (choice.answer.length > 30 || choice.answer.length < 1) {
@@ -423,9 +429,11 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     const randomElement = Math.floor(Math.random() * colourArray.length);
     const newColour = colourArray[randomElement];
 
+    console.log(newColour);
+
     const answerObject = {
       answerId: createAnswerId,
-      answer: answers.choice,
+      answer: choice,
       colour: newColour,
       correct: choice.correct,
     };
@@ -442,6 +450,8 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
   }
 
   quiz.questions.push(newQuestion);
+
+  console.log(data.quizzes.questions);
 
   setData(data);
 
