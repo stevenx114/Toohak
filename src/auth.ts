@@ -113,7 +113,6 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
     return {
       error: 'Email address does not exist',
       statusCode: 400,
-
     };
   }
   // Finds the user given their email
@@ -205,10 +204,10 @@ export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, 
   const data = getData();
   const curToken = getToken(sessionId);
   if (!curToken) {
-      return {
-          error: "Token does not refer to valid logged in user session",
-          statusCode: 401
-      }
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
   }
   const curUser = getUser(curToken.authUserId);
   if (oldPassword !== curUser.password) {
@@ -216,7 +215,7 @@ export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, 
           error: "Old password is not the correct old password",
           statusCode: 400
       }
-  } else if (oldPassword.localeCompare(newPassword, 'en', { sensitivity: 'base' })) {
+  } else if (oldPassword === newPassword) {
       return {
           error: "Old Password and New Password match exactly",
           statusCode: 400
@@ -231,19 +230,20 @@ export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, 
           error: "New Password is less than 8 characters",
           statusCode: 400
       }
-  } else if ((!/[a-z]/.test(password) && !/[A-Z]/.test(password))) {
+  } else if ((!/[a-z]/.test(newPassword) && !/[A-Z]/.test(newPassword))) {
       return {
           error: "New Password does not contain at least one letter",
           statusCode: 400
       }
-  } else if (/[0-9]/.test(password)) {
+  } else if (/[0-9]/.test(newPassword)) {
       return {
           error: "New Password does not contain at least one number", 
           statusCode: 400
       }
   }
-  curUser.password = newPassword;
-  curUser.previousPasswords.push(oldPassword);
+  const indexOfUserInData = data.users.findIndex(user => user.authUserId === curToken.authUserId);
+  data.users[indexOfUserInData].password = newPassword;
+  data.users[indexOfUserInData].previousPasswords.push(oldPassword);
   setData(data);
   return {}
 }
