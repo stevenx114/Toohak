@@ -22,6 +22,8 @@ import {
   adminQuizInfo,
   adminQuizCreate,
   adminQuizList,
+  adminQuizNameUpdate,
+  adminQuizRemove,
   adminQuizDescriptionUpdate
 } from './quiz';
 
@@ -111,6 +113,19 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminQuizRemove
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.query.token as string;
+  const result = adminQuizRemove(token, quizId);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
 // adminQuizInfo
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -121,6 +136,19 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
+  res.json(result);
+});
+
+// adminQuizNameUpdate
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizId, name);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
   res.json(result);
 });
 
