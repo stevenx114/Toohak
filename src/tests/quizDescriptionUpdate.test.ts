@@ -46,15 +46,21 @@ describe('PUT /v1/admin/quiz/{quizid}/description', () => {
   describe('Valid Input test', () => {
     let quizInfo: Quiz;
     test('All inputs are valid', () => {
+      const initialTime = requestQuizInfo(ownsQuizUser.token, quizId.quizId).timeLastEdited;
       expect(requestQuizDescriptionUpdate(ownsQuizUser.token, quizId.quizId, 'newDescription')).toStrictEqual({});
       quizInfo = requestQuizInfo(ownsQuizUser.token, quizId.quizId);
       expect(quizInfo.description).toStrictEqual('newDescription');
+      expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(initialTime);
+      expect(quizInfo.timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
     });
 
     test('All inputs are valid but description is empty string', () => {
+      const initialTime = requestQuizInfo(ownsQuizUser.token, quizId.quizId).timeLastEdited;
       expect(requestQuizDescriptionUpdate(ownsQuizUser.token, quizId.quizId, '')).toStrictEqual({});
       quizInfo = requestQuizInfo(ownsQuizUser.token, quizId.quizId);
       expect(quizInfo.description).toStrictEqual('');
+      expect(quizInfo.timeLastEdited).toBeGreaterThanOrEqual(initialTime);
+      expect(quizInfo.timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
     });
   });
 });
