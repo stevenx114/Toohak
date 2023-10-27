@@ -21,13 +21,13 @@ import {
 } from './types';
 
 /**
-     * Given basic details about a new quiz, create one for the logged in user.
-     *
-     * @param {string} token
-     * @param {string} name
-     * @param {string} description
-     * @returns {object} QuizIdReturn | ErrorObject
-     */
+ * Given basic details about a new quiz, create one for the logged in user.
+ *
+ * @param {string} token
+ * @param {string} name
+ * @param {string} description
+ * @returns {object} QuizIdReturn | ErrorObject
+ */
 export const adminQuizCreate = (token: string, name: string, description: string): QuizIdReturn | ErrorObject => {
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;

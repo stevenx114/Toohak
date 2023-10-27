@@ -20,7 +20,7 @@ beforeEach(() => {
 });
 
 // Tests for adminQuizNameUpdate function
-describe('PUT /v1/admin/quiz/{quizid}/description', () => {
+describe('PUT /v1/admin/quiz/{quizid}/name', () => {
   let newUser: TokenReturn;
   let newQuiz: QuizIdReturn;
   let errorResult: ErrorObject;
@@ -32,9 +32,12 @@ describe('PUT /v1/admin/quiz/{quizid}/description', () => {
   // Success cases for adminQuizNameUpdate function
   describe('Success Cases', () => {
     test('Successful implementation', () => {
+      const initialTime = requestQuizInfo(newUser.token, newQuiz.quizId).timeLastEdited;
       expect(requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'name Updated')).toEqual({});
       const curQuiz = requestQuizInfo(newUser.token, newQuiz.quizId);
       expect(curQuiz.name).toEqual('name Updated');
+      expect(curQuiz.timeLastEdited).toBeGreaterThanOrEqual(initialTime);
+      expect(curQuiz.timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
     });
   });
 
