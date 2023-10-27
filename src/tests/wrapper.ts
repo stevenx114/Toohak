@@ -57,7 +57,7 @@ export function requestQuizCreate(token: string, name: string, description: stri
 // Wrapper for adminQuizNameUpdate
 export function requestQuizNameUpdate(token: string, quizid: number, name: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/name', {
-    json: { token: token, quizid: quizid, name: name }
+    json: { token: token, name: name }
   });
   return JSON.parse(res.body.toString());
 }
