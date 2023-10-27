@@ -180,7 +180,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const result = adminUpdateQuiz(quizId, questionId, token, questionBody);
 
   if ('error' in result) {
-      return res.status(Number(result.error)).json;
+      return res.status(Number(result.error)).json(result);
   }
 
   res.json(result);
