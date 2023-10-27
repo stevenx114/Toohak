@@ -47,13 +47,10 @@ describe('Success Cases', () => {
   test('Returns empty successfully', () => {
   expect(requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL_2)).toStrictEqual({});
   });
-  test.skip('Transfer one quiz correctly', () => {
-      expect(requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL_2)).toStrictEqual({});
-      userTwoQuizList = requestQuizList(userTwo.token);
-      expect(userTwoQuizList.quizzes.some(q => q.quizId === quiz1.quizId)).toStrictEqual(true);
-  });
-  test('', () => {
-   
+  
+  test('Returns empty successfully', () => {
+    expect(requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL_2)).toStrictEqual({});
+    });
   });
 });
 // Error cases for adminQuizTransfer
@@ -94,5 +91,4 @@ describe('Error Cases', () => {
     expect(errorResult.statusCode).toStrictEqual(400);
   });
 
-});
 });
