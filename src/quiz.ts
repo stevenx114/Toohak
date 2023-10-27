@@ -339,3 +339,57 @@ export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject =>
     quizzes: quizzesInTrash,
   };
 };
+
+/**
+ * Restores a quiz from the trash for a given user if certain conditions are met.
+ *
+ * @param {number} quizId - The ID of the quiz to be restored.
+ * @param {string} token - The session ID used to authenticate the user.
+ *
+ * @returns {EmptyObject | ErrorObject} An empty object if the quiz is successfully restored,
+ * or an ErrorObject with details if the restoration encounters an error.
+ */
+export const quizRestore = (quizId: number, token: string): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const tokenObject = getToken(token);
+
+  if (!tokenObject) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(tokenObject.authUserId);
+
+  if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    return {
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+      statusCode: 403,
+    };
+  }
+
+  const index = data.trash.findIndex(quiz => quiz.quizId === quizId);
+
+  if (index !== -1) {
+    if (data.quizzes.find(quiz => quiz.name === data.trash[index].name)) {
+      return {
+        error: 'Quiz name of the restored quiz is already used by another active quiz',
+        statusCode: 400,
+      };
+    }
+
+    const deletedQuiz = data.trash.splice(index, 1)[0];
+    data.quizzes.push(deletedQuiz);
+  } else {
+    return {
+      error: 'Quiz ID refers to a quiz that is not currently in the trash',
+      statusCode: 400,
+    };
+  }
+
+  setData(data);
+
+  return {};
+};

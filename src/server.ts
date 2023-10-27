@@ -30,6 +30,8 @@ import {
   viewQuizTrash
 } from './quiz';
 
+import { quizRestore } from './quiz';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -78,6 +80,20 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
+  res.json(result);
+});
+
+// quizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.body.token;
+
+  const result = quizRestore(quizId, token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
   res.json(result);
 });
 
