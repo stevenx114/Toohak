@@ -269,6 +269,29 @@ export const adminQuizList = (authUserId: number): QuizListReturn | ErrorObject 
   };
 };
 
+/**
+ 
+Update a quiz question by modifying its content and properties.*
+@param {number} quizId - The unique identifier of the quiz containing the question to be updated.
+@param {number} questionId - The unique identifier of the question to be updated.
+@param {string} sessionId - The session ID of the user making the request.
+@param {object} questionBody - An object containing the new question content and properties.
+@param {string} questionBody.question - The updated question text.
+@param {object[]} questionBody.answers - An array of answer objects.
+@param {string} questionBody.answers.answer - The text of an answer option.
+@param {boolean} questionBody.answers.correct - Indicates whether the answer is correct (true) or not (false).
+@param {number} questionBody.duration - The updated duration for the question.
+@param {number} questionBody.points - The updated number of points awarded for the question.
+*
+@returns {EmptyObject | ErrorObject} - An object representing the result of the update operation.
+@returns {EmptyObject} - If the update is successful, an empty object is returned.
+@returns {ErrorObject} - If any validation checks fail, an error object is returned with details.
+*
+@typedef {Object} EmptyObject - An empty object representing a successful operation.
+@typedef {Object} ErrorObject - An object representing an error with a status code and message.
+@property {string} error - A description of the error.
+@property {string} status - The HTTP status code associated with the error.
+*/
 export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: questionBody): EmptyObject | ErrorObject => {
   const data = getData();
   const quiz = getQuiz(quizId);
