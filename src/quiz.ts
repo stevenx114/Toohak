@@ -1,7 +1,9 @@
 import {
   getData,
   setData,
-  Quiz
+  Quiz,
+  Token,
+  Answer
 } from './dataStore';
 
 import validator from 'validator';
@@ -18,20 +20,10 @@ import {
   QuizIdReturn,
   QuizListReturn,
   EmptyObject,
-<<<<<<< HEAD
-  QuestionBody,
-  QuestionId,
-  getToken,
-  validDetails,
-=======
   trashedQuizReturn,
->>>>>>> a54a6eecd308cf8731828b23eb7ac3043c6c9aca
+  QuestionBody,
+  QuestionIdReturn
 } from './types';
-
-import {
-  Token,
-} from './dataStore';
-
 
 /**
  * Given basic details about a new quiz, create one for the logged in user.
@@ -98,7 +90,8 @@ export const adminQuizCreate = (token: string, name: string, description: string
       timeLastEdited: Math.floor((new Date()).getTime() / 1000),
       description: description,
       numQuestions: 0,
-      questions: []
+      questions: [],
+      duration: 0
     }
   );
 
@@ -226,6 +219,7 @@ export const adminQuizNameUpdate = (token: string, quizId: number, name: string)
       statusCode: 401
     };
   }
+
   const curUserId = curToken.authUserId;
   const curUser = getUser(curUserId);
   const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
@@ -283,7 +277,7 @@ export const adminQuizDescriptionUpdate = (token: string, quizId: number, descri
       statusCode: 401,
     };
   }
-  const quiz = getQuiz(quizId);
+
   if (description.length > 100) {
     return {
       error: 'Description is more than 100 characters in length',
@@ -293,6 +287,7 @@ export const adminQuizDescriptionUpdate = (token: string, quizId: number, descri
 
   const userId = curToken.authUserId;
   const user = getUser(userId);
+  const quiz = getQuiz(quizId);
 
   const doesUserOwnQuiz = user.quizzesOwned.includes(quizId);
 
@@ -310,161 +305,6 @@ export const adminQuizDescriptionUpdate = (token: string, quizId: number, descri
   return { };
 };
 
-<<<<<<< HEAD
-const VALID_Q_BODY: QuestionBody = {
-  question: 'question',
-  duration: 3,
-  points: 3,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ]
-}
-/**
- * 
- * @param quizid 
- * @param token 
- * @param questionBody 
- */
-export const adminQuizQuestionCreate = (quizid: number, token: string, questionBody: QuestionBody): QuestionId | ErrorObject => {
-  const data: DataStore = getData();
-  const quiz = getQuiz(quizid);
-  const findToken = getToken(token) as Token;
-  console.log(findToken);
-  if (!findToken) {
-    return { 
-      error: 'Invalid token',
-      statusCode: 401,
-    };
-  } 
-  const user = getUser(findToken.authUserId);
-  const hasQuizId = user.quizzesOwned.find(element => element === quizid);
-  const CorrectAnswer = questionBody.answers.some((element) => element.correct === true); 
-
-  if (!hasQuizId) { 
-    return { 
-      error: 'Token does not belong to quiz owner',
-      statusCode: 403,
-    };
-  } else if (questionBody.question.length < 5 || questionBody.question.length > 50) {
-    return { 
-      error: 'Invalid question length',
-      statusCode: 400,
-    };
-  } else if (questionBody.duration <= 0) {
-    return { 
-      error: 'Question duration cannot be smaller than 0',
-      statusCode: 400,
-    };
-  } else if (questionBody.points < 1 || questionBody.points > 10) {
-    return { 
-      error: 'Invalid number of points',
-      statusCode: 400,   
-    };
-  } else if (!CorrectAnswer) {
-    return { 
-      error: 'Question must have a correct answer', 
-      statusCode: 400,
-    };
-  }  else if (questionBody.duration > 180) {
-    return { 
-      error: 'Quiz duration cannot be longer than 3 minutes',
-      statusCode: 400,
-    };
-  } 
-
-  if (questionBody.answers.length > 6) {
-    return {
-      error: 'Quiz duration cannot be longer than 3 minutes',
-      statusCode: 400,
-    }
-  } else if (questionBody.answers.length < 2) {
-    return {
-      error: 'Quiz duration cannot be longer than 3 minutes',
-      statusCode: 400,
-    }
-  }
-
-  console.log(questionBody.duration + quiz.duration > 180);
-
-  for (const choice of questionBody.answers) {
-    if (choice.answer.length > 30 || choice.answer.length < 1) {
-      return { 
-        error: 'Invalid string length of answers',
-        statusCode: 400,
-      }; 
-    }
-  }
-
-  for (let i = 0; i < questionBody.answers.length - 1; i++) {
-    for (let j = i + 1; j < questionBody.answers.length; j++) {
-      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
-        return { 
-          error: 'Cannot have duplicate answers',
-          statusCode: 400,
-        }; 
-      }
-    }
-  }
-
-  quiz.duration += questionBody.duration; // Update duration of quiz
-  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000); // Update timeLastEdited of quiz
-
-  const colourArray = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
-  const newQuestionId = parseInt(generateCustomUuid("0123456789", 12));
-  const answers = [];
-
-  for (const choice in questionBody.answers) {
-    let createAnswerId;
-    if (answers.length === 0) {
-      createAnswerId = 0;
-    } else {
-      createAnswerId = answers[answers.length - 1].answerId + 1;
-    }
-
-    const randomElement = Math.floor(Math.random() * colourArray.length);
-    const newColour = colourArray[randomElement];
-
-    console.log(newColour);
-
-    const answerObject = {
-      answerId: createAnswerId,
-      answer: choice,
-      colour: newColour,
-      correct: choice.correct,
-    };
-
-    answers.push(answerObject);
-  }
-
-  const newQuestion = {
-    questionId: newQuestionId,
-    question: questionBody.question,
-    duration: questionBody.duration,
-    points: questionBody.points,
-    answers: answers,
-  }
-
-  quiz.questions.push(newQuestion);
-
-  console.log(data.quizzes.questions);
-
-  setData(data);
-
-  return {
-    questionId: newQuestionId
-  }
-};
-
-
-
-=======
 /**
 
 Retrieve a list of trashed quizzes associated with the user identified by the provided token.*
@@ -558,4 +398,117 @@ export const quizRestore = (quizId: number, token: string): EmptyObject | ErrorO
 
   return {};
 };
->>>>>>> a54a6eecd308cf8731828b23eb7ac3043c6c9aca
+
+/**
+ * Create a new stub question for a particular quiz.
+ *
+ * @param {number} quizid
+ * @param {string} token
+ * @param {object} questionBody
+ * @returns {QuestionIdReturn | ErrorObject} QuestionIdReturn if the question is successfully created,
+ * or an ErrorObject with details if the restoration encounters an error.
+ */
+export const adminQuizQuestionCreate = (quizid: number, token: string, questionBody: QuestionBody): QuestionIdReturn | ErrorObject => {
+  const data = getData();
+  const quiz = getQuiz(quizid);
+  const findToken = getToken(token) as Token;
+
+  if (!findToken) {
+    return {
+      error: 'Invalid token',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(findToken.authUserId);
+  const hasQuizId = user.quizzesOwned.find(quiz => quiz === quizid);
+  const CorrectAnswer = questionBody.answers.some(ans => ans.correct === true);
+
+  if (!hasQuizId) {
+    return {
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+      statusCode: 403,
+    };
+  } else if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    return {
+      error: 'Invalid question length',
+      statusCode: 400,
+    };
+  } else if (questionBody.answers.length < 2 || questionBody.answers.length > 6) {
+    return {
+      error: 'The question has more than 6 answers or less than 2 answers',
+      statusCode: 400,
+    };
+  } else if (questionBody.duration <= 0) {
+    return {
+      error: 'Question duration must be positive',
+      statusCode: 400,
+    };
+  } else if (questionBody.duration + quiz.duration > 180) {
+    return {
+      error: 'Quiz duration cannot be longer than 3 minutes',
+      statusCode: 400,
+    };
+  } else if (questionBody.points < 1 || questionBody.points > 10) {
+    return {
+      error: 'The points awarded for the question are less than 1 or greater than 10',
+      statusCode: 400,
+    };
+  } else if (questionBody.answers.find(ans => ans.answer.length < 1 || ans.answer.length > 30)) {
+    return {
+      error: 'The length of an answer is shorter than 1 character long, or longer than 30 characters long',
+      statusCode: 400,
+    };
+  } else if (!CorrectAnswer) {
+    return {
+      error: 'Question must have a correct answer',
+      statusCode: 400,
+    };
+  }
+  const seenAnswers: string[] = [];
+  for (const answer of questionBody.answers) {
+    if (seenAnswers.includes(answer.answer)) {
+      return {
+        error: 'Cannot have duplicate answers.',
+        statusCode: 400,
+      };
+    }
+    seenAnswers.push(answer.answer);
+  }
+
+  quiz.duration += questionBody.duration; // Update duration of quiz
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000); // Update timeLastEdited of quiz
+
+  const colourArray = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
+  const newQuestionId = parseInt(generateCustomUuid('0123456789', 12));
+  const answers: Answer[] = [];
+
+  for (const answer of questionBody.answers) {
+    const createAnswerId = parseInt(generateCustomUuid('0123456789', 10));
+    const randomElement = Math.floor(Math.random() * colourArray.length);
+    const newColour = colourArray[randomElement];
+    const answerObject = {
+      answerId: createAnswerId,
+      answer: answer.answer,
+      colour: newColour,
+      correct: answer.correct,
+    };
+    answers.push(answerObject);
+  }
+
+  const newQuestion = {
+    questionId: newQuestionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answers,
+  };
+
+  quiz.questions.push(newQuestion);
+
+  setData(data);
+
+  return {
+    questionId: newQuestionId
+  };
+};

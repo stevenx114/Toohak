@@ -76,32 +76,20 @@ export interface QuizListReturn {
   quizzes: QuizSimple[];
 }
 
-export interface TokenReturn {
-  token: string;
-}
-
-export type EmptyObject = Record<string, string>;
-
-export interface QuestionBody {
-  question: string; 
-  duration: number;
-  points: number; 
-  answers: Answer[];
-}
-
-export interface Question {
-  questionid: number;
-  question: string; 
-  duration: number;
-  points: number; 
-  answers: Answer[];
-}
-
-export interface Answer {
+export interface AnswerSimple {
   answer: string;
   correct: true | false;
 }
 
-export interface QuestionId {
+export interface QuestionBody {
+  question: string;
+  duration: number;
+  points: number;
+  answers: AnswerSimple[];
+}
+
+export interface QuestionIdReturn {
   questionId: number;
 }
+
+export type EmptyObject = Record<string, string>;

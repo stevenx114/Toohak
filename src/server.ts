@@ -27,7 +27,8 @@ import {
   adminQuizDescriptionUpdate,
   adminQuizNameUpdate,
   adminQuizList,
-  viewQuizTrash
+  viewQuizTrash,
+  adminQuizQuestionCreate
 } from './quiz';
 
 import { quizRestore } from './quiz';
@@ -47,30 +48,6 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docE
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
-
-import {
-  clear, 
-} from './other'
-
-import {
-  adminQuizCreate, 
-  adminQuizRemove,
-  adminQuizInfo,
-  adminQuizDescriptionUpdate,
-  adminQuizNameUpdate,
-  adminQuizList
-} from './quiz'
-
-import {
-  adminUserDetails,
-  adminAuthRegister
-} from './auth'
-
-
-
-import {
-  adminQuizQuestionCreate
-} from './quiz';
 
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
@@ -235,20 +212,11 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
-<<<<<<< HEAD
-app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  console.log("hello\n");
-  const { token, questionBody } = req.body;
-  const quizId = parseInt(req.params.quizid);
-  const result = adminQuizQuestionCreate(quizId, token, questionBody);
-  console.log("this is server" + token, quizId);
-=======
 // adminUserDetailsUpdate
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
 
->>>>>>> a54a6eecd308cf8731828b23eb7ac3043c6c9aca
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
@@ -256,11 +224,18 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(result);
 });
 
-<<<<<<< HEAD
+// adminQuizQuestionCreate
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const { token, questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizQuestionCreate(quizId, token, questionBody);
 
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
 
-=======
->>>>>>> a54a6eecd308cf8731828b23eb7ac3043c6c9aca
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
