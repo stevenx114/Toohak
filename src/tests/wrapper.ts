@@ -33,7 +33,7 @@ export function requestUserDetails(token: string) {
 // Wrapper for adminQuizInfo
 export function requestQuizInfo(token: string, quizid: number) {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token, quizid: quizid }
+    qs: { token: token }
   });
   return JSON.parse(res.body.toString());
 }
@@ -49,7 +49,7 @@ export function requestQuizList(token: string) {
 // Wrapper for adminQuizRemove
 export function requestQuizRemove(token: string, quizid: number) {
   const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token, quizid: quizid }
+    qs: { token: token }
   });
   return JSON.parse(res.body.toString());
 }
@@ -65,7 +65,7 @@ export function requestQuizCreate(token: string, name: string, description: stri
 // Wrapper for adminQuizNameUpdate
 export function requestQuizNameUpdate(token: string, quizid: number, name: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/name', {
-    json: { token: token, quizid: quizid, name: name }
+    json: { token: token, name: name }
   });
   return JSON.parse(res.body.toString());
 }
