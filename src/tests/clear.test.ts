@@ -11,7 +11,6 @@ import {
   requestQuizList
 } from './wrapper';
 
-
 const ERROR = expect.any(String);
 
 describe('Clear Function implementation', () => {
