@@ -129,10 +129,7 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
     data.trash.push(data.quizzes[indexOfQuizInData]);
     data.quizzes.splice(indexOfQuizInData, 1);
   }
-  const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
-  if (indexOfQuizInUserOwned !== -1) {
-    user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
-  }
+
   setData(data);
   return {};
 };
@@ -304,29 +301,28 @@ export const adminQuizDescriptionUpdate = (token: string, quizId: number, descri
 };
 
 /**
- 
+
 Retrieve a list of trashed quizzes associated with the user identified by the provided token.*
 @param {string} token - The authentication token for the user.
 *
 @returns {trashedQuizReturn|ErrorObject} An object containing trashed quizzes or an error object.
 */
-export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject  => {
+export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject => {
   const tokenObject = getToken(token);
- 
+
   if (!tokenObject) {
-    return { 
+    return {
       error: 'Token is empty or invalid (does not refer to valid logged in user session)',
       statusCode: 401,
-    }
+    };
   }
   const user = getUser(tokenObject.authUserId);
 
   const data = getData();
 
-  const quizzesInTrash = []
+  const quizzesInTrash = [];
 
   for (const quizzesOwned of user.quizzesOwned) {
-
     const currTrashedQuiz = data.trash.find(quiz => quiz.quizId === quizzesOwned);
 
     if (currTrashedQuiz) {
@@ -337,10 +333,9 @@ export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject  =
 
       quizzesInTrash.push(trashQuizData);
     }
-
   }
 
   return {
     quizzes: quizzesInTrash,
   };
-} 
+};
