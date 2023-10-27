@@ -339,3 +339,49 @@ export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject =>
     quizzes: quizzesInTrash,
   };
 };
+
+/**
+ * Permanently delete specific quizzes currently sitting in the trash
+ *
+ * @param {string} token - The ID of the current user session.
+ * @param {string} quizIds - The ID of the quiz to be updated.
+ * @returns {object} EmptyObject | ErrorObject
+ */
+
+export const adminQuizEmptyTrash = (token: string, quizIds: string): EmptyObject | ErrorObjects => {
+  const tokenObject = getToken(token);
+  const data = getData();
+  if (!tokenObject) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(tokenObject.authUserId);
+  const jsonArray = JSON.parse(quizIds);
+  const numberIds = jsonArray.map(id => parseInt(id));
+
+  for (const id of numberIds) {
+    if (!user.quizzesOwned.find(quizId => quizId === id)) {
+      return {
+        error: "Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own",
+        statusCode: 403
+      }
+    }
+    if (!data.trash.find(quiz => quiz.quizId === id)) {
+      return {
+        error: "One or more of the Quiz IDs is not currently in the trash",
+        statusCode: 400
+      }
+    }
+  }
+  for (const id of numberIds) {
+    const indexOfQuizInTrash = data.trash.findIndex(quiz => quiz.quizId === id);
+    data.trash.splice(indexOfQuizInTrash, 1);
+    const indexOfQuizInQuizzesOwned = user.quizzesOwned.findIndex(quiz => quiz.quizId === id) 
+    user.quizzesOwned.splice(indexOfQuizInQuizzesOwned, 1);
+  }
+  setData(data);
+  return {}
+}
