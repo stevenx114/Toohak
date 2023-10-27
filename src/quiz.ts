@@ -1,6 +1,7 @@
 import {
   getData,
   setData,
+  Quiz
 } from './dataStore';
 
 import {
@@ -10,8 +11,10 @@ import {
 import {
   getUser,
   getToken,
+  getQuiz,
   ErrorObject,
   QuizIdReturn,
+  QuizListReturn
 } from './types';
 
 /**
@@ -26,6 +29,7 @@ export const adminQuizCreate = (token: string, name: string, description: string
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;
   const curToken = getToken(token);
+
   if (!curToken) {
     return {
       error: 'Token does not refer to valid logged in user session',
@@ -87,5 +91,68 @@ export const adminQuizCreate = (token: string, name: string, description: string
 
   return {
     quizId: newQuizId
+  };
+};
+
+/**
+ * Get all of the relevant information about the current quiz.
+ *
+ * @param {String} token
+ * @param {Number} quizId
+ * @returns {object} Quiz
+ */
+export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject => {
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+  const quiz = getQuiz(quizId);
+
+  const userId = curToken.authUserId;
+  const curUser = getUser(userId);
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
+  }
+  return {
+    quizId: quiz.quizId,
+    name: quiz.name,
+    timeCreated: quiz.timeCreated,
+    timeLastEdited: quiz.timeLastEdited,
+    description: quiz.description,
+    numQuestions: quiz.numQuestions,
+    questions: quiz.questions
+  };
+};
+
+/**
+ *
+ * Provide a list of all quizzes that are owned by the currently logged in user.
+ *
+ * @param {String} token
+ * @returns {Object} quizId
+ *
+ */
+export const adminQuizList = (token: string): QuizListReturn | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+  const userId = curToken.authUserId;
+  const curUser = getUser(userId);
+  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
+  const quizInfo = curQuizzes.map(quiz => ({ quizId: quiz.quizId, name: quiz.name }));
+  return {
+    quizzes: quizInfo
   };
 };
