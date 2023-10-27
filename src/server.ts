@@ -16,7 +16,8 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminAuthLogin,
-  adminAuthLogout
+  adminAuthLogout,
+  adminUserDetailsUpdate
 } from './auth';
 
 import {
@@ -27,7 +28,9 @@ import {
   adminQuizNameUpdate,
   adminQuizList,
   viewQuizTrash,
-  adminQuizQuestionMove
+  quizRestore,
+  adminQuizEmptyTrash,
+  adminQuizQuestionCreate
 } from './quiz';
 
 // Set up web app
@@ -189,6 +192,55 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminAuthLogout(token);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// quizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.body.token;
+
+  const result = quizRestore(quizId, token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizEmptyTrash
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.query.token;
+  const quizIds = req.query.quizIds;
+  const result = adminQuizEmptyTrash(token, quizIds);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizQuestionCreate
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const { token, questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizQuestionCreate(quizId, token, questionBody);
+
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }

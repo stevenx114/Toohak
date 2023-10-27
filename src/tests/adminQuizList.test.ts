@@ -10,6 +10,7 @@ import {
   requestQuizCreate,
   requestClear,
   requestQuizList,
+  requestLogout
 } from './wrapper';
 
 const ERROR = expect.any(String);
@@ -42,8 +43,8 @@ describe('GET /v1/admin/quiz/list', () => {
     expect(errorResult.statusCode).toEqual(401);
   });
 
-  test.skip('Token does not refer to valid logged in user session', () => {
-    //   requestLogout(user.token);
+  test('Token does not refer to valid logged in user session', () => {
+    requestLogout(user.token);
     errorResult = requestQuizList(user.token);
     expect(errorResult.error).toEqual(ERROR);
     expect(errorResult.statusCode).toEqual(401);

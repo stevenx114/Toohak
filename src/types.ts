@@ -82,6 +82,18 @@ export interface QuizListReturn {
   quizzes: QuizSimple[];
 }
 
+export interface AnswerSimple {
+  answer: string;
+  correct: true | false;
+}
+
+export interface QuestionBody {
+  question: string;
+  duration: number;
+  points: number;
+  answers: AnswerSimple[];
+}
+
 export interface QuestionIdReturn {
   questionId: number;
 }
