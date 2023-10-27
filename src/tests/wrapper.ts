@@ -111,4 +111,3 @@ export function requestQuizRestore(quizId: number, token: string) {
   });
   return JSON.parse(res.body.toString());
 }
-
