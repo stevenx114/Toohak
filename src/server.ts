@@ -15,7 +15,8 @@ import {
 import {
   adminAuthRegister,
   adminUserDetails,
-  adminAuthLogin
+  adminAuthLogin,
+  adminAuthLogout
 } from './auth';
 
 import {
@@ -168,6 +169,16 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 // clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
   res.json(clear());
+});
+
+// adminAuthLogout
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminAuthLogout(token);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
 });
 
 // ====================================================================
