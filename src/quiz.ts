@@ -98,6 +98,45 @@ export const adminQuizCreate = (token: string, name: string, description: string
 };
 
 /**
+ * Given a particular quiz, permanently remove the quiz.
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizRemove = (token: string, quizId: number): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
+
+  if (!user.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403
+    };
+  }
+  const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+  if (indexOfQuizInData !== -1) {
+    data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+    data.trash.push(data.quizzes[indexOfQuizInData]);
+    data.quizzes.splice(indexOfQuizInData, 1);
+  }
+  const indexOfQuizInUserOwned = user.quizzesOwned.findIndex(ownedQuizId => ownedQuizId === quizId);
+  if (indexOfQuizInUserOwned !== -1) {
+    user.quizzesOwned.splice(indexOfQuizInUserOwned, 1);
+  }
+  setData(data);
+  return {};
+};
+
+/**
  * Get all of the relevant information about the current quiz.
  *
  * @param {String} token
@@ -215,4 +254,50 @@ export const adminQuizNameUpdate = (token: string, quizId: number, name: string)
   setData(data);
 
   return {};
+};
+
+/**
+ * Updates the description of the relevant quiz.
+ *
+ * @param {string} token - The ID of the current user session.
+ * @param {number} quizId - The ID of the quiz to be updated.
+ * @param {string} description - The new description for the quiz.
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizDescriptionUpdate = (token: string, quizId: number, description: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  if (description.length > 100) {
+    return {
+      error: 'Description is more than 100 characters in length',
+      statusCode: 400,
+    };
+  }
+
+  const userId = curToken.authUserId;
+  const user = getUser(userId);
+  const quiz = getQuiz(quizId);
+
+  const doesUserOwnQuiz = user.quizzesOwned.includes(quizId);
+
+  if (doesUserOwnQuiz === false) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
+  }
+
+  quiz.description = description;
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
+  return { };
 };
