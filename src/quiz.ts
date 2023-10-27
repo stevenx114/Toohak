@@ -343,10 +343,15 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
     };
   }
 
-  const initialIndex = curQuestions.indexOf(curQuestion);
-  curQuestions.splice(initialIndex, 0, curQuestion);
+  const initialIndex = curQuestionIds.indexOf(curQuestion.questionId);
+  const { questionId: Id, ...dupeQuestionBody } = curQuestion;
+  const dupeQuestionId = adminQuizQuestionCreate(quizId, token, dupeQuestionBody);
+  const dupeQuestion = getQuestion(dupeQuestionId.questionId);
+  curQuestions.splice(initialIndex, 0, dupeQuestion);
   curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
 
-  return {};
+  return {
+    newQuestionId: dupeQuestion.questionId
+  };
 };
