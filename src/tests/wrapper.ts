@@ -145,7 +145,7 @@ export function requestQuizQuestionCreate(token: string, quizid: number, questio
 
 // Wrapper for adminQuizQuestionMove
 export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question' + questionId + '/move', {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
     json: { token: token, newPosition: newPosition }
   });
   return JSON.parse(res.body.toString());
