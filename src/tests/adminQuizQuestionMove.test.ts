@@ -4,6 +4,7 @@ import {
   TokenReturn,
   ErrorObject,
   QuestionIdReturn,
+  QuestionBody
 } from '../types';
 
 import {
@@ -12,9 +13,13 @@ import {
   requestQuizInfo,
   requestLogout,
   requestQuizQuestionMove,
-  requestQuestionCreate,
+  requestQuizQuestionCreate,
   requestClear
 } from './wrapper';
+
+import {
+  Question
+} from '../dataStore';
 
 const ERROR = expect.any(String);
 
@@ -29,19 +34,64 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
   let questionId2: QuestionIdReturn;
   let questionId3: QuestionIdReturn;
   let errorReturn: ErrorObject;
+  const VALID_Q_BODY_1: QuestionBody = {
+    question: 'question1',
+    duration: 3,
+    points: 3,
+    answers: [
+      {
+        answer: 'answer1',
+        correct: false
+      },
+      {
+        answer: 'answer2',
+        correct: true
+      }
+    ]
+  };
+  const VALID_Q_BODY_2: QuestionBody = {
+    question: 'question2',
+    duration: 4,
+    points: 4,
+    answers: [
+      {
+        answer: 'answer1',
+        correct: false
+      },
+      {
+        answer: 'answer2',
+        correct: true
+      }
+    ]
+  };
+  const VALID_Q_BODY_3: QuestionBody = {
+    question: 'question3',
+    duration: 5,
+    points: 5,
+    answers: [
+      {
+        answer: 'answer1',
+        correct: false
+      },
+      {
+        answer: 'answer2',
+        correct: true
+      }
+    ]
+  };
 
   beforeEach(() => {
     userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     userQuizId = requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    questionId1 = requestQuestionCreate(userQuizId.quizId);
-    questionId2 = requestQuestionCreate(userQuizId.quizId);
-    questionId3 = requestQuestionCreate(userQuizId.quizId);
+    questionId1 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_1);
+    questionId2 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_2);
+    questionId3 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_3);
   });
 
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
       expect(requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 0)).toEqual({});
-      const quizQuestions = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
+      const quizQuestions: Question[] = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
       const quizQuestionIds = quizQuestions.map(q => q.questionId);
       expect(quizQuestionIds.indexOf(questionId3.questionId)).toEqual(0);
       expect(quizQuestionIds.indexOf(questionId1.questionId)).toEqual(1);
