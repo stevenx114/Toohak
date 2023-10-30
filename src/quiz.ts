@@ -664,10 +664,11 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
   }
 
   const initialIndex = curQuestionIds.indexOf(curQuestion.questionId);
-  const { questionId: Id, ...dupeQuestionBody } = curQuestion;
-  const dupeQuestionId = adminQuizQuestionCreate(quizId, token, dupeQuestionBody);
-  const dupeQuestion = getQuestion(dupeQuestionId.questionId);
-  curQuestions.splice(initialIndex, 0, dupeQuestion);
+  const dupeQuestion = JSON.parse(JSON.stringify(curQuestion));
+  dupeQuestion.questionId = parseInt(generateCustomUuid('0123456789', 12));
+  curQuestions.splice(initialIndex + 1, 0, dupeQuestion);
+  curQuiz.duration += dupeQuestion.duration;
+  curQuiz.numQuestions += 1;
   curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
 
