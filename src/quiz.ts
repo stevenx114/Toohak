@@ -601,14 +601,14 @@ export const adminQuizQuestionMove = (token: string, quizId: number, questionId:
 
   if (newPosition < 0 || newPosition > curQuiz.numQuestions - 1) {
     return {
-      error: 'NewPosition is less than 0, or NewPosition is greater than n-1 where n is the number of questions',
+      error: 'NewPosition cannot be less than 0 or greater than n-1 where n is the number of questions',
       statusCode: 400,
     };
   }
 
   if (newPosition === curQuestionIds.indexOf(questionId)) {
     return {
-      error: 'NewPosition is the position of the current question',
+      error: 'NewPosition cannot be the position of the current question',
       statusCode: 400,
     };
   }
