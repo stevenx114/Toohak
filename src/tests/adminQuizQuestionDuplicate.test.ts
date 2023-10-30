@@ -3,7 +3,8 @@ import {
   QuizIdReturn,
   TokenReturn,
   ErrorObject,
-  QuestionIdReturn
+  QuestionIdReturn,
+  QuestionBody
 } from '../types';
 
 import {
@@ -11,7 +12,7 @@ import {
   requestQuizCreate,
   requestQuizInfo,
   requestLogout,
-  requestQuestionCreate,
+  requestQuizQuestionCreate,
   requestClear,
   requestQuizQuestionDuplicate
 } from './wrapper';
@@ -22,10 +23,6 @@ import {
 
 const ERROR = expect.any(String);
 
-beforeEach(() => {
-  requestClear();
-});
-
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;
@@ -33,12 +30,43 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let questionId2: QuestionIdReturn;
   let errorReturn: ErrorObject;
   let quizQuestions: Question[];
+  const VALID_Q_BODY_1: QuestionBody = {
+    question: 'question1',
+    duration: 3,
+    points: 3,
+    answers: [
+      {
+        answer: 'answer1',
+        correct: false
+      },
+      {
+        answer: 'answer2',
+        correct: true
+      }
+    ]
+  };
+  const VALID_Q_BODY_2: QuestionBody = {
+    question: 'question2',
+    duration: 4,
+    points: 4,
+    answers: [
+      {
+        answer: 'answer1',
+        correct: false
+      },
+      {
+        answer: 'answer2',
+        correct: true
+      }
+    ]
+  };
 
   beforeEach(() => {
+    requestClear();
     userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     userQuizId = requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    questionId1 = requestQuestionCreate(userQuizId.quizId);
-    questionId2 = requestQuestionCreate(userQuizId.quizId);
+    questionId1 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_1);
+    questionId2 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_2);
   });
 
   describe('Success Cases', () => {
@@ -70,7 +98,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
       expect(errorReturn.statusCode).toEqual(401);
     });
 
-    test.skip('Token does not refer to valid logged in user session', () => {
+    test('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
       errorReturn = requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId);
       expect(errorReturn.error).toEqual(ERROR);
