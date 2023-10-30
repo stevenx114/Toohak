@@ -124,7 +124,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
       expect(errorReturn.statusCode).toEqual(401);
     });
 
-    test.skip('Token does not refer to valid logged in user session', () => {
+    test('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
       errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 0);
       expect(errorReturn.error).toEqual(ERROR);
