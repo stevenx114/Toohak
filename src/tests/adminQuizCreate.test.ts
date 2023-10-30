@@ -77,4 +77,3 @@ describe('POST v1/admin/quiz', () => {
     });
   });
 });
-
