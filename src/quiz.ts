@@ -524,6 +524,7 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
 
   quiz.duration += questionBody.duration; // Update duration of quiz
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000); // Update timeLastEdited of quiz
+  quiz.numQuestions += 1;
 
   const colourArray = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
   const newQuestionId = parseInt(generateCustomUuid('0123456789', 12));
