@@ -173,7 +173,8 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
     timeLastEdited: quiz.timeLastEdited,
     description: quiz.description,
     numQuestions: quiz.numQuestions,
-    questions: quiz.questions
+    questions: quiz.questions,
+    duration: quiz.duration,
   };
 };
 
