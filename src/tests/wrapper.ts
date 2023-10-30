@@ -153,7 +153,7 @@ export function requestQuizQuestionMove(token: string, quizId: number, questionI
 
 // Wrapper for adminQuizQuestionDuplicate
 export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
     json: { token: token }
   });
   return JSON.parse(res.body.toString());
