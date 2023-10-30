@@ -2,6 +2,7 @@ import {
   getData,
   Quiz,
   User,
+  Question,
   Token
 } from './dataStore';
 
@@ -18,6 +19,11 @@ export const getQuiz = (quizId: number): Quiz | undefined => {
 export const getToken = (sessionId: string): Token | undefined => {
   const data = getData();
   return data.tokens.find(t => t.sessionId === sessionId);
+};
+
+export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
+  const quiz = getQuiz(quizId);
+  return quiz.questions.find(q => q.questionId === questionId);
 };
 
 export enum validDetails {
