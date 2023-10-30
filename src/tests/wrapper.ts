@@ -6,6 +6,10 @@ const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
 
+import {
+  QuestionBody
+} from '../types';
+
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
@@ -102,9 +106,54 @@ export function requestTrashView(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizTrashEmpty
+export function requestEmptyTrash(token: string, quizIds: string) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/trash/empty', {
+    qs: { token: token, quizIds: quizIds }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminUserDetailsUpdate
+export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
+    json: { token: token, email: email, nameFirst: nameFirst, nameLast: nameLast }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Request quizRestore
+export function requestQuizRestore(quizId: number, token: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
+    json: {
+      token: token,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionCreate
+export function requestQuizQuestionCreate(token: string, quizid: number, questionBody: QuestionBody) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question', {
+    json: {
+      token: token,
+      questionBody: questionBody,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionMove
+export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
+    json: { token: token, newPosition: newPosition }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminQuizQuestionDuplicate
 export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question' + questionId + '/duplicate', {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
     json: { token: token }
   });
   return JSON.parse(res.body.toString());

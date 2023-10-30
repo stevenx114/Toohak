@@ -3,6 +3,7 @@ import { echo } from './newecho';
 import morgan from 'morgan';
 import config from './config.json';
 import cors from 'cors';
+import errorHandler from 'middleware-http-errors';
 import YAML from 'yaml';
 import sui from 'swagger-ui-express';
 import fs from 'fs';
@@ -16,7 +17,8 @@ import {
   adminAuthRegister,
   adminUserDetails,
   adminAuthLogin,
-  adminAuthLogout
+  adminAuthLogout,
+  adminUserDetailsUpdate
 } from './auth';
 
 import {
@@ -27,6 +29,10 @@ import {
   adminQuizNameUpdate,
   adminQuizList,
   viewQuizTrash,
+  quizRestore,
+  adminQuizEmptyTrash,
+  adminQuizQuestionCreate,
+  adminQuizQuestionMove,
   adminQuizQuestionDuplicate
 } from './quiz';
 
@@ -53,11 +59,7 @@ const HOST: string = process.env.IP || 'localhost';
 // Example get request
 app.get('/echo', (req: Request, res: Response) => {
   const data = req.query.echo as string;
-  const ret = echo(data);
-  if ('error' in ret) {
-    res.status(400);
-  }
-  return res.json(ret);
+  return res.json(echo(data));
 });
 
 // adminAuthRegister
@@ -195,6 +197,68 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// adminUserDetailsUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// quizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.body.token;
+
+  const result = quizRestore(quizId, token);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
+// adminQuizEmptyTrash
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.query.token;
+  const quizIds = req.query.quizIds;
+  const result = adminQuizEmptyTrash(token, quizIds);
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizQuestionCreate
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const { token, questionBody } = req.body;
+  const quizId = parseInt(req.params.quizid);
+  const result = adminQuizQuestionCreate(quizId, token, questionBody);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizQuestionMove
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token, newPosition } = req.body;
+  const result = adminQuizQuestionMove(token, quizId, questionId, newPosition);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
 // adminQuizQuestionDuplicate
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -225,6 +289,9 @@ app.use((req: Request, res: Response) => {
   `;
   res.status(404).json({ error });
 });
+
+// For handling errors
+app.use(errorHandler());
 
 // start server
 const server = app.listen(PORT, HOST, () => {

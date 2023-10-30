@@ -1,7 +1,9 @@
 import {
   getData,
   setData,
-  Quiz
+  Quiz,
+  Token,
+  Answer
 } from './dataStore';
 
 import validator from 'validator';
@@ -20,6 +22,8 @@ import {
   QuizListReturn,
   EmptyObject,
   trashedQuizReturn,
+  QuestionBody,
+  QuestionIdReturn,
   QuestionDuplicateReturn
 } from './types';
 
@@ -88,7 +92,8 @@ export const adminQuizCreate = (token: string, name: string, description: string
       timeLastEdited: Math.floor((new Date()).getTime() / 1000),
       description: description,
       numQuestions: 0,
-      questions: []
+      questions: [],
+      duration: 0
     }
   );
 
@@ -340,6 +345,283 @@ export const viewQuizTrash = (token: string): trashedQuizReturn | ErrorObject =>
   return {
     quizzes: quizzesInTrash,
   };
+};
+
+/**
+ * Restores a quiz from the trash for a given user if certain conditions are met.
+ *
+ * @param {number} quizId - The ID of the quiz to be restored.
+ * @param {string} token - The session ID used to authenticate the user.
+ *
+ * @returns {EmptyObject | ErrorObject} An empty object if the quiz is successfully restored,
+ * or an ErrorObject with details if the restoration encounters an error.
+ */
+export const quizRestore = (quizId: number, token: string): EmptyObject | ErrorObject => {
+  const data = getData();
+
+  const tokenObject = getToken(token);
+
+  if (!tokenObject) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(tokenObject.authUserId);
+
+  if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    return {
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+      statusCode: 403,
+    };
+  }
+
+  const index = data.trash.findIndex(quiz => quiz.quizId === quizId);
+
+  if (index !== -1) {
+    if (data.quizzes.find(quiz => quiz.name === data.trash[index].name)) {
+      return {
+        error: 'Quiz name of the restored quiz is already used by another active quiz',
+        statusCode: 400,
+      };
+    }
+
+    const deletedQuiz = data.trash.splice(index, 1)[0];
+    data.quizzes.push(deletedQuiz);
+  } else {
+    return {
+      error: 'Quiz ID refers to a quiz that is not currently in the trash',
+      statusCode: 400,
+    };
+  }
+
+  setData(data);
+
+  return {};
+};
+
+/**
+ * Permanently delete specific quizzes currently sitting in the trash
+ *
+ * @param {string} token - The ID of the current user session.
+ * @param {string} quizIds - The ID of the quiz to be updated.
+ * @returns {object} EmptyObject | ErrorObject
+ */
+
+export const adminQuizEmptyTrash = (token: string, quizIds: string): EmptyObject | ErrorObject => {
+  const tokenObject = getToken(token);
+  const data = getData();
+  if (!tokenObject) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(tokenObject.authUserId);
+  const jsonArray = JSON.parse(quizIds);
+  const numberIds = jsonArray.map(id => parseInt(id));
+
+  for (const id of numberIds) {
+    if (!user.quizzesOwned.find(quizId => quizId === id)) {
+      return {
+        error: 'Valid token is provided, but one or more of the Quiz IDs refers to a quiz that this current user does not own',
+        statusCode: 403
+      };
+    }
+    if (!data.trash.find(quiz => quiz.quizId === id)) {
+      return {
+        error: 'One or more of the Quiz IDs is not currently in the trash',
+        statusCode: 400
+      };
+    }
+  }
+  for (const id of numberIds) {
+    const indexOfQuizInTrash = data.trash.findIndex(quiz => quiz.quizId === id);
+    data.trash.splice(indexOfQuizInTrash, 1);
+    const indexOfQuizInQuizzesOwned = user.quizzesOwned.findIndex(quiz => quiz.quizId === id);
+    user.quizzesOwned.splice(indexOfQuizInQuizzesOwned, 1);
+  }
+  setData(data);
+  return {};
+};
+
+/**
+ * Create a new stub question for a particular quiz.
+ *
+ * @param {number} quizid
+ * @param {string} token
+ * @param {object} questionBody
+ * @returns {QuestionIdReturn | ErrorObject} QuestionIdReturn if the question is successfully created,
+ * or an ErrorObject with details if the restoration encounters an error.
+ */
+export const adminQuizQuestionCreate = (quizid: number, token: string, questionBody: QuestionBody): QuestionIdReturn | ErrorObject => {
+  const data = getData();
+  const quiz = getQuiz(quizid);
+  const findToken = getToken(token) as Token;
+
+  if (!findToken) {
+    return {
+      error: 'Invalid token',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(findToken.authUserId);
+  const hasQuizId = user.quizzesOwned.find(quiz => quiz === quizid);
+  const CorrectAnswer = questionBody.answers.some(ans => ans.correct === true);
+
+  if (!hasQuizId) {
+    return {
+      error: 'Valid token is provided, but user is not an owner of this quiz',
+      statusCode: 403,
+    };
+  } else if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    return {
+      error: 'Invalid question length',
+      statusCode: 400,
+    };
+  } else if (questionBody.answers.length < 2 || questionBody.answers.length > 6) {
+    return {
+      error: 'The question has more than 6 answers or less than 2 answers',
+      statusCode: 400,
+    };
+  } else if (questionBody.duration <= 0) {
+    return {
+      error: 'Question duration must be positive',
+      statusCode: 400,
+    };
+  } else if (questionBody.duration + quiz.duration > 180) {
+    return {
+      error: 'Quiz duration cannot be longer than 3 minutes',
+      statusCode: 400,
+    };
+  } else if (questionBody.points < 1 || questionBody.points > 10) {
+    return {
+      error: 'The points awarded for the question are less than 1 or greater than 10',
+      statusCode: 400,
+    };
+  } else if (questionBody.answers.find(ans => ans.answer.length < 1 || ans.answer.length > 30)) {
+    return {
+      error: 'The length of an answer is shorter than 1 character long, or longer than 30 characters long',
+      statusCode: 400,
+    };
+  } else if (!CorrectAnswer) {
+    return {
+      error: 'Question must have a correct answer',
+      statusCode: 400,
+    };
+  }
+  const seenAnswers: string[] = [];
+  for (const answer of questionBody.answers) {
+    if (seenAnswers.includes(answer.answer)) {
+      return {
+        error: 'Cannot have duplicate answers.',
+        statusCode: 400,
+      };
+    }
+    seenAnswers.push(answer.answer);
+  }
+
+  quiz.duration += questionBody.duration; // Update duration of quiz
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000); // Update timeLastEdited of quiz
+  quiz.numQuestions += 1;
+
+  const colourArray = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
+  const newQuestionId = parseInt(generateCustomUuid('0123456789', 12));
+  const answers: Answer[] = [];
+
+  for (const answer of questionBody.answers) {
+    const createAnswerId = parseInt(generateCustomUuid('0123456789', 10));
+    const randomElement = Math.floor(Math.random() * colourArray.length);
+    const newColour = colourArray[randomElement];
+    const answerObject = {
+      answerId: createAnswerId,
+      answer: answer.answer,
+      colour: newColour,
+      correct: answer.correct,
+    };
+    answers.push(answerObject);
+  }
+
+  const newQuestion = {
+    questionId: newQuestionId,
+    question: questionBody.question,
+    duration: questionBody.duration,
+    points: questionBody.points,
+    answers: answers,
+  };
+
+  quiz.questions.push(newQuestion);
+
+  setData(data);
+
+  return {
+    questionId: newQuestionId
+  };
+};
+
+/**
+ * Move a question from one particular position in the quiz to another
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @param {number} questionId
+ * @param {number} newPosition
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizQuestionMove = (token: string, quizId: number, questionId: number, newPosition: number): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+  const curQuiz = getQuiz(quizId);
+  const curQuestion = getQuestion(quizId, questionId);
+  const curQuestions = curQuiz.questions;
+  const curQuestionIds = curQuestions.map(q => q.questionId);
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
+  }
+
+  if (!curQuestionIds.includes(questionId)) {
+    return {
+      error: 'Question Id does not refer to a valid question within this quiz',
+      statusCode: 400,
+    };
+  }
+
+  if (newPosition < 0 || newPosition > curQuiz.numQuestions - 1) {
+    return {
+      error: 'NewPosition cannot be less than 0 or greater than n-1 where n is the number of questions',
+      statusCode: 400,
+    };
+  }
+
+  if (newPosition === curQuestionIds.indexOf(questionId)) {
+    return {
+      error: 'NewPosition cannot be the position of the current question',
+      statusCode: 400,
+    };
+  }
+
+  const initialIndex = curQuestionIds.indexOf(curQuestion.questionId);
+  curQuestions.splice(initialIndex, 1);
+  curQuestions.splice(newPosition, 0, curQuestion);
+  curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
+  return {};
 };
 
 /**
