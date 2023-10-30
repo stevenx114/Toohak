@@ -1,5 +1,9 @@
 {
     "url": "http://localhost",
+<<<<<<< HEAD
     "port": "3120",
+=======
+    "port": "3201",
+>>>>>>> ba44fa04c5420109192b6706808c9b2e6ba27760
     "expandDocs": false
 }

@@ -2,6 +2,7 @@ import {
   getData,
   Quiz,
   User,
+  Question,
   Token
 } from './dataStore';
 
@@ -23,6 +24,11 @@ export const getToken = (sessionId: string): Token | undefined => {
 export const getUserByEmail = (email: string): User | undefined => {
   const data = getData();
   return data.users.find(u => u.email === email);
+}
+
+export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
+  const quiz = getQuiz(quizId);
+  return quiz.questions.find(q => q.questionId === questionId);
 };
 
 export enum validDetails {
@@ -79,6 +85,26 @@ export interface QuizSimple {
 
 export interface QuizListReturn {
   quizzes: QuizSimple[];
+}
+
+export interface AnswerSimple {
+  answer: string;
+  correct: true | false;
+}
+
+export interface QuestionBody {
+  question: string;
+  duration: number;
+  points: number;
+  answers: AnswerSimple[];
+}
+
+export interface QuestionIdReturn {
+  questionId: number;
+}
+
+export interface QuestionDuplicateReturn {
+  newQuestionId: number;
 }
 
 export type EmptyObject = Record<string, string>;
