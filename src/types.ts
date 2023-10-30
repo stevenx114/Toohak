@@ -98,4 +98,8 @@ export interface QuestionIdReturn {
   questionId: number;
 }
 
+export interface QuestionDuplicateReturn {
+  newQuestionId: number;
+}
+
 export type EmptyObject = Record<string, string>;

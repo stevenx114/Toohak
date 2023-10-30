@@ -32,7 +32,8 @@ import {
   quizRestore,
   adminQuizEmptyTrash,
   adminQuizQuestionCreate,
-  adminQuizQuestionMove
+  adminQuizQuestionMove,
+  adminQuizQuestionDuplicate
 } from './quiz';
 
 // Set up web app
@@ -252,6 +253,18 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   const { token, newPosition } = req.body;
   const result = adminQuizQuestionMove(token, quizId, questionId, newPosition);
 
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+// adminQuizQuestionDuplicate
+app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  const result = adminQuizQuestionDuplicate(token, quizId, questionId);
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
