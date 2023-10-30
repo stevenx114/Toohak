@@ -31,7 +31,8 @@ import {
   viewQuizTrash,
   quizRestore,
   adminQuizEmptyTrash,
-  adminQuizQuestionCreate
+  adminQuizQuestionCreate,
+  adminQuizQuestionMove
 } from './quiz';
 
 // Set up web app
