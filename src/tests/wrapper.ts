@@ -6,6 +6,8 @@ const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
 
+import { QuestionBody } from '../types';
+
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
@@ -95,10 +97,78 @@ export function requestLogout(token: string) {
 }
 
 // Wrapper for adminUpdateUserPassword
-export function requestAdminUpdateUserPassword(sessionId: string, oldPassword: string, newPassword: string) {
+export function requestAdminUpdateUserPassword(token: string, oldPassword: string, newPassword: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/user/password', {
-    json: { sessionId: sessionId, oldPassword: oldPassword, newPassword: newPassword }
+    json: { token: token, oldPassword: oldPassword, newPassword: newPassword }
   });
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for trashview
+export function requestTrashView(token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
+    qs: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizTrashEmpty
+export function requestEmptyTrash(token: string, quizIds: string) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/trash/empty', {
+    qs: { token: token, quizIds: quizIds }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizTransfer
+export function requestQuizTransfer(token: string, quizid: number, userEmail: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/transfer', {
+    json: { token: token, userEmail: userEmail }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminUserDetailsUpdate
+export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
+    json: { token: token, email: email, nameFirst: nameFirst, nameLast: nameLast }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Request quizRestore
+export function requestQuizRestore(quizId: number, token: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
+    json: {
+      token: token,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionCreate
+export function requestQuizQuestionCreate(token: string, quizid: number, questionBody: QuestionBody) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question', {
+    json: {
+      token: token,
+      questionBody: questionBody,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionMove
+export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
+    json: { token: token, newPosition: newPosition }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionDuplicate
+export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
+    json: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}

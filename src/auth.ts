@@ -171,12 +171,12 @@ export const adminUserDetails = (token: string): UserDetailsReturn | ErrorObject
 /**
  * Logs out an admin user who has an active session.
  *
- * @param {string} sessionId
+ * @param {string} token
  * @returns {object} EmptyObject | ErrorObject
  */
-export const adminAuthLogout = (sessionId: string): EmptyObject | ErrorObject => {
+export const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   const data = getData();
-  const curToken = getToken(sessionId);
+  const curToken = getToken(token);
 
   if (!curToken) {
     return {
@@ -193,6 +193,67 @@ export const adminAuthLogout = (sessionId: string): EmptyObject | ErrorObject =>
 };
 
 /**
+ * 
+ * @param {string} token 
+ * @param {string} email 
+ * @param {string} nameFirst
+ * @param {string} nameLast 
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string, nameLast: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  const allowedNameChars = /^[a-zA-Z '-]+$/;
+
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to valid logged in user session',
+      statusCode: 401,
+    };
+  }
+  if (data.users.some(user => user.email === email)) {
+    return {
+      error: 'Email address is used by another user',
+      statusCode: 400
+    };
+  } else if (!validator.isEmail(email)) {
+    return {
+      error: 'Email address is invalid',
+      statusCode: 400
+    };
+  } else if (!allowedNameChars.test(nameFirst)) {
+    return {
+      error: 'First name contains forbidden characters',
+      statusCode: 400
+    };
+  } else if (nameFirst.length < 2 || nameFirst.length > 20) {
+    return {
+      error: 'First name must be between 2 and 20 characters long',
+      statusCode: 400
+    };
+  } else if (!allowedNameChars.test(nameLast)) {
+    return {
+      error: 'NameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes',
+      statusCode: 400
+    };
+  } else if (nameLast.length < 2 || nameLast.length > 20) {
+    return {
+      error: 'NameLast is less than 2 characters or more than 20 characters',
+      statusCode: 400
+    };
+  }
+  const curUser = getUser(curToken.authUserId);
+
+  curUser.email = email;
+  curUser.name = `${nameFirst} ${nameLast}`;
+
+  setData(data);
+
+  return { };
+};
+
+
+/**
  * Given details relating to a password change, update the password of a logged in user.
  *
  * @param {string} sessionId
@@ -203,12 +264,6 @@ export const adminAuthLogout = (sessionId: string): EmptyObject | ErrorObject =>
 export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject => {
   const data = getData();
   const curToken = getToken(sessionId);
-  if (!curToken) {
-    return {
-      error: 'Token does not refer to valid logged in user session',
-      statusCode: 401,
-    };
-  }
   const curUser = getUser(curToken.authUserId);
   if (oldPassword !== curUser.password) {
       return {
@@ -247,3 +302,4 @@ export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, 
   setData(data);
   return {}
 }
+

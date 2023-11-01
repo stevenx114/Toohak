@@ -2,6 +2,7 @@ import {
   getData,
   Quiz,
   User,
+  Question,
   Token
 } from './dataStore';
 
@@ -18,6 +19,16 @@ export const getQuiz = (quizId: number): Quiz | undefined => {
 export const getToken = (sessionId: string): Token | undefined => {
   const data = getData();
   return data.tokens.find(t => t.sessionId === sessionId);
+};
+
+export const getUserByEmail = (email: string): User | undefined => {
+  const data = getData();
+  return data.users.find(u => u.email === email);
+};
+
+export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
+  const quiz = getQuiz(quizId);
+  return quiz.questions.find(q => q.questionId === questionId);
 };
 
 export enum validDetails {
@@ -40,12 +51,17 @@ export interface ErrorObject {
   statusCode?: number;
 }
 
-export interface AuthUserIdReturn {
-  authUserId: number;
-}
-
 export interface TokenReturn {
   token: string;
+}
+
+export interface trashQuizData {
+  quizId: number,
+  name: string,
+}
+
+export interface trashedQuizReturn {
+  quizzes: trashQuizData[];
 }
 
 export interface UserDetailsReturn {
@@ -69,6 +85,26 @@ export interface QuizSimple {
 
 export interface QuizListReturn {
   quizzes: QuizSimple[];
+}
+
+export interface AnswerSimple {
+  answer: string;
+  correct: true | false;
+}
+
+export interface QuestionBody {
+  question: string;
+  duration: number;
+  points: number;
+  answers: AnswerSimple[];
+}
+
+export interface QuestionIdReturn {
+  questionId: number;
+}
+
+export interface QuestionDuplicateReturn {
+  newQuestionId: number;
 }
 
 export type EmptyObject = Record<string, string>;

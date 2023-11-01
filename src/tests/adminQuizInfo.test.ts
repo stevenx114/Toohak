@@ -39,7 +39,8 @@ describe('GET /v1/admin/quiz/{quizid}', () => {
         timeLastEdited: expect.any(Number),
         description: validDetails.DESCRIPTION,
         numQuestions: expect.any(Number),
-        questions: expect.any(Array),
+        questions: [],
+        duration: 0,
       });
     });
   });
