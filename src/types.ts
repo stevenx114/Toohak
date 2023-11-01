@@ -24,7 +24,7 @@ export const getToken = (sessionId: string): Token | undefined => {
 export const getUserByEmail = (email: string): User | undefined => {
   const data = getData();
   return data.users.find(u => u.email === email);
-}
+};
 
 export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
   const quiz = getQuiz(quizId);

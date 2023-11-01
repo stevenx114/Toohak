@@ -237,9 +237,15 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 
 // adminQuizTransfer
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const { token, userEmail } = req.body;  
+  const quizId = parseInt(req.params.quizid as string);
+  const { token, userEmail } = req.body;
   const result = adminQuizTransfer(token, quizId, userEmail);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
 });
 
 // adminQuizQuestionCreate
@@ -252,7 +258,7 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
     return res.status(result.statusCode).json(result);
   }
   res.json(result);
-})
+});
 
 // adminQuizQuestionMove
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {

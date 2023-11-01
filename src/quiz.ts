@@ -189,6 +189,7 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
  */
 export const adminQuizList = (token: string): QuizListReturn | ErrorObject => {
   const data = getData();
+
   const curToken = getToken(token);
   if (!curToken) {
     return {
@@ -678,10 +679,9 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
   };
 };
 
-
 /**
- * 
- * @param {string} token 
+ *
+ * @param {string} token
  * @param {number} quizId
  * @param {string} userEmail
  * @returns {object} EmptyObject | ErrorObject
@@ -689,7 +689,7 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
 export const adminQuizTransfer = (token: string, quizId: number, userEmail: string): EmptyObject | ErrorObject => {
   const data = getData();
   const curToken = getToken(token);
-  
+
   if (!curToken) {
     return {
       error: 'Token does not refer to valid logged in user session',
@@ -701,32 +701,32 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
   const curUser = getUser(userId);
 
   if (!curUser.quizzesOwned.includes(quizId)) {
-      return {
-        error: 'Quiz ID does not refer to a quiz that this user owns',
-        statusCode: 403,
-      };
+    return {
+      error: 'Quiz ID does not refer to a quiz that this user owns',
+      statusCode: 403,
+    };
   }
-  
+
   const curQuiz = getQuiz(quizId);
   const getQuizByName = data.quizzes.find(quiz => quiz.name === curQuiz.name);
   const userToTransfer = getUserByEmail(userEmail);
   if (!userToTransfer) {
-      return {
-          error: 'userEmail is not a real user',
-          statusCode: 400,
-      };
+    return {
+      error: 'userEmail is not a real user',
+      statusCode: 400,
+    };
   } else if (curUser.email === userEmail) {
-      return {
-          error: 'userEmail is the current logged in user',
-          statusCode: 400,
-      };
+    return {
+      error: 'userEmail is the current logged in user',
+      statusCode: 400,
+    };
   } else if (userToTransfer.quizzesOwned.includes(getQuizByName.quizId)) {
-      return {
-          error: 'Quiz ID refers to a quiz that has a name that is already used by the target user',
-          statusCode: 400,
-      };
+    return {
+      error: 'Quiz ID refers to a quiz that has a name that is already used by the target user',
+      statusCode: 400,
+    };
   }
-  
+
   userToTransfer.quizzesOwned.push(quizId);
 
   const indexToRemove = curUser.quizzesOwned.indexOf(quizId);
@@ -734,6 +734,6 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
     curUser.quizzesOwned.splice(indexToRemove, 1);
   }
 
-  setData();
+  setData(data);
   return { };
 };

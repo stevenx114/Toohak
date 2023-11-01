@@ -114,6 +114,14 @@ export function requestEmptyTrash(token: string, quizIds: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizTransfer
+export function requestQuizTransfer(token: string, quizid: number, userEmail: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/transfer', {
+    json: { token: token, userEmail: userEmail }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminUserDetailsUpdate
 export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
@@ -132,12 +140,6 @@ export function requestQuizRestore(quizId: number, token: string) {
   return JSON.parse(res.body.toString());
 }
 
-<<<<<<< HEAD
-// Wrapper for adminQuizTransfer
-export function requestQuizTransfer(token: string, quizid: number, userEmail: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/transfer', {
-    json: { token: token, userEmail: userEmail }
-=======
 // Wrapper for adminQuizQuestionCreate
 export function requestQuizQuestionCreate(token: string, quizid: number, questionBody: QuestionBody) {
   const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question', {
@@ -145,13 +147,10 @@ export function requestQuizQuestionCreate(token: string, quizid: number, questio
       token: token,
       questionBody: questionBody,
     }
->>>>>>> ba44fa04c5420109192b6706808c9b2e6ba27760
   });
   return JSON.parse(res.body.toString());
 }
 
-<<<<<<< HEAD
-=======
 // Wrapper for adminQuizQuestionMove
 export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
@@ -167,4 +166,3 @@ export function requestQuizQuestionDuplicate(token: string, quizId: number, ques
   });
   return JSON.parse(res.body.toString());
 }
->>>>>>> ba44fa04c5420109192b6706808c9b2e6ba27760
