@@ -151,6 +151,16 @@ export function requestQuizQuestionCreate(token: string, quizid: number, questio
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizQuestionDelete
+export function requestQuizQuestionDelete(token: string, quizid: number, questionid: number) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question/' + questionid, {
+    qs: {
+      token: token,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminQuizQuestionMove
 export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
