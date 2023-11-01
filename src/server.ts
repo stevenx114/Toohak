@@ -29,6 +29,7 @@ import {
   adminQuizNameUpdate,
   adminQuizList,
   viewQuizTrash,
+  adminQuizTransfer,
   quizRestore,
   adminQuizEmptyTrash,
   adminQuizQuestionCreate,
@@ -231,6 +232,19 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
+  res.json(result);
+});
+
+// adminQuizTransfer
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const { token, userEmail } = req.body;
+  const result = adminQuizTransfer(token, quizId, userEmail);
+
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+
   res.json(result);
 });
 
