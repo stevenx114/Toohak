@@ -27,7 +27,7 @@ describe('quizUpdate', () => {
         requestClear();
         token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
         quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-        questionId = requestQuizCreate(quizId.quizId, token.token, validQuestionDetails);
+        questionId = requestQuestionCreate(quizId.quizId, token.token, validQuestionDetails);
         questionBody = {...validQuestionDetails};
     });
   
@@ -141,7 +141,7 @@ describe('quizUpdate', () => {
       });
 
       test('Valid token is provided, but user is unauthorised to complete this action', () => { 
-        token = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME).body;
+        token = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
 
         const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token + 'a', questionBody);
         expect(res.statusCode).toBe(403);
