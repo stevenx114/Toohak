@@ -59,4 +59,3 @@ export const getData = (): DataStore => data;
 
 // Use set(newData) to pass in the entire data object, with modifications made
 export const setData = (newData: DataStore) => { data = newData; };
-

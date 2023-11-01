@@ -162,10 +162,10 @@ export function requestQuizQuestionDuplicate(token: string, quizId: number, ques
 // Wrapper for quizUpdate
 export function requestQuizUpdate(quizId: number, questionId: number, token: string, questionBody: questionBody) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId, {
-    json: { 
-      token: token, 
+    json: {
+      token: token,
       questionBody: questionBody,
     }
   });
   return JSON.parse(res.body.toString());
-} 
+}

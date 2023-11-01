@@ -27,8 +27,6 @@ import {
   QuestionDuplicateReturn
 } from './types';
 
-import { getToken } from './types';
-
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -681,7 +679,7 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
 };
 
 /**
- 
+
 Update a quiz question by modifying its content and properties.*
 @param {number} quizId - The unique identifier of the quiz containing the question to be updated.
 @param {number} questionId - The unique identifier of the question to be updated.
@@ -703,11 +701,11 @@ Update a quiz question by modifying its content and properties.*
 @property {string} error - A description of the error.
 @property {string} status - The HTTP status code associated with the error.
 */
-export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: questionBody): EmptyObject | ErrorObject => {
+export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: QuestionBody): EmptyObject | ErrorObject => {
   const data = getData();
   const quiz = getQuiz(quizId);
   const token = (getToken(sessionId));
-    
+
   if (!token) {
     return {
       error: 'Token is empty or invalid (does not refer to valid logged in user session)',
@@ -715,9 +713,8 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
     };
   }
 
-
   const user = getUser(token.authUserId);
-  
+
   if (!user) {
     return {
       error: 'Token is empty or invalid (does not refer to valid logged in user session)',
@@ -762,10 +759,14 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
     };
   }
 
-  const sum = quiz.questions.reduce((a, b) => {
-    if (a === 0) return b;
-    return a.duration + b.duration;
-  },0) - question.duration + questionBody.duration;
+  let sum = 0;
+
+  for (const question of quiz.questions) {
+    sum += question.duration;
+  }
+
+  sum -= question.duration;
+  sum += questionBody.duration;
 
   if (sum > 180) {
     return {
@@ -789,16 +790,13 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   }
 
   for (let i = 0; i < questionBody.answers.length; i++) {
-
     for (let j = i + 1; j < questionBody.answers.length; j++) {
-
       if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
         return {
           error: 'Any answer strings are duplicates of one another (within the same question)',
           statusCode: 400,
         };
       }
-
     }
   }
 
@@ -813,10 +811,19 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   const answers: Answer[] = [];
 
   for (const index in questionBody.answers) {
+    const pushObject: Answer = {
+      answerId: Number(index),
+      answer: questionBody.answers[index.answer],
+      colour: colour[Math.floor(Math.random()) % 3],
+      correct: questionBody.answers[index].correct,
+    };
+    answers.push(pushObject);
+    /*
     answers[index].answerId = Number(index);
     answers[index].answer = questionBody.answers[index].answer;
     answers[index].colour = colour[Math.floor(Math.random()) % 3];
     answers[index].correct = questionBody.answers[index].correct;
+    */
   }
 
   question.answers = answers;
@@ -827,4 +834,4 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
   return {};
-}
+};

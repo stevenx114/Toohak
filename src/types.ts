@@ -104,7 +104,6 @@ export interface QuestionDuplicateReturn {
 
 export type EmptyObject = Record<string, string>;
 
-
 export interface questionAnswer {
   answer: string;
   correct: boolean;
