@@ -1,5 +1,4 @@
-import { Token } from "../dataStore";
-import { TokenReturn, questionAnswer, questionBody } from "../types";
+import { TokenReturn, questionBody } from "../types";
 import { QuizIdReturn, validDetails } from "../types";
 import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizUpdate } from "./wrapper";
 

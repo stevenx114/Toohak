@@ -1,11 +1,14 @@
 import request from 'sync-request-curl';
 import config from '../config.json';
-import { questionBody } from '../types';
 
 const port = config.port;
 const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
+
+import {
+  QuestionBody, questionBody
+} from '../types';
 
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
@@ -31,10 +34,10 @@ export function requestUserDetails(token: string) {
   return JSON.parse(res.body.toString());
 }
 
-// Wrapper for adminQuizCreate
-export function requestQuizCreate(token: string, name: string, description: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
-    json: { token: token, name: name, description: description }
+// Wrapper for adminQuizInfo
+export function requestQuizInfo(token: string, quizid: number) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
+    qs: { token: token }
   });
   return JSON.parse(res.body.toString());
 }
@@ -50,15 +53,15 @@ export function requestQuizList(token: string) {
 // Wrapper for adminQuizRemove
 export function requestQuizRemove(token: string, quizid: number) {
   const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token, quizid: quizid }
+    qs: { token: token }
   });
   return JSON.parse(res.body.toString());
 }
 
-// Wrapper for adminQuizDescriptionUpdate
-export function requestQuizDescriptionUpdate(token: string, quizid: number, description: string) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
-    json: { token: token, quizid: quizid, description: description }
+// Wrapper for adminQuizCreate
+export function requestQuizCreate(token: string, name: string, description: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
+    json: { token: token, name: name, description: description }
   });
   return JSON.parse(res.body.toString());
 }
@@ -66,30 +69,16 @@ export function requestQuizDescriptionUpdate(token: string, quizid: number, desc
 // Wrapper for adminQuizNameUpdate
 export function requestQuizNameUpdate(token: string, quizid: number, name: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/name', {
-    json: { token: token, quizid: quizid, name: name }
+    json: { token: token, name: name }
   });
   return JSON.parse(res.body.toString());
 }
 
-// Wrapper for adminQuizInfo
-export function requestQuizInfo(token: string, quizid: number) {
-  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token, quizid: quizid }
+// Wrapper for adminQuizDescriptionUpdate
+export function requestQuizDescriptionUpdate(token: string, quizid: number, description: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
+    json: { token: token, description: description }
   });
-  return JSON.parse(res.body.toString());
-}
-
-// Wrapper for logout
-export function requestLogout(token: string) {
-  const res = request(
-    'POST',
-    SERVER_URL + '/v1/admin/auth/logout',
-    {
-      json: {
-        token: token,
-      }
-    }
-  );
   return JSON.parse(res.body.toString());
 }
 
@@ -97,6 +86,75 @@ export function requestLogout(token: string) {
 export function requestClear() {
   const res = request('DELETE', SERVER_URL + '/v1/clear', {
     qs: { }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminAuthLogout
+export function requestLogout(token: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
+    json: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for trashview
+export function requestTrashView(token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
+    qs: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizTrashEmpty
+export function requestEmptyTrash(token: string, quizIds: string) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/trash/empty', {
+    qs: { token: token, quizIds: quizIds }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminUserDetailsUpdate
+export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
+    json: { token: token, email: email, nameFirst: nameFirst, nameLast: nameLast }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Request quizRestore
+export function requestQuizRestore(quizId: number, token: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
+    json: {
+      token: token,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionCreate
+export function requestQuizQuestionCreate(token: string, quizid: number, questionBody: QuestionBody) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question', {
+    json: {
+      token: token,
+      questionBody: questionBody,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionMove
+export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
+    json: { token: token, newPosition: newPosition }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminQuizQuestionDuplicate
+export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
+    json: { token: token }
   });
   return JSON.parse(res.body.toString());
 }
@@ -109,5 +167,5 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
       questionBody: questionBody,
     }
   });
-  return {JSON.parse(res.body.toString())};
+  return JSON.parse(res.body.toString());
 } 

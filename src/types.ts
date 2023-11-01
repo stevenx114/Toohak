@@ -2,8 +2,8 @@ import {
   getData,
   Quiz,
   User,
-  Token,
-  Answer
+  Question,
+  Token
 } from './dataStore';
 
 export const getUser = (userId: number): User | undefined => {
@@ -21,6 +21,11 @@ export const getToken = (sessionId: string): Token | undefined => {
   return data.tokens.find(t => t.sessionId === sessionId);
 };
 
+export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
+  const quiz = getQuiz(quizId);
+  return quiz.questions.find(q => q.questionId === questionId);
+};
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
@@ -28,15 +33,30 @@ export enum validDetails {
   LAST_NAME = 'lastname',
   QUIZ_NAME = 'quizName',
   DESCRIPTION = 'description',
+  EMAIL_2 = 'sample2@gmail.com',
+  PASSWORD_2 = 'password2',
+  FIRST_NAME_2 = 'first',
+  LAST_NAME_2 = 'last',
+  QUIZ_NAME_2 = 'quiz',
+  DESCRIPTION_2 = 'description2',
 }
 
 export interface ErrorObject {
   error: string;
-  statusCode: number;
+  statusCode?: number;
 }
 
 export interface TokenReturn {
   token: string;
+}
+
+export interface trashQuizData {
+  quizId: number,
+  name: string,
+}
+
+export interface trashedQuizReturn {
+  quizzes: trashQuizData[];
 }
 
 export interface UserDetailsReturn {
@@ -60,6 +80,26 @@ export interface QuizSimple {
 
 export interface QuizListReturn {
   quizzes: QuizSimple[];
+}
+
+export interface AnswerSimple {
+  answer: string;
+  correct: true | false;
+}
+
+export interface QuestionBody {
+  question: string;
+  duration: number;
+  points: number;
+  answers: AnswerSimple[];
+}
+
+export interface QuestionIdReturn {
+  questionId: number;
+}
+
+export interface QuestionDuplicateReturn {
+  newQuestionId: number;
 }
 
 export type EmptyObject = Record<string, string>;
