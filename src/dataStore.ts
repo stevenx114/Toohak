@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+
 export interface Answer {
   answerId: number;
   answer: string;
@@ -9,7 +11,7 @@ export interface Question {
   questionId: number;
   question: string;
   duration: number;
-  points: number,
+  points: number;
   answers: Answer[];
 }
 
@@ -47,15 +49,26 @@ export interface DataStore {
   trash?: Quiz[];
 }
 
-let data: DataStore = {
-  users: [],
-  quizzes: [],
-  tokens: [],
-  trash: [],
+const dataFilePath = 'data.json';
+
+const readData = (): DataStore => {
+  if (existsSync(dataFilePath)) {
+    const fileContent = readFileSync(dataFilePath, 'utf8');
+    return JSON.parse(fileContent) as DataStore;
+  }
+  return { users: [], quizzes: [], tokens: [], trash: [] };
 };
 
-// Use get() to access the data
+const writeData = (data: DataStore) => {
+  const dataToSave = JSON.stringify(data, null, 2);
+  writeFileSync(dataFilePath, dataToSave, 'utf8');
+};
+
+let data: DataStore = readData();
+
 export const getData = (): DataStore => data;
 
-// Use set(newData) to pass in the entire data object, with modifications made
-export const setData = (newData: DataStore) => { data = newData; };
+export const setData = (newData: DataStore) => {
+  data = newData;
+  writeData(data);
+};
