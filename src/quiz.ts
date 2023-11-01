@@ -679,7 +679,6 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
 };
 
 /**
-
 Update a quiz question by modifying its content and properties.*
 @param {number} quizId - The unique identifier of the quiz containing the question to be updated.
 @param {number} questionId - The unique identifier of the question to be updated.
@@ -818,12 +817,6 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
       correct: questionBody.answers[index].correct,
     };
     answers.push(pushObject);
-    /*
-    answers[index].answerId = Number(index);
-    answers[index].answer = questionBody.answers[index].answer;
-    answers[index].colour = colour[Math.floor(Math.random()) % 3];
-    answers[index].correct = questionBody.answers[index].correct;
-    */
   }
 
   question.answers = answers;
