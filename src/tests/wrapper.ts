@@ -114,6 +114,14 @@ export function requestEmptyTrash(token: string, quizIds: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizTransfer
+export function requestQuizTransfer(token: string, quizid: number, userEmail: string) {
+  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/transfer', {
+    json: { token: token, userEmail: userEmail }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminUserDetailsUpdate
 export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
   const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
