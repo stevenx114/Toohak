@@ -74,6 +74,21 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   res.json(result);
 });
 
+// Quiz Update
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as  string);
+  const questionId = parseInt(req.params.questionid as string);
+  const { token, questionBody } = req.body;
+
+  const result = adminUpdateQuiz(quizId, questionId, token, questionBody);
+
+  if ('error' in result) {
+      return res.status(result.statusCode).json(result);
+  }
+
+  res.json(result);
+});
+
 // adminAuthLogin
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -116,21 +131,6 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
-  res.json(result);
-});
-
-// Quiz Update
-app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid as  string);
-  const questionId = parseInt(req.params.questionid as string);
-  const { token, questionBody } = req.body;
-
-  const result = adminUpdateQuiz(quizId, questionId, token, questionBody);
-
-  if ('error' in result) {
-      return res.status(result.statusCode).json(result);
-  }
-
   res.json(result);
 });
 

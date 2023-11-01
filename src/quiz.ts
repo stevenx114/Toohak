@@ -725,7 +725,7 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
     };
   }
 
-  const question = quiz?.questions.find(question => question.questionId === questionId);
+  const question = quiz.questions.find(question => question.questionId === questionId);
 
   if (!quiz || !question) {
     return {
@@ -737,7 +737,7 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
     return {
       error: 'Valid token is provided, but user is unauthorised to complete this action',
-      statusCode: 401,
+      statusCode: 403,
     };
   }
 
@@ -826,5 +826,5 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
 
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
-  return{}
+  return {};
 }
