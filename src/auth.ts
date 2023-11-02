@@ -193,11 +193,11 @@ export const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
 };
 
 /**
- * 
- * @param {string} token 
- * @param {string} email 
+ *
+ * @param {string} token
+ * @param {string} email
  * @param {string} nameFirst
- * @param {string} nameLast 
+ * @param {string} nameLast
  * @returns {object} EmptyObject | ErrorObject
  */
 export const adminUserDetailsUpdate = (token: string, email: string, nameFirst: string, nameLast: string): EmptyObject | ErrorObject => {
@@ -246,12 +246,9 @@ export const adminUserDetailsUpdate = (token: string, email: string, nameFirst: 
 
   curUser.email = email;
   curUser.name = `${nameFirst} ${nameLast}`;
-
   setData(data);
-
-  return { };
+  return {};
 };
-
 
 /**
  * Given details relating to a password change, update the password of a logged in user.
@@ -264,42 +261,46 @@ export const adminUserDetailsUpdate = (token: string, email: string, nameFirst: 
 export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject => {
   const data = getData();
   const curToken = getToken(sessionId);
+  if (!curToken) {
+    return {
+      error: 'Token does not refer to a valid logged in user session',
+      statusCode: 401
+    };
+  }
   const curUser = getUser(curToken.authUserId);
   if (oldPassword !== curUser.password) {
-      return {
-          error: "Old password is not the correct old password",
-          statusCode: 400
-      }
+    return {
+      error: 'Old password is not the correct old password',
+      statusCode: 400
+    };
   } else if (oldPassword === newPassword) {
-      return {
-          error: "Old Password and New Password match exactly",
-          statusCode: 400
-      }
+    return {
+      error: 'Old Password and New Password match exactly',
+      statusCode: 400
+    };
   } else if (curUser.previousPasswords.includes(newPassword)) {
-      return {
-          error: "New Password has already been used before by this user",
-          statusCode: 400
-      }
+    return {
+      error: 'New Password has already been used before by this user',
+      statusCode: 400
+    };
   } else if (newPassword.length < 8) {
-      return {
-          error: "New Password is less than 8 characters",
-          statusCode: 400
-      }
+    return {
+      error: 'New Password is less than 8 characters',
+      statusCode: 400
+    };
   } else if ((!/[a-z]/.test(newPassword) && !/[A-Z]/.test(newPassword))) {
-      return {
-          error: "New Password does not contain at least one letter",
-          statusCode: 400
-      }
-  } else if (/[0-9]/.test(newPassword)) {
-      return {
-          error: "New Password does not contain at least one number", 
-          statusCode: 400
-      }
+    return {
+      error: 'New Password does not contain at least one letter',
+      statusCode: 400
+    };
+  } else if (!/\d/.test(newPassword)) {
+    return {
+      error: 'New Password does not contain at least one number',
+      statusCode: 400
+    };
   }
-  const indexOfUserInData = data.users.findIndex(user => user.authUserId === curToken.authUserId);
-  data.users[indexOfUserInData].password = newPassword;
-  data.users[indexOfUserInData].previousPasswords.push(oldPassword);
+  curUser.password = newPassword;
+  curUser.previousPasswords.push(oldPassword);
   setData(data);
-  return {}
-}
-
+  return {};
+};

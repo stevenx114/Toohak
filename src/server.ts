@@ -207,7 +207,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
     return res.status(result.statusCode).json(result);
   }
   res.json(result);
-})
+});
 
 // adminUserDetailsUpdate
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
@@ -294,8 +294,7 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
     return res.status(result.statusCode).json(result);
   }
   res.json(result);
-})
-
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
@@ -329,4 +328,3 @@ const server = app.listen(PORT, HOST, () => {
 process.on('SIGINT', () => {
   server.close(() => console.log('Shutting down server gracefully.'));
 });
-
