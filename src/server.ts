@@ -35,7 +35,8 @@ import {
   adminQuizEmptyTrash,
   adminQuizQuestionCreate,
   adminQuizQuestionMove,
-  adminQuizQuestionDuplicate
+  adminQuizQuestionDuplicate,
+  adminQuizQuestionDelete
 } from './quiz';
 
 // Set up web app
@@ -265,6 +266,18 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const result = adminQuizQuestionCreate(quizId, token, questionBody);
 
+  if ('error' in result) {
+    return res.status(result.statusCode).json(result);
+  }
+  res.json(result);
+});
+
+app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.query.token as string;
+  const questionId = parseInt(req.params.questionid);
+
+  const result = adminQuizQuestionDelete(quizId, questionId, token);
   if ('error' in result) {
     return res.status(result.statusCode).json(result);
   }
