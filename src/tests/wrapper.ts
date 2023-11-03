@@ -6,9 +6,7 @@ const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
 
-import {
-  QuestionBody
-} from '../types';
+import { QuestionBody } from '../types';
 
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
@@ -94,6 +92,14 @@ export function requestClear() {
 export function requestLogout(token: string) {
   const res = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
     json: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
+
+// Wrapper for adminUpdateUserPassword
+export function requestAdminUpdateUserPassword(token: string, oldPassword: string, newPassword: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/user/password', {
+    json: { token: token, oldPassword: oldPassword, newPassword: newPassword }
   });
   return JSON.parse(res.body.toString());
 }
