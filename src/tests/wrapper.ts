@@ -6,9 +6,7 @@ const url = config.url;
 
 const SERVER_URL = `${url}:${port}`;
 
-import {
-  QuestionBody, questionBody
-} from '../types';
+import { QuestionBody } from '../types';
 
 // Wrapper for adminAuthRegister
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
@@ -98,6 +96,14 @@ export function requestLogout(token: string) {
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminUpdateUserPassword
+export function requestAdminUpdateUserPassword(token: string, oldPassword: string, newPassword: string) {
+  const res = request('PUT', SERVER_URL + '/v1/admin/user/password', {
+    json: { token: token, oldPassword: oldPassword, newPassword: newPassword }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for trashview
 export function requestTrashView(token: string) {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
@@ -151,6 +157,16 @@ export function requestQuizQuestionCreate(token: string, quizid: number, questio
   return JSON.parse(res.body.toString());
 }
 
+// Wrapper for adminQuizQuestionDelete
+export function requestQuizQuestionDelete(token: string, quizid: number, questionid: number) {
+  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question/' + questionid, {
+    qs: {
+      token: token,
+    }
+  });
+  return JSON.parse(res.body.toString());
+}
+
 // Wrapper for adminQuizQuestionMove
 export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
@@ -168,7 +184,7 @@ export function requestQuizQuestionDuplicate(token: string, quizId: number, ques
 }
 
 // Wrapper for quizUpdate
-export function requestQuizUpdate(quizId: number, questionId: number, token: string, questionBody: questionBody) {
+export function requestQuizUpdate(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
   const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId, {
     json: {
       token: token,

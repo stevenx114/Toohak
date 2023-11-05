@@ -740,6 +740,49 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
 };
 
 /**
+ *
+ * @param quizId
+ * @param questionId
+ * @param sessionId
+ * @returns
+ */
+export const adminQuizQuestionDelete = (quizId: number, questionId: number, sessionId: string): Error | Record<string, never> => {
+  const data = getData();
+  const quiz = getQuiz(quizId);
+  const token = getToken(sessionId);
+  if (!token) {
+    return {
+      error: 'Invalid token',
+      statusCode: 401
+    };
+  }
+
+  const user = getUser(token.authUserId);
+  if (!user.quizzesOwned.includes(quiz.quizId)) {
+    return {
+      error: 'User is not the owner of the quiz',
+      statusCode: 403
+    };
+  }
+
+  const question = quiz.questions.find(question => question.questionId === questionId);
+  if (!question) {
+    return {
+      error: 'Invalid question id',
+      statusCode: 400
+    };
+  }
+
+  quiz.numQuestions--;
+  quiz.questions = quiz.questions.filter(question => question.questionId !== questionId);
+  quiz.duration -= question.duration;
+
+  setData(data);
+
+  return {};
+};
+
+/**
 Update a quiz question by modifying its content and properties.*
 @param {number} quizId - The unique identifier of the quiz containing the question to be updated.
 @param {number} questionId - The unique identifier of the question to be updated.
