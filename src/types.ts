@@ -108,3 +108,15 @@ export interface QuestionDuplicateReturn {
 }
 
 export type EmptyObject = Record<string, string>;
+
+export interface questionAnswer {
+  answer: string;
+  correct: boolean;
+}
+
+export interface questionBody {
+  question: string;
+  duration: number;
+  points: number,
+  answers: questionAnswer[];
+}

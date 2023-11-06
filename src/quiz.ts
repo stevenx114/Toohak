@@ -781,3 +781,154 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, sess
 
   return {};
 };
+
+/**
+Update a quiz question by modifying its content and properties.*
+@param {number} quizId - The unique identifier of the quiz containing the question to be updated.
+@param {number} questionId - The unique identifier of the question to be updated.
+@param {string} sessionId - The session ID of the user making the request.
+@param {object} questionBody - An object containing the new question content and properties.
+@param {string} questionBody.question - The updated question text.
+@param {object[]} questionBody.answers - An array of answer objects.
+@param {string} questionBody.answers.answer - The text of an answer option.
+@param {boolean} questionBody.answers.correct - Indicates whether the answer is correct (true) or not (false).
+@param {number} questionBody.duration - The updated duration for the question.
+@param {number} questionBody.points - The updated number of points awarded for the question.
+*
+@returns {EmptyObject | ErrorObject} - An object representing the result of the update operation.
+@returns {EmptyObject} - If the update is successful, an empty object is returned.
+@returns {ErrorObject} - If any validation checks fail, an error object is returned with details.
+*
+@typedef {Object} EmptyObject - An empty object representing a successful operation.
+@typedef {Object} ErrorObject - An object representing an error with a status code and message.
+@property {string} error - A description of the error.
+@property {string} status - The HTTP status code associated with the error.
+*/
+export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: QuestionBody): EmptyObject | ErrorObject => {
+  const data = getData();
+  const quiz = getQuiz(quizId);
+  const token = (getToken(sessionId));
+
+  if (!token) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+
+  const user = getUser(token.authUserId);
+
+  if (!user) {
+    return {
+      error: 'Token is empty or invalid (does not refer to valid logged in user session)',
+      statusCode: 401,
+    };
+  }
+
+  const question = quiz.questions.find(question => question.questionId === questionId);
+
+  if (!quiz || !question) {
+    return {
+      error: 'Question Id does not refer to a valid question within this quiz',
+      statusCode: 400,
+    };
+  }
+
+  if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    return {
+      error: 'Valid token is provided, but user is unauthorised to complete this action',
+      statusCode: 403,
+    };
+  }
+
+  if (questionBody.question.length < 5 || questionBody.question.length > 50) {
+    return {
+      error: 'Question Id does not refer to a valid question within this quiz',
+      statusCode: 400,
+    };
+  }
+
+  if (questionBody.answers.length < 2 || questionBody.answers.length > 6) {
+    return {
+      error: 'The question has more than 6 answers or less than 2 answers',
+      statusCode: 400,
+    };
+  }
+
+  if (questionBody.duration <= 0) {
+    return {
+      error: 'The question duration is not a positive number',
+      statusCode: 400,
+    };
+  }
+
+  let sum = 0;
+
+  for (const question of quiz.questions) {
+    sum += question.duration;
+  }
+
+  sum -= question.duration;
+  sum += questionBody.duration;
+
+  if (sum > 180) {
+    return {
+      error: 'If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes',
+      statusCode: 400,
+    };
+  }
+
+  if (questionBody.points < 1 || questionBody.points > 10) {
+    return {
+      error: 'The points awarded for the question are less than 1 or greater than 10',
+      statusCode: 400,
+    };
+  }
+
+  if (questionBody.answers.find(answer => answer.answer.length < 1) || questionBody.answers.find(answer => answer.answer.length > 30)) {
+    return {
+      error: 'The length of any answer is shorter than 1 character long, or longer than 30 characters long',
+      statusCode: 400,
+    };
+  }
+
+  for (let i = 0; i < questionBody.answers.length; i++) {
+    for (let j = i + 1; j < questionBody.answers.length; j++) {
+      if (questionBody.answers[i].answer === questionBody.answers[j].answer) {
+        return {
+          error: 'Any answer strings are duplicates of one another (within the same question)',
+          statusCode: 400,
+        };
+      }
+    }
+  }
+
+  if (!questionBody.answers.find(answer => answer.correct === true)) {
+    return {
+      error: 'There are no correct answers',
+      statusCode: 400,
+    };
+  }
+  const colour = ['red', 'green', 'blue'];
+
+  const answers: Answer[] = [];
+
+  for (const index in questionBody.answers) {
+    const pushObject: Answer = {
+      answerId: Number(index),
+      answer: questionBody.answers[index.answer],
+      colour: colour[Math.floor(Math.random()) % 3],
+      correct: questionBody.answers[index].correct,
+    };
+    answers.push(pushObject);
+  }
+
+  question.answers = answers;
+  question.duration = questionBody.duration;
+  question.points = questionBody.points;
+  question.question = questionBody.question;
+
+  quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+  return {};
+};
