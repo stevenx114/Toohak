@@ -8,6 +8,8 @@ import {
 
 import validator from 'validator';
 
+import HTTPError from 'http-errors';
+
 import {
   generateCustomUuid
 } from 'custom-uuid';
@@ -219,10 +221,7 @@ export const adminQuizNameUpdate = (token: string, quizId: number, name: string)
   const data = getData();
   const curToken = getToken(token);
   if (!curToken) {
-    return {
-      error: 'Token does not refer to valid logged in user session',
-      statusCode: 401
-    };
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
   }
 
   const curUserId = curToken.authUserId;
@@ -230,31 +229,19 @@ export const adminQuizNameUpdate = (token: string, quizId: number, name: string)
   const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
   const curQuizzesNames = curQuizzes.map(quiz => quiz.name);
   if (!validator.isAlphanumeric(name.replace(/\s/g, ''))) {
-    return {
-      error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Name contains invalid characters. Valid characters are alphanumeric and spaces');
   }
 
   if (name.length < 3 || name.length > 30) {
-    return {
-      error: 'Name is either less than 3 characters long or more than 30 characters long',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Name is either less than 3 characters long or more than 30 characters long');
   }
 
   if (curQuizzesNames.includes(name)) {
-    return {
-      error: 'Name is already used by the current logged in user for another quiz',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Name is already used by the current logged in user for another quiz');
   }
 
   if (!curUser.quizzesOwned.includes(quizId)) {
-    return {
-      error: 'Quiz ID does not refer to a quiz that this user owns',
-      statusCode: 403
-    };
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
 
   getQuiz(quizId).name = name;
@@ -578,10 +565,7 @@ export const adminQuizQuestionMove = (token: string, quizId: number, questionId:
   const data = getData();
   const curToken = getToken(token);
   if (!curToken) {
-    return {
-      error: 'Token does not refer to valid logged in user session',
-      statusCode: 401,
-    };
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
   }
 
   const curUserId = curToken.authUserId;
@@ -591,31 +575,19 @@ export const adminQuizQuestionMove = (token: string, quizId: number, questionId:
   const curQuestions = curQuiz.questions;
   const curQuestionIds = curQuestions.map(q => q.questionId);
   if (!curUser.quizzesOwned.includes(quizId)) {
-    return {
-      error: 'Quiz ID does not refer to a quiz that this user owns',
-      statusCode: 403,
-    };
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
 
   if (!curQuestionIds.includes(questionId)) {
-    return {
-      error: 'Question Id does not refer to a valid question within this quiz',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Question Id does not refer to a valid question within this quiz');
   }
 
   if (newPosition < 0 || newPosition > curQuiz.numQuestions - 1) {
-    return {
-      error: 'NewPosition cannot be less than 0 or greater than n-1 where n is the number of questions',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'NewPosition cannot be less than 0 or greater than n-1 where n is the number of questions');
   }
 
   if (newPosition === curQuestionIds.indexOf(questionId)) {
-    return {
-      error: 'NewPosition cannot be the position of the current question',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'NewPosition cannot be the position of the current question');
   }
 
   const initialIndex = curQuestionIds.indexOf(curQuestion.questionId);
@@ -640,10 +612,7 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
   const data = getData();
   const curToken = getToken(token);
   if (!curToken) {
-    return {
-      error: 'Token does not refer to valid logged in user session',
-      statusCode: 401,
-    };
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
   }
 
   const curUserId = curToken.authUserId;
@@ -653,17 +622,11 @@ export const adminQuizQuestionDuplicate = (token: string, quizId: number, questi
   const curQuestions = curQuiz.questions;
   const curQuestionIds = curQuestions.map(q => q.questionId);
   if (!curUser.quizzesOwned.includes(quizId)) {
-    return {
-      error: 'Quiz ID does not refer to a quiz that this user owns',
-      statusCode: 403,
-    };
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
 
   if (!curQuestionIds.includes(questionId)) {
-    return {
-      error: 'Question Id does not refer to a valid question within this quiz',
-      statusCode: 400,
-    };
+    throw HTTPError(400, 'Question Id does not refer to a valid question within this quiz');
   }
 
   const initialIndex = curQuestionIds.indexOf(curQuestion.questionId);

@@ -11,6 +11,8 @@ import {
 
 import validator from 'validator';
 
+import HTTPError from 'http-errors';
+
 import {
   ErrorObject,
   EmptyObject,
@@ -50,46 +52,21 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
   };
 
   if (data.users.some(user => user.email === email)) {
-    return {
-      error: 'Email address is used by another user',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Email address is used by another user');
   } else if (!validator.isEmail(email)) {
-    return {
-      error: 'Email address is invalid',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Email address is invalid');
   } else if (!allowedNameChars.test(nameFirst)) {
-    return {
-      error: 'First name contains forbidden characters',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'First name contains forbidden characters');
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return {
-      error: 'First name must be between 2 and 20 characters long',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'First name must be between 2 and 20 characters long');
   } else if (!allowedNameChars.test(nameLast)) {
-    return {
-      error: 'Last name contains forbidden characters',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Last name contains forbidden characters');
   } else if (nameLast.length < 2 || nameLast.length > 20) {
-    return {
-      error: 'Last name must be between 2 and 20 characters long',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Last name must be between 2 and 20 characters long');
   } else if (password.length < 8) {
-    return {
-      error: 'Password needs to be 8 characters or longer',
-      statusCode: 400
-    };
-  } else if (!((/[a-z]/.test(password) || /[A-Z]/.test(password)) &&
-                  /[0-9]/.test(password))) {
-    return {
-      error: 'Password must contain at least one number and at least one letter',
-      statusCode: 400
-    };
+    throw HTTPError(400, 'Password needs to be 8 characters or longer');
+  } else if (!((/[a-z]/.test(password) || /[A-Z]/.test(password)) && /[0-9]/.test(password))) {
+    throw HTTPError(400, 'Password must contain at least one number and at least one letter');
   }
 
   data.users.push(newUser);
@@ -179,10 +156,7 @@ export const adminAuthLogout = (token: string): EmptyObject | ErrorObject => {
   const curToken = getToken(token);
 
   if (!curToken) {
-    return {
-      error: 'Token does not refer to valid logged in user session',
-      statusCode: 401,
-    };
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
   }
 
   const indexOfToken = data.tokens.indexOf(curToken);
