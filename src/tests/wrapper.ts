@@ -193,3 +193,11 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminQuizSessionView
+export function requestQuizSessionView(quizId: number, token: string) {
+  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid + '/sessions', {
+    headers: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
