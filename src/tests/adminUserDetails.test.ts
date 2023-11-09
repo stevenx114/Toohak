@@ -10,6 +10,8 @@ import {
   requestClear,
 } from './wrapper';
 
+import HTTPError from 'http-errors';
+
 const ERROR = expect.any(String);
 
 beforeEach(() => {
@@ -43,14 +45,10 @@ describe('adminUserDetails', () => {
   // Error cases for adminUserDetails function
   describe('Error cases', () => {
     test('Token is empty', () => {
-      errorReturn = requestUserDetails('');
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestUserDetails('').toThrow(HTTPError[401]));
     });
     test('Token is invalid', () => {
-      errorReturn = requestUserDetails(token.token + 1);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestUserDetails(token.token + 1).toThrow(HTTPError[401]));
     });
   });
 });

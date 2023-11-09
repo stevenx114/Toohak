@@ -11,6 +11,8 @@ import {
   requestQuizList
 } from './wrapper';
 
+import HTTPError from 'http-errors';
+
 const ERROR = expect.any(String);
 
 describe('Clear Function implementation', () => {
@@ -27,9 +29,7 @@ describe('Clear Function implementation', () => {
 
   test('Removing user data', () => {
     expect(requestClear()).toStrictEqual({});
-    const res = requestUserDetails(token.token);
-    expect(res.error).toStrictEqual(ERROR);
-    expect(res.statusCode).toStrictEqual(401);
+    expect(() => requestUserDetails(token.token).toThrow(HTTPError[401]));
   });
 
   test('Removing quiz data', () => {
