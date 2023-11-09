@@ -1,7 +1,6 @@
 import {
   TokenReturn,
-  validDetails,
-  ErrorObject
+  validDetails
 } from '../types';
 
 import {
@@ -14,10 +13,7 @@ import {
 
 import HTTPError from 'http-errors';
 
-const ERROR = expect.any(String);
-
 let token: TokenReturn;
-let result: ErrorObject;
 
 beforeEach(() => {
   requestClear();

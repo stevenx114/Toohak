@@ -13,8 +13,6 @@ import {
 
 import HTTPError from 'http-errors';
 
-const ERROR = expect.any(String);
-
 describe('Clear Function implementation', () => {
   let token: TokenReturn;
 

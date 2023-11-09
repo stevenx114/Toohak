@@ -1,7 +1,6 @@
 import {
   TokenReturn,
-  validDetails,
-  ErrorObject
+  validDetails
 } from '../types';
 
 import {
@@ -12,15 +11,12 @@ import {
 
 import HTTPError from 'http-errors';
 
-const ERROR = expect.any(String);
-
 beforeEach(() => {
   requestClear();
 });
 
 // Tests for adminUserDetails function
 describe('adminUserDetails', () => {
-  let errorReturn: ErrorObject;
   let token: TokenReturn;
 
   // Success cases for adminUserDetails function
