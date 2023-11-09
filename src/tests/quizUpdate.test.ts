@@ -2,6 +2,8 @@ import { TokenReturn, questionBody } from '../types';
 import { QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
 import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizUpdate } from './wrapper';
 
+import HTTPError from 'http-errors';
+
 const validQuestionDetails: questionBody = {
   question: 'Who is the Monarch of England?',
   duration: 1,
@@ -15,8 +17,6 @@ const validQuestionDetails: questionBody = {
   },
   ],
 };
-
-const ERROR = expect.any(String);
 
 describe('quizUpdate', () => {
   let token: TokenReturn;
@@ -42,115 +42,76 @@ describe('quizUpdate', () => {
 
   describe('Invalid Input Tests', () => {
     test('Question Id does not refer to a valid question within this quiz', () => {
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId + 400, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId + 400, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('Question string is less than 5 characters in length', () => {
       questionBody.question = '';
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('Question string is greater than 50 characters in length', () => {
       questionBody.question = 'a'.repeat(52);
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('The question has more than 6 answers', () => {
       questionBody.answers.length = 10;
       questionBody.answers.fill(questionBody.answers[0]);
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('The question has less than 2 answers', () => {
       questionBody.answers.length = 1;
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes', () => {
       questionBody.duration = 181;
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('The points awarded for the question are less than 1', () => {
       questionBody.points = 0;
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('The points awarded for the question are greater than 10', () => {
       questionBody.points = 11;
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('The length of any answer is shorter than 1 character long', () => {
       questionBody.answers[0].answer = '';
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('Any answer strings are duplicates of one another (within the same question)', () => {
       questionBody.answers.push(questionBody.answers[0]);
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('No Correct Answers', () => {
       questionBody.answers[0].correct = false;
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
 
     test('Token in empty', () => {
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, '', questionBody);
-      expect(res.statusCode).toBe(401);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, '', questionBody).toThrow(HTTPError[401]));
     });
 
     test('Token is invalid', () => {
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token + 'a', questionBody);
-      expect(res.statusCode).toBe(401);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token + 'a', questionBody).toThrow(HTTPError[401]));
     });
 
     test('Valid token is provided, but user is unauthorised to complete this action', () => {
       const token2 = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token2.token, questionBody);
-      expect(res.statusCode).toBe(403);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token2.token, questionBody).toThrow(HTTPError[403]));
     });
 
     test('The length of any answer is longer than 30 characters long', () => {
       questionBody.answers[0].answer = 'a'.repeat(40);
-
-      const res = requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody);
-      expect(res.statusCode).toBe(400);
-      expect(res.error).toStrictEqual(ERROR);
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
     });
   });
 });

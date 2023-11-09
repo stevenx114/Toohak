@@ -2,8 +2,6 @@ import {
   validDetails,
   QuizIdReturn,
   TokenReturn,
-  ErrorObject,
-
 } from '../types';
 
 import {
@@ -14,7 +12,7 @@ import {
   requestQuizList,
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 // Tests for adminQuizRemove function
 describe('DELETE /v1/admin/quiz/{quizid}', () => {
@@ -22,7 +20,6 @@ describe('DELETE /v1/admin/quiz/{quizid}', () => {
   let noQuizUserToken: TokenReturn;
   let quizOneId: QuizIdReturn;
   let quizTwoId: QuizIdReturn;
-  let errorResult: ErrorObject;
   beforeEach(() => {
     requestClear();
     ownsQuizUserToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
@@ -56,20 +53,14 @@ describe('DELETE /v1/admin/quiz/{quizid}', () => {
   });
   describe('Error Cases', () => {
     test('Token is empty', () => {
-      errorResult = requestQuizRemove('', quizOneId.quizId);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(401);
+      expect(() => requestQuizRemove('', quizOneId.quizId).toThrow(HTTPError[401]));
     });
 
     test('Token is invalid', () => {
-      errorResult = requestQuizRemove(ownsQuizUserToken.token + '1', quizOneId.quizId);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(401);
+      expect(() => requestQuizRemove(ownsQuizUserToken.token + '1', quizOneId.quizId).toThrow(HTTPError[401]));
     });
     test('Quiz Id does not refer to a quiz that this user owns', () => {
-      errorResult = requestQuizRemove(noQuizUserToken.token, quizOneId.quizId);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(403);
+      expect(() => requestQuizRemove(noQuizUserToken.token, quizOneId.quizId).toThrow(HTTPError[403]));
     });
   });
 });

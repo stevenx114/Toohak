@@ -2,7 +2,6 @@ import {
   validDetails,
   QuizIdReturn,
   TokenReturn,
-  ErrorObject
 } from '../types';
 
 import {
@@ -13,7 +12,7 @@ import {
   requestLogout
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
@@ -24,7 +23,6 @@ describe('GET /v1/admin/quiz/list', () => {
   let user: TokenReturn;
   let quiz: QuizIdReturn;
   let quiz1: QuizIdReturn;
-  let errorResult: ErrorObject;
   beforeEach(() => {
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
@@ -32,22 +30,16 @@ describe('GET /v1/admin/quiz/list', () => {
 
   // Error cases
   test('Token is empty', () => {
-    errorResult = requestQuizList('');
-    expect(errorResult.error).toEqual(ERROR);
-    expect(errorResult.statusCode).toEqual(401);
+    expect(() => requestQuizList('').toThrow(HTTPError[401]));
   });
 
   test('Token is invalid', () => {
-    errorResult = requestQuizList(user.token + 1);
-    expect(errorResult.error).toEqual(ERROR);
-    expect(errorResult.statusCode).toEqual(401);
+    expect(() => requestQuizList(user.token + 1).toThrow(HTTPError[401]));
   });
 
   test('Token does not refer to valid logged in user session', () => {
     requestLogout(user.token);
-    errorResult = requestQuizList(user.token);
-    expect(errorResult.error).toEqual(ERROR);
-    expect(errorResult.statusCode).toEqual(401);
+    expect(() => requestQuizList(user.token).toThrow(HTTPError[401]));
   });
 
   // success cases:
