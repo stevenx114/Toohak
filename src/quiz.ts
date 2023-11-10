@@ -30,6 +30,8 @@ import {
   sessions
 } from './types';
 
+import HTTPError from 'http-errors';
+
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
@@ -935,7 +937,32 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   return {};
 };
 
+/**
+ * 
+ * @param quizId 
+ * @param token 
+ * @returns 
+ */
 export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
+  const data = getData();
+  const quiz = getQuiz(quizId);
+  const findToken = getToken(token) as Token;
+  
+  if (!token) {
+    throw HTTPError(401, 'Token is empty');
+  } 
+
+  if (!findToken) {
+    throw HTTPError(401, 'Invalid token');
+  } 
+
+  const user = getUser(findToken.authUserId);
+  const hasQuizId = user.quizzesOwned.find(quiz => quiz === quizId);
+
+  if (!hasQuizId) {
+    throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
+  }
+  
   const viewSessionList = {
     activeSessions: [],
     inactiveSessions: [],
