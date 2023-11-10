@@ -35,6 +35,7 @@ export interface Quiz {
   numQuestions?: number;
   questions?: Question[];
   duration?: number;
+  session:
 }
 
 export interface Token {
