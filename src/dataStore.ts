@@ -60,11 +60,6 @@ export interface session {
 
 export const sessions: session[] = []; // Array of sessions
 
-const sessionTime: {
-  sessionId: number;
-  sessionDuration: ReturnType<typeof setTimeout>[];
-}[] = [];
-
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {
