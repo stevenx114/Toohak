@@ -193,3 +193,11 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for playerJoin
+export function requestPlayerJoin(sessionId: number, name: string) {
+  const res = request('POST', SERVER_URL + '/v1/player/join', {
+    json: { sessionId: sessionId, name: name }
+  });
+  return JSON.parse(res.body.toString());
+}
