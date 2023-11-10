@@ -25,7 +25,9 @@ import {
   getUserByEmail,
   QuestionBody,
   QuestionIdReturn,
-  QuestionDuplicateReturn
+  QuestionDuplicateReturn,
+  SessionList,
+  sessions
 } from './types';
 
 /**
@@ -931,4 +933,23 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
   return {};
+};
+
+export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
+  const viewSessionList = {
+    activeSessions: [],
+    inactiveSessions: [],
+  }
+
+  for (const session of sessions) {
+    if (session.quizId === quizId) {
+      if (session.state === 'END') {
+        viewSessionList.inactiveSessions.push(session.sessionId);
+      } else {
+        viewSessionList.activeSessions.push(session.sessionId);
+      }
+    }
+  }
+
+  return viewSessionList;
 };
