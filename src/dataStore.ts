@@ -50,6 +50,21 @@ export interface DataStore {
   trash?: Quiz[];
 }
 
+// Data for sessions and timers
+export interface session {
+  sessionId: number;
+  quizId: number;
+  currentQuestion: number;
+  state: string;
+}
+
+export const sessions: session[] = []; // Array of sessions
+
+const sessionTime: {
+  sessionId: number;
+  sessionDuration: ReturnType<typeof setTimeout>[];
+}[] = [];
+
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {
@@ -73,3 +88,5 @@ export const setData = (newData: DataStore) => {
   data = newData;
   writeData(data);
 };
+
+

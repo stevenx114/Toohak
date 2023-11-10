@@ -120,3 +120,8 @@ export interface questionBody {
   points: number,
   answers: questionAnswer[];
 }
+
+export interface SessionList {
+  activeSessions: number[];
+  inactiveSessions: number[];
+}
