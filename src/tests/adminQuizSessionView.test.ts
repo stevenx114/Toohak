@@ -1,18 +1,21 @@
 import {
-    validDetails,
-    TokenReturn,
-    ErrorObject
-  } from '../types';
-  
-  import {
-    requestAuthRegister,
-    requestQuizCreate,
-    requestClear,
-    requestQuizSessionView,
-    requestLogout,
-    requestQuizQuestionCreate
-  } from './wrapper';  
+  validDetails,
+  TokenReturn,
+  ErrorObject,
+  QuizIdReturn,
+} from '../types';
 
+import {
+  requestAuthRegister,
+  requestQuizCreate,
+  requestClear,
+  requestQuizSessionView,
+  requestLogout,
+  requestQuizQuestionCreate
+} from './wrapper';  
+
+interface QuizId { quizId: number };
+interface TokenObject { token: string };
 const ERROR = expect.any(String);
 
 beforeEach(() => {
@@ -21,32 +24,31 @@ beforeEach(() => {
 
 // Tests for adminQuizSessionView
 describe('GET adminQuizSessionView', () => {
-  let userToken: TokenReturn;
-  let errorResult: ErrorObject;
+  let user: TokenObject;
+  let quiz: QuizId;
   beforeEach(() => {
-    userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    quizCreateReturn = requestQuizCreate(user1.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    quiz1 = quizCreateReturn as QuizIdReturn;
+    requestClear();
+    user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    quiz = requestQuizCreate(userToken, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   // Error Cases
   test('Token is empty', () => {
-    errorResult = requestQuizSessionView(userToken.token, '');
-    expect(errorResult.error).toStrictEqual(ERROR);
-    expect(errorResult.statusCode).toStrictEqual(401);
+    expect(() => requestQuizSessionView(quiz.quizId, '')).toThrow(HTTPError[401]);
   });
 
   test('Valid token but not for logged in user', () => {
-    const user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
-    const token2 = user2 as TokenReturn;
-    requestLogout(token2.token);
+    const user1: TokenObject = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
+    requestLogout(user1.token);
+    expect(() => requestQuizSessionView(quiz.quizId, user1.token).toThrow(HTTPError[401]));
+  });
 
-    const errorResult = requestQuizSessionView(token2.token, quiz1.quizId);
-    expect(errorResult.error).toStrictEqual(ERROR);
-    expect(errorResult.statusCode).toStrictEqual(403);
+  test('Valid token but not the correct quiz owner', () => {
+    const user1: TokenObject = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
+    // Try to add question into another quiz from the second user.
+    expect(() => requestQuizSessionView(quiz.quizId, user1.token).toThrow(HTTPError[403]));
   });
 
   // Success cases
   test('')
-});
+}); 
