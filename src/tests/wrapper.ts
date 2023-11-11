@@ -193,3 +193,11 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminQuizQuestionDuplicateV2
+export function requestQuizQuestionDuplicateV2(token: string, quizId: number, questionId: number) {
+  const res = request('POST', SERVER_URL + '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
+    headers: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
