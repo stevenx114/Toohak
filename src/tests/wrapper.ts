@@ -193,3 +193,12 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminQuizQuestionMoveV2
+export function requestQuizQuestionMoveV2(token: string, quizId: number, questionId: number, newPosition: number) {
+  const res = request('PUT', SERVER_URL + '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
+    headers: {token: token},
+    json: { newPosition: newPosition }
+  });
+  return JSON.parse(res.body.toString());
+}
