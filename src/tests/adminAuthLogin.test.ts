@@ -1,6 +1,5 @@
 import {
   validDetails,
-  ErrorObject,
   TokenReturn,
   UserDetailsReturn,
 } from '../types';
@@ -12,7 +11,7 @@ import {
   requestClear,
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 // Tests for function adminAuthLogin
 describe('Tests for adminAuthLogin', () => {
@@ -51,18 +50,13 @@ describe('Tests for adminAuthLogin', () => {
   });
   // Error cases for adminAuthLogin
   describe('Error Cases', () => {
-    let errorReturn: ErrorObject;
     const invalidEmail = 'jamesbrown@gmail.com';
 
     test('Testing invalid email', () => {
-      errorReturn = requestAuthLogin(invalidEmail, validDetails.PASSWORD);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(400);
+      expect(() => requestAuthLogin(invalidEmail, validDetails.PASSWORD).toThrow(HTTPError[400]));
     });
     test('Testing incorrect password', () => {
-      errorReturn = requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD_2);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(400);
+      expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD_2).toThrow(HTTPError[400]));
     });
   });
 });

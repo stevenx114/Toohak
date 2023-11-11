@@ -2,7 +2,6 @@ import {
   validDetails,
   QuizIdReturn,
   TokenReturn,
-  ErrorObject,
   QuestionIdReturn,
   QuestionBody
 } from '../types';
@@ -21,14 +20,13 @@ import {
   Question
 } from '../dataStore';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;
   let questionId1: QuestionIdReturn;
   let questionId2: QuestionIdReturn;
-  let errorReturn: ErrorObject;
   let quizQuestions: Question[];
   const VALID_Q_BODY_1: QuestionBody = {
     question: 'question1',
@@ -87,29 +85,21 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
 
   describe('Error Cases', () => {
     test('Question Id does not refer to a valid question within this quiz', () => {
-      errorReturn = requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, -1);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(400);
+      expect(() => requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, -1).toThrow(HTTPError[400]));
     });
 
     test('Token is empty', () => {
-      errorReturn = requestQuizQuestionDuplicate('', userQuizId.quizId, questionId1.questionId);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestQuizQuestionDuplicate('', userQuizId.quizId, questionId1.questionId).toThrow(HTTPError[401]));
     });
 
     test('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
-      errorReturn = requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId).toThrow(HTTPError[401]));
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
       const noQuizzesUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      errorReturn = requestQuizQuestionDuplicate(noQuizzesUserToken.token, userQuizId.quizId, questionId1.questionId);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(403);
+      expect(() => requestQuizQuestionDuplicate(noQuizzesUserToken.token, userQuizId.quizId, questionId1.questionId).toThrow(HTTPError[403]));
     });
   });
 });
