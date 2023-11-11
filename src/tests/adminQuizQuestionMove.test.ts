@@ -12,7 +12,7 @@ import {
   requestQuizCreate,
   requestQuizInfo,
   requestLogout,
-  requestQuizQuestionMove,
+  requestQuizQuestionMoveV2,
   requestQuizQuestionCreate,
   requestClear
 } from './wrapper';
@@ -90,7 +90,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
 
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
-      expect(requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 0)).toEqual({});
+      expect(requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 0)).toEqual({});
       const quizQuestions: Question[] = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
       const quizQuestionIds = quizQuestions.map(q => q.questionId);
       expect(quizQuestionIds.indexOf(questionId3.questionId)).toEqual(0);
@@ -101,39 +101,39 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
 
   describe('Error Cases', () => {
     test('Question Id does not refer to a valid question within this quiz', () => {
-      errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, -1, 0);
+      errorReturn = requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, -1, 0);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(400);
     });
 
     test('NewPosition is less than 0', () => {
-      errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, -1);
+      errorReturn = requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, -1);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(400);
     });
 
     test('NewPosition is greater than n-1 where n is the number of questions', () => {
-      errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 4);
+      errorReturn = requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 4);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(400);
     });
 
     test('Token is empty', () => {
-      errorReturn = requestQuizQuestionMove('', userQuizId.quizId, questionId3.questionId, 0);
+      errorReturn = requestQuizQuestionMoveV2('', userQuizId.quizId, questionId3.questionId, 0);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(401);
     });
 
     test('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
-      errorReturn = requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 0);
+      errorReturn = requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 0);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(401);
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
       const noQuizzesUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      errorReturn = requestQuizQuestionMove(noQuizzesUserToken.token, userQuizId.quizId, questionId3.questionId, 0);
+      errorReturn = requestQuizQuestionMoveV2(noQuizzesUserToken.token, userQuizId.quizId, questionId3.questionId, 0);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(403);
     });
