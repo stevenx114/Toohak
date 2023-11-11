@@ -1,8 +1,7 @@
 import {
   validDetails,
   QuizIdReturn,
-  TokenReturn,
-  ErrorObject
+  TokenReturn
 } from '../types';
 
 import {
@@ -13,7 +12,7 @@ import {
   requestQuizNameUpdate
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
@@ -23,7 +22,6 @@ beforeEach(() => {
 describe('PUT /v1/admin/quiz/{quizid}/name', () => {
   let newUser: TokenReturn;
   let newQuiz: QuizIdReturn;
-  let errorResult: ErrorObject;
   beforeEach(() => {
     newUser = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     newQuiz = requestQuizCreate(newUser.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
@@ -44,47 +42,33 @@ describe('PUT /v1/admin/quiz/{quizid}/name', () => {
   // Error cases for adminQuizNameUpdate function
   describe('Error cases', () => {
     test('Token is empty', () => {
-      errorResult = requestQuizNameUpdate('', newQuiz.quizId, 'name Updated');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(401);
+      expect(() => requestQuizNameUpdate('', newQuiz.quizId, 'name Updated').toThrow(HTTPError[401]));
     });
 
     test('Token is invalid', () => {
-      errorResult = requestQuizNameUpdate(newUser.token + 1, newQuiz.quizId, 'name Updated');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(401);
+      expect(() => requestQuizNameUpdate(newUser.token + 1, newQuiz.quizId, 'name Updated').toThrow(HTTPError[401]));
     });
 
     test('Quiz ID does not refer to a quiz that this user owns', () => {
       const noQuizzesUser = requestAuthRegister('noquizzesuser@gmail.com', validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      errorResult = requestQuizNameUpdate(noQuizzesUser.token, newQuiz.quizId, 'name Updated');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(403);
+      expect(() => requestQuizNameUpdate(noQuizzesUser.token, newQuiz.quizId, 'name Updated').toThrow(HTTPError[403]));
     });
 
     test('Name contains invalid characters. Valid characters are alphanumeric and spaces', () => {
-      errorResult = requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'name Updated!');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(400);
+      expect(() => requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'name Updated!').toThrow(HTTPError[400]));
     });
 
     test('Name is less than 3 characters long', () => {
-      errorResult = requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'na');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(400);
+      expect(() => requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'na').toThrow(HTTPError(400)));
     });
 
     test('Name is more than 30 characters long', () => {
-      errorResult = requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'nameUpdatednameUpdatednameUpdated');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(400);
+      expect(() => requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'nameUpdatednameUpdatednameUpdated').toThrow(HTTPError(400)));
     });
 
     test('Name is already used by the current logged in user for another quiz', () => {
       requestQuizCreate(newUser.token, 'nameOther', validDetails.DESCRIPTION);
-      errorResult = requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'nameOther');
-      expect(errorResult.error).toEqual(ERROR);
-      expect(errorResult.statusCode).toEqual(400);
+      expect(() => requestQuizNameUpdate(newUser.token, newQuiz.quizId, 'nameOther').toThrow(HTTPError(400)));
     });
   });
 });

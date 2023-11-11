@@ -1,6 +1,7 @@
 import { requestAuthRegister, requestClear, requestQuizCreate, requestTrashView, requestQuizRemove } from './wrapper';
 import { validDetails, TokenReturn, QuizIdReturn } from '../types';
-const ERROR = expect.any(String);
+
+import HTTPError from 'http-errors';
 
 describe('tests for view Trash', () => {
   let token: TokenReturn;
@@ -14,9 +15,7 @@ describe('tests for view Trash', () => {
 
   // Error cases
   test('Invalid token', () => {
-    const res = requestTrashView(token.token + 'a');
-    expect(res.statusCode).toBe(401);
-    expect(res.error).toStrictEqual(ERROR);
+    expect(() => requestTrashView(token.token + 'a').toThrow(HTTPError[401]));
   });
 
   // Success cases
