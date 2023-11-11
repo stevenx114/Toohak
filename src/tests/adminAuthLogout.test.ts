@@ -8,7 +8,7 @@ import {
   requestAuthRegister,
   requestUserDetails,
   requestClear,
-  requestLogout
+  requestLogoutV2
 } from './wrapper';
 
 const ERROR = expect.any(String);
@@ -26,7 +26,7 @@ describe('POST /v1/admin/auth/logout', () => {
 
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
-      expect(requestLogout(userToken.token)).toEqual({});
+      expect(requestLogoutV2(userToken.token)).toEqual({});
       errorReturn = requestUserDetails(userToken.token);
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(401);
@@ -35,13 +35,13 @@ describe('POST /v1/admin/auth/logout', () => {
 
   describe('Error Cases', () => {
     test('Token is empty', () => {
-      errorReturn = requestLogout('');
+      errorReturn = requestLogoutV2('');
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(401);
     });
 
     test('Token is invalid', () => {
-      errorReturn = requestLogout('invalidToken');
+      errorReturn = requestLogoutV2('invalidToken');
       expect(errorReturn.error).toEqual(ERROR);
       expect(errorReturn.statusCode).toEqual(401);
     });
