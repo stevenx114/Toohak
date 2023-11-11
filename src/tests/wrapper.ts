@@ -193,3 +193,11 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminAuthLogoutV2
+export function requestLogout(token: string) {
+  const res = request('POST', SERVER_URL + '/v2/admin/auth/logout', {
+    headers: { token: token }
+  });
+  return JSON.parse(res.body.toString());
+}
