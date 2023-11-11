@@ -195,7 +195,7 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
 }
 
 // Wrapper for adminAuthLogoutV2
-export function requestLogout(token: string) {
+export function requestLogoutV2(token: string) {
   const res = request('POST', SERVER_URL + '/v2/admin/auth/logout', {
     headers: { token: token }
   });
