@@ -13,6 +13,7 @@ export interface Question {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailURL: string;
 }
 
 export interface User {
@@ -49,6 +50,24 @@ export interface DataStore {
   trash?: Quiz[];
 }
 
+export interface Player {
+  playerId: number;
+  score: number;
+  name: string;
+  sessionId: number;
+}
+
+export interface Session {
+  sessionId: number;
+  quizId: number;
+  currentQuestion: number;
+  state: string;
+  players: Player[];
+  thumbnailURL: string;
+}
+
+export const sessions: session[] = []; // Array of sessions
+
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {
@@ -72,3 +91,5 @@ export const setData = (newData: DataStore) => {
   data = newData;
   writeData(data);
 };
+
+
