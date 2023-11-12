@@ -49,12 +49,13 @@ const requestHelper = (
   // potentially failing on a different expect statement without useful outputs
   switch (res.statusCode) {
     case 400: // BAD_REQUEST
+      throw HTTPError(res.statusCode, errorMessage);
     case 401: // UNAUTHORIZED
       throw HTTPError(res.statusCode, errorMessage);
     case 403:
       throw HTTPError(res.statusCode, errorMessage);
     case 404: // NOT_FOUND
-      throw HTTPError(res.statusCode, `Cannot find '${url}' [${method}]\nReason: ${errorMessage}\n\nHint: Check that your server.ts have the correct path AND method`);
+      throw HTTPError(res.statusCode, `Cannot find '$rver.ts have the correct path AND method`);
     case 500: // INTERNAL_SERVER_ERROR
       throw HTTPError(res.statusCode, errorMessage + '\n\nHint: Your server crashed. Check the server log!\n');
     default:
@@ -151,4 +152,8 @@ export function requestQuizQuestionDuplicate(token: string, quizId: number, ques
 
 export function requestQuizUpdate(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token, questionBody });
+}
+
+export function requestNonExistentRoute() {
+  return requestHelper('POST', '/non-existent-route', {});
 }
