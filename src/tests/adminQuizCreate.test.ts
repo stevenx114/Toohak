@@ -40,7 +40,7 @@ describe('POST v1/admin/quiz', () => {
     { name: '12' }, // < 2 chars
     { name: 'qwerty'.repeat(6) }, // > 30 chars
   ])('invalid name input: $name', ({ name }) => {
-    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
+    expect(() => requestQuizCreate(userToken.token, name, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
   });
 
   test('description too long', () => {
