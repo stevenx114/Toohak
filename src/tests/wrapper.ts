@@ -195,7 +195,7 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
 }
 
 // Wrapper for adminQuizSessionView
-export function requestQuizSessionView(quizId: number, token: string) {
+export function requestQuizSessionView(token: string, quizId: number) {
   const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizId + '/sessions', {
     headers: { token: token }
   });
