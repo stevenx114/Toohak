@@ -27,7 +27,7 @@ describe('Clear Function implementation', () => {
 
   test('Removing user data', () => {
     expect(requestClear()).toStrictEqual({});
-    expect(() => requestUserDetails(token.token).toThrow(HTTPError[401]));
+    expect(() => requestUserDetails(token.token)).toThrow(HTTPError[401]);
   });
 
   test('Removing quiz data', () => {

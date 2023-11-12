@@ -44,18 +44,18 @@ describe('Tests for adminQuizEmptyTrash', () => {
   describe('Error cases for adminQuizEmptyTrash', () => {
     test('Trying to empty quizzes not in trash', () => {
       arrayOfIds = '[' + quiz.quizId.toString() + ']';
-      expect(() => requestEmptyTrash(token.token, arrayOfIds).toThrow(HTTPError[400]));
+      expect(() => requestEmptyTrash(token.token, arrayOfIds)).toThrow(HTTPError[400]);
     });
     test('Testing for invalid token', () => {
       requestQuizRemove(token.token, quiz.quizId);
       arrayOfIds = '[' + quiz.quizId.toString() + ']';
-      expect(() => requestEmptyTrash(token.token, arrayOfIds).toThrow(HTTPError[401]));
+      expect(() => requestEmptyTrash(token.token, arrayOfIds)).toThrow(HTTPError[401]);
     });
     test('Quiz ID refers to a quiz that current user does not own', () => {
       const noQuizzes = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
       requestQuizRemove(token.token, quiz.quizId);
       arrayOfIds = '[' + quiz.quizId.toString() + ']';
-      expect(() => requestEmptyTrash(noQuizzes.token, arrayOfIds).toThrow(HTTPError[403]));
+      expect(() => requestEmptyTrash(noQuizzes.token, arrayOfIds)).toThrow(HTTPError[403]);
     });
   });
 });

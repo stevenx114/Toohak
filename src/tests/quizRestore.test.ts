@@ -24,25 +24,25 @@ describe('quizRestore test', () => {
   describe('Invalid Input Tests', () => {
     test('Quiz name of the restored quiz is already used by another active quiz', () => {
       requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-      expect(() => requestQuizRestore(quizId.quizId, token.token).toThrow(HTTPError[400]));
+      expect(() => requestQuizRestore(quizId.quizId, token.token)).toThrow(HTTPError[400]);
     });
 
     test('Quiz ID refers to a quiz that is not currently in the trash', () => {
       quizId = requestQuizCreate(token.token, 'a' + validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-      expect(() => requestQuizRestore(quizId.quizId, token.token).toThrow(HTTPError[400]));
+      expect(() => requestQuizRestore(quizId.quizId, token.token)).toThrow(HTTPError[400]);
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
       const token2 = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      expect(() => requestQuizRestore(quizId.quizId, token2.token).toThrow(HTTPError[403]));
+      expect(() => requestQuizRestore(quizId.quizId, token2.token)).toThrow(HTTPError[403]);
     });
 
     test('Token is empty', () => {
-      expect(() => requestQuizRestore(quizId.quizId, '123').toThrow(HTTPError[401]));
+      expect(() => requestQuizRestore(quizId.quizId, '123')).toThrow(HTTPError[401]);
     });
 
     test('Token is invalid and does not refer to a valid loggin in user', () => {
-      expect(() => requestQuizRestore(quizId.quizId, '231').toThrow(HTTPError[401]));
+      expect(() => requestQuizRestore(quizId.quizId, '231')).toThrow(HTTPError[401]);
     });
   });
 });

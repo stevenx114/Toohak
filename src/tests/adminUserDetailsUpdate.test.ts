@@ -53,7 +53,7 @@ describe('PUT /v1/admin/user/details', () => {
     ];
 
     test.each(testCases)('%s', (testName, tokenValue, email, firstName, lastName) => {
-      expect(() => requestUserDetailsUpdate(tokenValue, email, firstName, lastName).toThrow(HTTPError[401]));
+      expect(() => requestUserDetailsUpdate(tokenValue, email, firstName, lastName)).toThrow(HTTPError[401]);
     });
   });
 });

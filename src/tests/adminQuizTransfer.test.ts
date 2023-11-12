@@ -101,27 +101,27 @@ describe('POST v1/admin/quiz/:quizid/transfer', () => {
   // Error cases for adminQuizTransfer
   describe('Error Cases', () => {
     test('Token is empty', () => {
-      expect(() => requestQuizTransfer('', quiz1.quizId, validDetails.EMAIL_2).toThrow(HTTPError[401]));
+      expect(() => requestQuizTransfer('', quiz1.quizId, validDetails.EMAIL_2)).toThrow(HTTPError[401]);
     });
 
     test('Token is invalid', () => {
-      expect(() => requestQuizTransfer(userOne.token + '1', quiz1.quizId, validDetails.EMAIL_2).toThrow(HTTPError[401]));
+      expect(() => requestQuizTransfer(userOne.token + '1', quiz1.quizId, validDetails.EMAIL_2)).toThrow(HTTPError[401]);
     });
 
     test('Quiz Id does not refer to a quiz that this user owns', () => {
-      expect(() => requestQuizTransfer(userOne.token, quiz2.quizId, validDetails.EMAIL_2).toThrow(HTTPError[403]));
+      expect(() => requestQuizTransfer(userOne.token, quiz2.quizId, validDetails.EMAIL_2)).toThrow(HTTPError[403]);
     });
 
     test('userEmail is not a real user', () => {
-      expect(() => requestQuizTransfer(userOne.token, quiz1.quizId, 'ilovecats@gmail.com').toThrow(HTTPError[400]));
+      expect(() => requestQuizTransfer(userOne.token, quiz1.quizId, 'ilovecats@gmail.com')).toThrow(HTTPError[400]);
     });
 
     test('userEmail is the current logged in user', () => {
-      expect(() => requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL).toThrow(HTTPError[400]));
+      expect(() => requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL)).toThrow(HTTPError[400]);
     });
 
     test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
-      expect(() => requestQuizTransfer(userOne.token, quiz3.quizId, validDetails.EMAIL_2).toThrow(HTTPError[400]));
+      expect(() => requestQuizTransfer(userOne.token, quiz3.quizId, validDetails.EMAIL_2)).toThrow(HTTPError[400]);
     });
   });
 });

@@ -35,9 +35,9 @@ describe('POST /v1/admin/auth/register', () => {
       ['Password does not contain at least one number and at least one letter', validDetails.EMAIL, 'password', validDetails.FIRST_NAME, validDetails.LAST_NAME],
     ])('%s', (testName, email, password, firstName, lastName) => {
       if (testName === 'Existing email') {
-        expect(() => requestAuthRegister(email, password, firstName, lastName).toThrow(HTTPError[400]));
+        requestAuthRegister(email, password, firstName, lastName);
       }
-      expect(() => requestAuthRegister(email, password, firstName, lastName).toThrow(HTTPError[400]));
+      expect(() => requestAuthRegister(email, password, firstName, lastName)).toThrow(HTTPError[400]);
     });
   });
 });

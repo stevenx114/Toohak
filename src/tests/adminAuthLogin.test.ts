@@ -53,10 +53,10 @@ describe('Tests for adminAuthLogin', () => {
     const invalidEmail = 'jamesbrown@gmail.com';
 
     test('Testing invalid email', () => {
-      expect(() => requestAuthLogin(invalidEmail, validDetails.PASSWORD).toThrow(HTTPError[400]));
+      expect(() => requestAuthLogin(invalidEmail, validDetails.PASSWORD)).toThrow(HTTPError[400]);
     });
     test('Testing incorrect password', () => {
-      expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD_2).toThrow(HTTPError[400]));
+      expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD_2)).toThrow(HTTPError[400]);
     });
   });
 });

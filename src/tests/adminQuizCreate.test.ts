@@ -25,11 +25,11 @@ describe('POST v1/admin/quiz', () => {
 
   // Error cases for AdminQuizCreate function
   test('Token is empty', () => {
-    expect(() => requestQuizCreate('', validDetails.QUIZ_NAME, validDetails.DESCRIPTION).toThrow(HTTPError[400]));
+    expect(() => requestQuizCreate('', validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
   });
 
   test('Token is invalid', () => {
-    expect(() => requestQuizCreate(userToken.token + 1, validDetails.QUIZ_NAME, validDetails.DESCRIPTION).toThrow(HTTPError[400]));
+    expect(() => requestQuizCreate(userToken.token + 1, validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
   });
 
   test.each([
@@ -40,16 +40,16 @@ describe('POST v1/admin/quiz', () => {
     { name: '12' }, // < 2 chars
     { name: 'qwerty'.repeat(6) }, // > 30 chars
   ])('invalid name input: $name', ({ name }) => {
-    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION).toThrow(HTTPError[400]));
+    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
   });
 
   test('description too long', () => {
     const longDescription = 'description'.repeat(10);
-    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, longDescription).toThrow(HTTPError[400]));
+    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, longDescription)).toThrow(HTTPError[400]);
   });
 
   test('existing quiz name', () => {
-    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION).toThrow(HTTPError[400]));
+    expect(() => requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
   });
 
   // Success case for adminQuizCreate function

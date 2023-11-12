@@ -15,7 +15,7 @@ describe('tests for view Trash', () => {
 
   // Error cases
   test('Invalid token', () => {
-    expect(() => requestTrashView(token.token + 'a').toThrow(HTTPError[401]));
+    expect(() => requestTrashView(token.token + 'a')).toThrow(HTTPError[401]);
   });
 
   // Success cases

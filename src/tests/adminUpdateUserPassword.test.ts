@@ -43,24 +43,24 @@ describe('Tests for adminUpdateUserPassword', () => {
   });
   describe('Error Cases', () => {
     test('Old password same as new password', () => {
-      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, validDetails.PASSWORD).toThrow(HTTPError[400]));
+      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, validDetails.PASSWORD)).toThrow(HTTPError[400]);
     });
     test('Old password is not the same as current password', () => {
-      expect(() => requestAdminUpdateUserPassword(token.token, 'samplePassword1', validDetails.PASSWORD).toThrow(HTTPError[400]));
+      expect(() => requestAdminUpdateUserPassword(token.token, 'samplePassword1', validDetails.PASSWORD)).toThrow(HTTPError[400]);
     });
     test('New Password has already been used before by this User', () => {
       // Assume that the first call to requestAdminUpdateUserPassword is part of the setup and does not throw.
       requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, newPassword);
-      expect(() => requestAdminUpdateUserPassword(token.token, newPassword, validDetails.PASSWORD).toThrow(HTTPError[400]));
+      expect(() => requestAdminUpdateUserPassword(token.token, newPassword, validDetails.PASSWORD)).toThrow(HTTPError[400]);
     });
     test('New Password is less than 8 characters', () => {
-      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, 'abcdef1').toThrow(HTTPError[400]));
+      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, 'abcdef1')).toThrow(HTTPError[400]);
     });
     test('New Password does not contain at least one letter', () => {
-      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, '12345678').toThrow(HTTPError[400]));
+      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, '12345678')).toThrow(HTTPError[400]);
     });
     test('New Password does not contain at least one number', () => {
-      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, 'abcdefgh').toThrow(HTTPError[400]));
+      expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, 'abcdefgh')).toThrow(HTTPError[400]);
     });
   });
 });

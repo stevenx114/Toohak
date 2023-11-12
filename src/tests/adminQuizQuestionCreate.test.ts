@@ -51,24 +51,24 @@ describe.only('Tests for adminQuizQuestionCreate', () => {
   // Error tests
   // Tests for invalid token structure
   test('Empty token', () => {
-    expect(() => requestQuizQuestionCreate('', quiz1.quizId, VALID_Q_BODY).toThrow(HTTPError[401]));
+    expect(() => requestQuizQuestionCreate('', quiz1.quizId, VALID_Q_BODY)).toThrow(HTTPError[401]);
   });
 
   test('Invalid token', () => {
-    expect(() => requestQuizQuestionCreate(user1.token + 1, quiz1.quizId, VALID_Q_BODY).toThrow(HTTPError[401]));
+    expect(() => requestQuizQuestionCreate(user1.token + 1, quiz1.quizId, VALID_Q_BODY)).toThrow(HTTPError[401]);
   });
 
   test('Valid token but not for logged in user', () => {
     const user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     const token2 = user2 as TokenReturn;
     requestLogout(token2.token);
-    expect(() => requestQuizQuestionCreate(token2.token, quiz1.quizId, VALID_Q_BODY).toThrow(HTTPError[401]));
+    expect(() => requestQuizQuestionCreate(token2.token, quiz1.quizId, VALID_Q_BODY)).toThrow(HTTPError[401]);
   });
 
   test('Valid token but not the correct quiz owner', () => {
     const user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     // Try to add question into another quiz from the second user.
-    expect(() => requestQuizQuestionCreate(user2.token, quiz1.quizId, VALID_Q_BODY).toThrow(HTTPError[403]));
+    expect(() => requestQuizQuestionCreate(user2.token, quiz1.quizId, VALID_Q_BODY)).toThrow(HTTPError[403]);
   });
 
   // Tests for invalid question body
@@ -294,7 +294,7 @@ describe.only('Tests for adminQuizQuestionCreate', () => {
       }
     }, // Question has no correct answers
   ])("Invalid question body: '$questionBody'", ({ questionBody }) => {
-    expect(() => requestQuizQuestionCreate(user1.token, quiz1.quizId, questionBody).toThrow(HTTPError[400]));
+    expect(() => requestQuizQuestionCreate(user1.token, quiz1.quizId, questionBody)).toThrow(HTTPError[400]);
   });
 
   // Success test
