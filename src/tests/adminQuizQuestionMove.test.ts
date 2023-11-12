@@ -111,7 +111,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
     });
 
     test('NewPosition cannot be the position of the current question', () => {
-      expect(() => requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId1.questionId, 0)).toThrow(HTTPError[400]);
+      expect(() => requestQuizQuestionMove(userToken.token, userQuizId.quizId, questionId3.questionId, 2)).toThrow(HTTPError[400]);
     });
 
     test('Token is empty', () => {
