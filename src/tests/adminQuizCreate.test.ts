@@ -25,11 +25,11 @@ describe('POST v1/admin/quiz', () => {
 
   // Error cases for AdminQuizCreate function
   test('Token is empty', () => {
-    expect(() => requestQuizCreate('', validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
+    expect(() => requestQuizCreate('', validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[401]);
   });
 
   test('Token is invalid', () => {
-    expect(() => requestQuizCreate(userToken.token + 1, validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[400]);
+    expect(() => requestQuizCreate(userToken.token + 1, validDetails.QUIZ_NAME, validDetails.DESCRIPTION)).toThrow(HTTPError[401]);
   });
 
   test.each([
