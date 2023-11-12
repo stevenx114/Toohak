@@ -8,7 +8,7 @@ import {
 
 import HTTPError from 'http-errors';
 
-const NUMBER = expect.any(Number);
+const NUMBER = { questionId: expect.any(Number) };
 
 import {
   requestQuizQuestionCreate,
@@ -34,18 +34,17 @@ const VALID_Q_BODY: QuestionBody = {
     }
   ]
 };
-describe.only('Tests for adminQuizQuestionCreate', () => {
-  let registerReturn: TokenReturn;
-  let quizCreateReturn: QuizIdReturn;
+beforeEach(() => {
+  requestClear();
+});
+
+describe('Tests for adminQuizQuestionCreate', () => {
   let user1: TokenReturn;
   let quiz1: QuizIdReturn;
 
   beforeEach(() => {
-    requestClear(); // Clear the data to make each test independent from one another
-    registerReturn = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    user1 = registerReturn as TokenReturn;
-    quizCreateReturn = requestQuizCreate(user1.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    quiz1 = quizCreateReturn as QuizIdReturn;
+    user1 = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    quiz1 = requestQuizCreate(user1.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   // Error tests
@@ -59,8 +58,7 @@ describe.only('Tests for adminQuizQuestionCreate', () => {
   });
 
   test('Valid token but not for logged in user', () => {
-    const user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
-    const token2 = user2 as TokenReturn;
+    const token2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     requestLogout(token2.token);
     expect(() => requestQuizQuestionCreate(token2.token, quiz1.quizId, VALID_Q_BODY)).toThrow(HTTPError[401]);
   });
@@ -301,9 +299,7 @@ describe.only('Tests for adminQuizQuestionCreate', () => {
   // Tests for the successful creation of questionId
   test('Valid output of questionId', () => {
     const initialTime = requestQuizInfo(user1.token, quiz1.quizId).timeLastEdited;
-    const newQuestion: QuestionIdReturn = requestQuizQuestionCreate(user1.token, quiz1.quizId, VALID_Q_BODY);
-    const question = newQuestion.questionId;
-    expect(question).toStrictEqual(NUMBER);
+    expect(requestQuizQuestionCreate(user1.token, quiz1.quizId, VALID_Q_BODY)).toStrictEqual(NUMBER);
     const finalTime = requestQuizInfo(user1.token, quiz1.quizId).timeLastEdited;
     expect(finalTime).toBeGreaterThanOrEqual(initialTime);
     expect(finalTime).toBeLessThanOrEqual(initialTime + 1);
