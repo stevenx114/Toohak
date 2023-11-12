@@ -3,7 +3,8 @@ import {
   Quiz,
   User,
   Question,
-  Token
+  Token,
+  Player
 } from './dataStore';
 
 export const getUser = (userId: number): User | undefined => {
