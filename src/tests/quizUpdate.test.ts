@@ -112,5 +112,11 @@ describe('quizUpdate', () => {
       questionBody.answers[0].answer = 'a'.repeat(40);
       expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
+
+    test('The question duration is not a positive number', () => {
+      questionBody.duration = -1;
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
+    });
+
   });
 });
