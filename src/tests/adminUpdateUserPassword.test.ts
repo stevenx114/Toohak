@@ -33,9 +33,9 @@ describe('Tests for adminUpdateUserPassword', () => {
     });
     test('Updates user details correctly', () => {
       expect(requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, newPassword)).toStrictEqual({});
-      requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD);
-      requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD);
-      requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD);
+      expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD)).toThrow(HTTPError[400]);
+      expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD)).toThrow(HTTPError[400]);
+      expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD)).toThrow(HTTPError[400]);
       expect(requestUserDetails(token.token).user.numFailedPasswordsSinceLastLogin).toEqual(3);
       requestAuthLogin(validDetails.EMAIL, newPassword);
       expect(requestUserDetails(token.token).user.numSuccessfulLogins).toEqual(2);
