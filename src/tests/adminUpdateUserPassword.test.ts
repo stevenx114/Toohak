@@ -42,6 +42,13 @@ describe('Tests for adminUpdateUserPassword', () => {
     });
   });
   describe('Error Cases', () => {
+    test('Token is empty', () => {
+      expect(() => requestAdminUpdateUserPassword('', validDetails.PASSWORD, newPassword)).toThrow(HTTPError[401]);
+    });
+    test('Token is invalid', () => {
+      expect(() => requestAdminUpdateUserPassword(token.token + 1, validDetails.PASSWORD, newPassword)).toThrow(HTTPError[401]);
+    });
+
     test('Old password same as new password', () => {
       expect(() => requestAdminUpdateUserPassword(token.token, validDetails.PASSWORD, validDetails.PASSWORD)).toThrow(HTTPError[400]);
     });
