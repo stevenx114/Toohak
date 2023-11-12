@@ -2,7 +2,6 @@ import {
   validDetails,
   QuizIdReturn,
   TokenReturn,
-  ErrorObject
 } from '../types';
 
 import {
@@ -12,7 +11,7 @@ import {
   requestQuizCreate
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
@@ -47,23 +46,14 @@ describe('GET /v1/admin/quiz/{quizid}', () => {
 
   // Error cases for adminQuizInfo function
   describe('Error cases', () => {
-    let errorResult: ErrorObject;
     test('Token is empty', () => {
-      errorResult = requestQuizInfo('', quizId.quizId);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(401);
+      expect(() => requestQuizInfo('', quizId.quizId).toThrow(HTTPError[401]));
     });
-
     test('Token is invalid', () => {
-      errorResult = requestQuizInfo(ownsQuizUserToken.token + 1, quizId.quizId);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(401);
+      expect(() => requestQuizInfo(ownsQuizUserToken.token + 1, quizId.quizId).toThrow(HTTPError[401]));
     });
-
     test('Quiz ID does not refer to a quiz that this user owns', () => {
-      errorResult = requestQuizInfo(noQuizUserToken.token, quizId.quizId);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(403);
+      expect(() => requestQuizInfo(noQuizUserToken.token, quizId.quizId).toThrow(HTTPError[403]));
     });
   });
 });

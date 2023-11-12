@@ -11,7 +11,7 @@ import {
   requestUserDetailsUpdate,
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
@@ -53,9 +53,7 @@ describe('PUT /v1/admin/user/details', () => {
     ];
 
     test.each(testCases)('%s', (testName, tokenValue, email, firstName, lastName) => {
-      const errorReturn = requestUserDetailsUpdate(tokenValue, email, firstName, lastName);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestUserDetailsUpdate(tokenValue, email, firstName, lastName).toThrow(HTTPError[401]));
     });
   });
 });

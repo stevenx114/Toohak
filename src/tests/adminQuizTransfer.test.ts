@@ -1,7 +1,6 @@
 import {
   validDetails,
   TokenReturn,
-  ErrorObject,
   QuizIdReturn,
 } from '../types';
 
@@ -13,7 +12,7 @@ import {
   requestQuizList
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
@@ -27,7 +26,6 @@ describe('POST v1/admin/quiz/:quizid/transfer', () => {
   let quiz2: QuizIdReturn;
   let quiz3: QuizIdReturn;
   let quiz4: QuizIdReturn;
-  let errorResult: ErrorObject;
 
   beforeEach(() => {
     userOne = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
@@ -103,39 +101,27 @@ describe('POST v1/admin/quiz/:quizid/transfer', () => {
   // Error cases for adminQuizTransfer
   describe('Error Cases', () => {
     test('Token is empty', () => {
-      errorResult = requestQuizTransfer('', quiz1.quizId, validDetails.EMAIL_2);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(401);
+      expect(() => requestQuizTransfer('', quiz1.quizId, validDetails.EMAIL_2).toThrow(HTTPError[401]));
     });
 
     test('Token is invalid', () => {
-      errorResult = requestQuizTransfer(userOne.token + '1', quiz1.quizId, validDetails.EMAIL_2);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(401);
+      expect(() => requestQuizTransfer(userOne.token + '1', quiz1.quizId, validDetails.EMAIL_2).toThrow(HTTPError[401]));
     });
 
     test('Quiz Id does not refer to a quiz that this user owns', () => {
-      errorResult = requestQuizTransfer(userOne.token, quiz2.quizId, validDetails.EMAIL_2);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(403);
+      expect(() => requestQuizTransfer(userOne.token, quiz2.quizId, validDetails.EMAIL_2).toThrow(HTTPError[403]));
     });
 
     test('userEmail is not a real user', () => {
-      errorResult = requestQuizTransfer(userOne.token, quiz1.quizId, 'ilovecats@gmail.com');
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(400);
+      expect(() => requestQuizTransfer(userOne.token, quiz1.quizId, 'ilovecats@gmail.com').toThrow(HTTPError[400]));
     });
 
     test('userEmail is the current logged in user', () => {
-      errorResult = requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(400);
+      expect(() => requestQuizTransfer(userOne.token, quiz1.quizId, validDetails.EMAIL).toThrow(HTTPError[400]));
     });
 
     test('Quiz ID refers to a quiz that has a name that is already used by the target user', () => {
-      errorResult = requestQuizTransfer(userOne.token, quiz3.quizId, validDetails.EMAIL_2);
-      expect(errorResult.error).toStrictEqual(ERROR);
-      expect(errorResult.statusCode).toStrictEqual(400);
+      expect(() => requestQuizTransfer(userOne.token, quiz3.quizId, validDetails.EMAIL_2).toThrow(HTTPError[400]));
     });
   });
 });
