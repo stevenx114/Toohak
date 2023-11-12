@@ -13,6 +13,10 @@ import {
 
 import HTTPError from 'http-errors';
 
+beforeEach(() => {
+  requestClear();
+});
+
 describe('Clear Function implementation', () => {
   let token: TokenReturn;
 
