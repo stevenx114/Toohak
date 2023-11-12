@@ -52,11 +52,8 @@ export interface DataStore {
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {
-  if (existsSync(dataFilePath)) {
-    const fileContent = readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(fileContent) as DataStore;
-  }
-  return { users: [], quizzes: [], tokens: [], trash: [] };
+  const fileContent = readFileSync(dataFilePath, 'utf8');
+  return JSON.parse(fileContent) as DataStore;
 };
 
 const writeData = (data: DataStore) => {
