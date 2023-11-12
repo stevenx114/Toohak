@@ -193,3 +193,12 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   });
   return JSON.parse(res.body.toString());
 }
+
+// Wrapper for adminQuizCreateV2
+export function requestQuizCreateV2(token: string, name: string, description: string) {
+  const res = request('POST', SERVER_URL + '/v2/admin/quiz', {
+    headers: { 'Content-type': 'application/json', token: token },
+    json: { name: name, description: description }
+  });
+  return JSON.parse(res.body.toString());
+}
