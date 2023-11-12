@@ -72,13 +72,6 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   res.json(adminAuthRegister(email, password, nameFirst, nameLast));
 });
 
-// adminQuizQuestionCreate
-app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  const { token, questionBody } = req.body;
-  const quizId = parseInt(req.params.quizid);
-  res.json(adminQuizQuestionCreate(quizId, token, questionBody));
-});
-
 // adminUpdateQuiz
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);
@@ -191,8 +184,8 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
 // adminQuizQuestionCreate
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  const { token, questionBody } = req.body;
   const quizId = parseInt(req.params.quizid);
+  const { token, questionBody } = req.body;
   res.json(adminQuizQuestionCreate(quizId, token, questionBody));
 });
 
