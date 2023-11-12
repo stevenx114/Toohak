@@ -1,7 +1,6 @@
 import {
   TokenReturn,
-  validDetails,
-  ErrorObject
+  validDetails
 } from '../types';
 
 import {
@@ -10,7 +9,7 @@ import {
   requestClear,
 } from './wrapper';
 
-const ERROR = expect.any(String);
+import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
@@ -18,7 +17,6 @@ beforeEach(() => {
 
 // Tests for adminUserDetails function
 describe('adminUserDetails', () => {
-  let errorReturn: ErrorObject;
   let token: TokenReturn;
 
   // Success cases for adminUserDetails function
@@ -43,14 +41,10 @@ describe('adminUserDetails', () => {
   // Error cases for adminUserDetails function
   describe('Error cases', () => {
     test('Token is empty', () => {
-      errorReturn = requestUserDetails('');
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestUserDetails('').toThrow(HTTPError[401]));
     });
     test('Token is invalid', () => {
-      errorReturn = requestUserDetails(token.token + 1);
-      expect(errorReturn.error).toEqual(ERROR);
-      expect(errorReturn.statusCode).toEqual(401);
+      expect(() => requestUserDetails(token.token + 1).toThrow(HTTPError[401]));
     });
   });
 });
