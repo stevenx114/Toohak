@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "userId": 953538035275,
+      "userId": 132575454482,
       "name": "firstname lastname",
       "email": "sample@gmail.com",
       "password": "samplepassword1",
@@ -16,8 +16,8 @@
   "quizzes": [],
   "tokens": [
     {
-      "sessionId": "463646675346",
-      "authUserId": 953538035275
+      "sessionId": "277594726765",
+      "authUserId": 132575454482
     }
   ],
   "trash": []
