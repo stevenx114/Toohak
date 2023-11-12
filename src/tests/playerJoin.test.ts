@@ -19,8 +19,11 @@ interface SessionObject { sessionId: number };
 
 const ERROR = expect.any(String);
 const NAME = expect.any(String);
+const NUMBER = expect.any(Number);
 
-const QUESTION_BODY_1: QuestionBody = {
+// Valid constants 
+const VALID_NAME = 'Tom Boy';
+const VALID_QUESTION_BODY: QuestionBody = {
   question: 'question',
   duration: 3,
   points: 3,
@@ -37,6 +40,10 @@ const QUESTION_BODY_1: QuestionBody = {
   thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
 
+const TEST_VALID_NAME1 = 'ALLCAPS';
+const TEST_VALID_NAME2 = 'name with space';
+const TEST_VALID_NAME3 = 'namewithnumber123';
+
 // Tests for playerJoin function
 describe('POST v1/player/join', () => {
   let user: TokenObject;
@@ -45,29 +52,32 @@ describe('POST v1/player/join', () => {
     requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    requestCreateQuestionV2(user.token, quiz.quizId, QUESTION_BODY_1);
+    requestCreateQuestionV2(user.token, quiz.quizId, VALID_QUESTION_BODY);
     const sessionId: SessionObject = requestSessionStart(user.token, quiz.quizId, 1); // status - ACTIVE
   });
 
   // Error Cases
   test('Session is not in LOBBY state', () => {
-    requestSessionStateUpdateV1(user.token, quizId.quizId, sessionId.sessionId, 'END');// status - END
+    requestSessionStateUpdate(user.token, quizId.quizId, sessionId.sessionId, 'END');// status - END
     expect(() => requestPlayerJoin(sessionId.sessionId, 'harry mcClary').toThrow(HTTPError[400]));
   });
 
-  // Check for unique name - need to confirm data
-
-  // Success Cases
-  test('Correct output with empty name', () => {
-    expect(requestPlayerJoin(sessionId.sessionId, '')).toStrictEqual({
-      playerId: NAME
-    })
+  test('Name is not unique', () => {  
+    requestPlayerJoin(sessionId.sessionId, VALID_NAME);
+    expect(() => requestPlayerJoin(sessionId.sessionId, VALID_NAME).toThrow(HTTPError[400]));
   });
 
-  test('Correct output with name', () => {
-    expect(requestPlayerJoin(sessionId.sessionId, 'Max Lee')).toStrictEqual({
-      playerId: NAME
-    })
+  // Success Cases
+  test.each([
+    [ 'name with number', 'Max123' ],
+    [ 'name with spaces', 'Max Lee' ],
+    [ 'name in CAPS', 'MAXLEE' ],
+    [ 'name is empty', '' ],
+  ]) ('%s', (test, name) => {
+    if (name === '') {
+      expect(requestPlayerJoin(sessionId.sessionId, name)).toStrictEqual({ playerId: NAME });
+    }
+    expect(requestPlayerJoin(sessionId.sessionId, name)).toStrictEqual({ playerId: NUMBER });
   });
   
 });
