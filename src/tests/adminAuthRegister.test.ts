@@ -32,7 +32,8 @@ describe('POST /v1/admin/auth/register', () => {
       ['Last name too short', validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'w'],
       ['Last name too long', validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, 'worldworldworldworldworld'],
       ['Password less than 8 characters', validDetails.EMAIL, 'pass', validDetails.FIRST_NAME, validDetails.LAST_NAME],
-      ['Password does not contain at least one number and at least one letter', validDetails.EMAIL, 'password', validDetails.FIRST_NAME, validDetails.LAST_NAME],
+      ['Password does not contain at least one number', validDetails.EMAIL, 'password', validDetails.FIRST_NAME, validDetails.LAST_NAME],
+      ['Password does not contain at least one letter', validDetails.EMAIL, '12345678', validDetails.FIRST_NAME, validDetails.LAST_NAME],
     ])('%s', (testName, email, password, firstName, lastName) => {
       if (testName === 'Existing email') {
         requestAuthRegister(email, password, firstName, lastName);
