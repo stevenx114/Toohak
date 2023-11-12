@@ -3,7 +3,8 @@ import {
   Quiz,
   User,
   Question,
-  Token
+  Session,
+  sessions,
 } from './dataStore';
 
 export const getUser = (userId: number): User | undefined => {
@@ -29,6 +30,10 @@ export const getUserByEmail = (email: string): User | undefined => {
 export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
   const quiz = getQuiz(quizId);
   return quiz.questions.find(q => q.questionId === questionId);
+};
+
+export const getSession = (sessionId: number): Session | undefined => {
+  return sessions.find(s => s.sessionId === sessionId);
 };
 
 export enum validDetails {
@@ -119,4 +124,8 @@ export interface questionBody {
   duration: number;
   points: number,
   answers: questionAnswer[];
+}
+
+export interface PlayerIdReturn {
+  playerId: number;
 }
