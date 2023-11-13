@@ -157,7 +157,7 @@ export function requestNonExistentRoute() {
 }
 
 export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
-  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/description`, { description }, { token });
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
 }
 
 
