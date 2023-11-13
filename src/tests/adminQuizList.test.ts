@@ -30,16 +30,16 @@ describe('GET /v1/admin/quiz/list', () => {
 
   // Error cases
   test('Token is empty', () => {
-    expect(() => requestQuizList('').toThrow(HTTPError[401]));
+    expect(() => requestQuizList('')).toThrow(HTTPError[401]);
   });
 
   test('Token is invalid', () => {
-    expect(() => requestQuizList(user.token + 1).toThrow(HTTPError[401]));
+    expect(() => requestQuizList(user.token + 1)).toThrow(HTTPError[401]);
   });
 
   test('Token does not refer to valid logged in user session', () => {
     requestLogout(user.token);
-    expect(() => requestQuizList(user.token).toThrow(HTTPError[401]));
+    expect(() => requestQuizList(user.token)).toThrow(HTTPError[401]);
   });
 
   // success cases:

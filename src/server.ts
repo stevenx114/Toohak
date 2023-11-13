@@ -50,7 +50,9 @@ app.use(cors());
 app.use(morgan('dev'));
 // for producing the docs that define the API
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
+/* istanbul ignore next */
 app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
+/* istanbul ignore next */
 app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' } }));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
@@ -70,13 +72,6 @@ app.get('/echo', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   res.json(adminAuthRegister(email, password, nameFirst, nameLast));
-});
-
-// adminQuizQuestionCreate
-app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  const { token, questionBody } = req.body;
-  const quizId = parseInt(req.params.quizid);
-  res.json(adminQuizQuestionCreate(quizId, token, questionBody));
 });
 
 // adminUpdateQuiz
@@ -191,8 +186,8 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 
 // adminQuizQuestionCreate
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
-  const { token, questionBody } = req.body;
   const quizId = parseInt(req.params.quizid);
+  const { token, questionBody } = req.body;
   res.json(adminQuizQuestionCreate(quizId, token, questionBody));
 });
 
