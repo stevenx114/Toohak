@@ -19,7 +19,7 @@ beforeEach(() => {
 describe('POST v1/admin/quiz', () => {
   let userToken: TokenReturn;
   beforeEach(() => {
-    userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    userToken = requestAuthRegisterV2(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     requestQuizCreateV2(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
