@@ -11,9 +11,9 @@ import {
   requestQuizCreate,
   requestQuizInfo,
   requestLogout,
+  requestQuizQuestionMoveV2,
   requestQuizQuestionCreate,
-  requestClear,
-  requestQuizQuestionDuplicate
+  requestClear
 } from './wrapper';
 
 import {
@@ -22,12 +22,16 @@ import {
 
 import HTTPError from 'http-errors';
 
-describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
+beforeEach(() => {
+  requestClear();
+});
+
+describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;
   let questionId1: QuestionIdReturn;
   let questionId2: QuestionIdReturn;
-  let quizQuestions: Question[];
+  let questionId3: QuestionIdReturn;
   const VALID_Q_BODY_1: QuestionBody = {
     question: 'question1',
     duration: 3,
@@ -58,48 +62,70 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
       }
     ]
   };
+  const VALID_Q_BODY_3: QuestionBody = {
+    question: 'question3',
+    duration: 5,
+    points: 5,
+    answers: [
+      {
+        answer: 'answer1',
+        correct: false
+      },
+      {
+        answer: 'answer2',
+        correct: true
+      }
+    ]
+  };
 
   beforeEach(() => {
-    requestClear();
     userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     userQuizId = requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     questionId1 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_1);
     questionId2 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_2);
+    questionId3 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_3);
   });
 
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
-      const initialTime = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
-      const questionIdNew = requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId);
-      expect(questionIdNew).toEqual({ newQuestionId: expect.any(Number) });
-      const timeLastEdited = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
-      quizQuestions = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
+      expect(requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 0)).toEqual({});
+      const quizQuestions: Question[] = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
       const quizQuestionIds = quizQuestions.map(q => q.questionId);
-      expect(quizQuestionIds.indexOf(questionId1.questionId)).toEqual(0);
-      expect(quizQuestionIds.indexOf(questionIdNew.newQuestionId)).toEqual(1);
+      expect(quizQuestionIds.indexOf(questionId3.questionId)).toEqual(0);
+      expect(quizQuestionIds.indexOf(questionId1.questionId)).toEqual(1);
       expect(quizQuestionIds.indexOf(questionId2.questionId)).toEqual(2);
-      expect(timeLastEdited).toBeGreaterThanOrEqual(initialTime);
-      expect(timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
     });
   });
 
   describe('Error Cases', () => {
     test('Question Id does not refer to a valid question within this quiz', () => {
-      expect(() => requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, -1)).toThrow(HTTPError[400]);
+      expect(() => requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, -1, 0)).toThrow(HTTPError[400]);
+    });
+
+    test('NewPosition is less than 0', () => {
+      expect(() => requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, -1)).toThrow(HTTPError[400]);
+    });
+
+    test('NewPosition is greater than n-1 where n is the number of questions', () => {
+      expect(() => requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 4)).toThrow(HTTPError[400]);
+    });
+
+    test('NewPosition cannot be the position of the current question', () => {
+      expect(() => requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 2)).toThrow(HTTPError[400]);
     });
 
     test('Token is empty', () => {
-      expect(() => requestQuizQuestionDuplicate('', userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
+      expect(() => requestQuizQuestionMoveV2('', userQuizId.quizId, questionId3.questionId, 0)).toThrow(HTTPError[401]);
     });
 
     test('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
-      expect(() => requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
+      expect(() => requestQuizQuestionMoveV2(userToken.token, userQuizId.quizId, questionId3.questionId, 0)).toThrow(HTTPError[401]);
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
       const noQuizzesUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      expect(() => requestQuizQuestionDuplicate(noQuizzesUserToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[403]);
+      expect(() => requestQuizQuestionMoveV2(noQuizzesUserToken.token, userQuizId.quizId, questionId3.questionId, 0)).toThrow(HTTPError[403]);
     });
   });
 });
