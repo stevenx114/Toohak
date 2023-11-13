@@ -49,9 +49,7 @@ const requestHelper = (
   // potentially failing on a different expect statement without useful outputs
   switch (res.statusCode) {
     case 400: // BAD_REQUEST
-      throw HTTPError(res.statusCode, errorMessage);
     case 401: // UNAUTHORIZED
-      throw HTTPError(res.statusCode, errorMessage);
     case 403:
       throw HTTPError(res.statusCode, errorMessage);
     case 404: // NOT_FOUND
