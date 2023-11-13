@@ -55,4 +55,3 @@ describe('PUT /v1/admin/quiz/{quizid}/description', () => {
     });
   });
 });
-
