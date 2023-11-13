@@ -1,3 +1,9 @@
+import { Quiz } from '../dataStore';
+import { QuizIdReturn, TokenReturn, validDetails } from '../types';
+import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizDescriptionUpdateV2, requestQuizInfo } from './wrapper';
+
+import HTTPError from 'http-errors';
+
 // Tests for adminQuizDescriptionUpdate v2
 describe('PUT /v2/admin/quiz/{quizid}/description', () => {
     let ownsQuizUser: TokenReturn;

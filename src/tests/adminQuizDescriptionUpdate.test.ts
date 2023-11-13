@@ -1,6 +1,6 @@
 import { Quiz } from '../dataStore';
 import { QuizIdReturn, TokenReturn, validDetails } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizDescriptionUpdate, requestQuizDescriptionUpdateV2, requestQuizInfo } from './wrapper';
+import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizDescriptionUpdate, requestQuizInfo } from './wrapper';
 
 import HTTPError from 'http-errors';
 
