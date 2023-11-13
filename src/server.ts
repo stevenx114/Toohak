@@ -215,6 +215,14 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
 
+// adminQuizDescriptionUpdate v2
+app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const description = req.body.description;
+  const token = req.headers.token;
+  res.json(adminQuizDescriptionUpdate(token, quizId, description));
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
