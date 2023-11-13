@@ -1,6 +1,6 @@
 import {
   requestNonExistentRoute
-} from './wrapper'
+} from './wrapper';
 import HTTPError from 'http-errors';
 
 test('Success test for error 404', () => {

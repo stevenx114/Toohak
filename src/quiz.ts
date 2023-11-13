@@ -111,7 +111,6 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   data.trash.push(data.quizzes[indexOfQuizInData]);
   data.quizzes.splice(indexOfQuizInData, 1);
 
-
   setData(data);
   return {};
 };

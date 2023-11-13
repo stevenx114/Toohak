@@ -117,6 +117,5 @@ describe('quizUpdate', () => {
       questionBody.duration = -1;
       expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
-
   });
 });

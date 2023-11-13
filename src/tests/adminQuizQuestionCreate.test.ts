@@ -2,8 +2,7 @@ import {
   TokenReturn,
   QuizIdReturn,
   QuestionBody,
-  QuestionIdReturn,
-  validDetails,
+  validDetails
 } from '../types';
 
 import HTTPError from 'http-errors';

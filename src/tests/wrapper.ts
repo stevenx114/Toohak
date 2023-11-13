@@ -55,7 +55,7 @@ const requestHelper = (
     case 403:
       throw HTTPError(res.statusCode, errorMessage);
     case 404: // NOT_FOUND
-      throw HTTPError(res.statusCode, `Cannot find '$rver.ts have the correct path AND method`);
+      throw HTTPError(res.statusCode, 'Cannot find \'$rver.ts have the correct path AND method');
     case 500: // INTERNAL_SERVER_ERROR
       throw HTTPError(res.statusCode, errorMessage + '\n\nHint: Your server crashed. Check the server log!\n');
     default:
