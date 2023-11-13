@@ -159,3 +159,11 @@ export function requestNonExistentRoute() {
 export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
 }
+
+export function requestTrashViewV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
+}
+
+export function requestQuizRestoreV2(quizId: number, token: string) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
+}
