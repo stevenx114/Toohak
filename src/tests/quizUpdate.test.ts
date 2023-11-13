@@ -29,7 +29,6 @@ describe('quizUpdate', () => {
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     questionId = requestQuizQuestionCreate(token.token, quizId.quizId, validQuestionDetails);
-    // questionBody = {...validQuestionDetails};
     questionBody = JSON.parse(JSON.stringify(validQuestionDetails));
   });
 
@@ -42,76 +41,81 @@ describe('quizUpdate', () => {
 
   describe('Invalid Input Tests', () => {
     test('Question Id does not refer to a valid question within this quiz', () => {
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId + 400, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId + 400, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('Question string is less than 5 characters in length', () => {
       questionBody.question = '';
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('Question string is greater than 50 characters in length', () => {
       questionBody.question = 'a'.repeat(52);
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('The question has more than 6 answers', () => {
       questionBody.answers.length = 10;
       questionBody.answers.fill(questionBody.answers[0]);
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('The question has less than 2 answers', () => {
       questionBody.answers.length = 1;
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes', () => {
       questionBody.duration = 181;
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('The points awarded for the question are less than 1', () => {
       questionBody.points = 0;
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('The points awarded for the question are greater than 10', () => {
       questionBody.points = 11;
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('The length of any answer is shorter than 1 character long', () => {
       questionBody.answers[0].answer = '';
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('Any answer strings are duplicates of one another (within the same question)', () => {
       questionBody.answers.push(questionBody.answers[0]);
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('No Correct Answers', () => {
       questionBody.answers[0].correct = false;
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
     test('Token in empty', () => {
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, '', questionBody).toThrow(HTTPError[401]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, '', questionBody)).toThrow(HTTPError[401]);
     });
 
     test('Token is invalid', () => {
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token + 'a', questionBody).toThrow(HTTPError[401]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token + 'a', questionBody)).toThrow(HTTPError[401]);
     });
 
     test('Valid token is provided, but user is unauthorised to complete this action', () => {
       const token2 = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token2.token, questionBody).toThrow(HTTPError[403]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token2.token, questionBody)).toThrow(HTTPError[403]);
     });
 
     test('The length of any answer is longer than 30 characters long', () => {
       questionBody.answers[0].answer = 'a'.repeat(40);
-      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody).toThrow(HTTPError[400]));
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
+    });
+
+    test('The question duration is not a positive number', () => {
+      questionBody.duration = -1;
+      expect(() => requestQuizUpdate(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
   });
 });
