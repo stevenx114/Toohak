@@ -223,6 +223,12 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(adminQuizDescriptionUpdate(token, quizId, description));
 });
 
+// viewTrash
+app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(viewQuizTrash(token));
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
