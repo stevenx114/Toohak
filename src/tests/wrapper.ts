@@ -152,6 +152,10 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token, questionBody });
 }
 
+export function requestQuizListV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/list', { token });
+}
+
 export function requestNonExistentRoute() {
   return requestHelper('POST', '/non-existent-route', {});
 }
