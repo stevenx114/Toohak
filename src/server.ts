@@ -223,10 +223,26 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.json(adminQuizDescriptionUpdate(token, quizId, description));
 });
 
-// viewTrash
+// viewTrash v2
 app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   res.json(viewQuizTrash(token));
+});
+
+// quizRestore v2
+app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.headers.token;
+  res.json(quizRestore(quizId, token));
+});
+
+// adminUpdateQuiz v2
+app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const questionId = parseInt(req.params.questionid as string);
+  const questionBody = req.body.questionBody;
+  const token = req.headers.token;
+  res.json(adminUpdateQuiz(quizId, questionId, token, questionBody));
 });
 
 // ====================================================================
