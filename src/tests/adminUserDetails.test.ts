@@ -41,10 +41,10 @@ describe('adminUserDetails', () => {
   // Error cases for adminUserDetails function
   describe('Error cases', () => {
     test('Token is empty', () => {
-      expect(() => requestUserDetails('').toThrow(HTTPError[401]));
+      expect(() => requestUserDetails('')).toThrow(HTTPError[401]);
     });
     test('Token is invalid', () => {
-      expect(() => requestUserDetails(token.token + 1).toThrow(HTTPError[401]));
+      expect(() => requestUserDetails(token.token + 1)).toThrow(HTTPError[401]);
     });
   });
 });

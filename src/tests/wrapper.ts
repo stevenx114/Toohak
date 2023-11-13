@@ -1,203 +1,173 @@
-import request from 'sync-request-curl';
-import config from '../config.json';
-
-const port = config.port;
-const url = config.url;
+import request, { HttpVerb } from 'sync-request-curl';
+import { port, url } from '../config.json';
+import { IncomingHttpHeaders } from 'http';
+import HTTPError from 'http-errors';
 
 const SERVER_URL = `${url}:${port}`;
+const TIMEOUT_MS = 10000;
+
+interface Payload {
+  [key: string]: any;
+}
 
 import { QuestionBody } from '../types';
 
-// Wrapper for adminAuthRegister
+const requestHelper = (
+  method: HttpVerb,
+  path: string,
+  payload: Payload,
+  headers: IncomingHttpHeaders = {}
+): any => {
+  let qs = {};
+  let json = {};
+  if (['GET', 'DELETE'].includes(method.toUpperCase())) {
+    qs = payload;
+  } else {
+    // PUT/POST
+    json = payload;
+  }
+
+  const url = SERVER_URL + path;
+  const res = request(method, url, { qs, json, headers, timeout: TIMEOUT_MS });
+
+  let responseBody: any;
+  try {
+    responseBody = JSON.parse(res.body.toString());
+  } catch (err: any) {
+    if (res.statusCode === 200) {
+      throw HTTPError(500,
+        `Non-jsonifiable body despite code 200: '${res.body}'.\nCheck that you are not doing res.json(undefined) instead of res.json({}), e.g. in '/clear'`
+      );
+    }
+    responseBody = { error: `Failed to parse JSON: '${err.message}'` };
+  }
+
+  const errorMessage = `[${res.statusCode}] ` + responseBody?.error || responseBody || 'No message specified!';
+
+  // NOTE: the error is rethrown in the test below. This is useful becasuse the
+  // test suite will halt (stop) if there's an error, rather than carry on and
+  // potentially failing on a different expect statement without useful outputs
+  switch (res.statusCode) {
+    case 400: // BAD_REQUEST
+    case 401: // UNAUTHORIZED
+    case 403:
+      throw HTTPError(res.statusCode, errorMessage);
+    case 404: // NOT_FOUND
+      throw HTTPError(res.statusCode, 'Cannot find \'$rver.ts have the correct path AND method');
+    case 500: // INTERNAL_SERVER_ERROR
+      throw HTTPError(res.statusCode, errorMessage + '\n\nHint: Your server crashed. Check the server log!\n');
+    default:
+      if (res.statusCode !== 200) {
+        throw HTTPError(res.statusCode, errorMessage + `\n\nSorry, no idea! Look up the status code ${res.statusCode} online!\n`);
+      }
+  }
+  return responseBody;
+};
+
 export function requestAuthRegister(email: string, password: string, nameFirst: string, nameLast: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/auth/register', {
-    json: { email: email, password: password, nameFirst: nameFirst, nameLast: nameLast }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', '/v1/admin/auth/register', { email, password, nameFirst, nameLast });
 }
 
-// Wrapper for adminAuthLogin
 export function requestAuthLogin(email: string, password: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/auth/login', {
-    json: { email: email, password: password }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', '/v1/admin/auth/login', { email, password });
 }
 
-// Wrapper for adminUserDetails
 export function requestUserDetails(token: string) {
-  const res = request('GET', SERVER_URL + '/v1/admin/user/details', {
-    qs: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('GET', '/v1/admin/user/details', { token });
 }
 
-// Wrapper for adminQuizInfo
 export function requestQuizInfo(token: string, quizid: number) {
-  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}`, { token });
 }
 
-// Wrapper for adminQuizList
 export function requestQuizList(token: string) {
-  const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', {
-    qs: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('GET', '/v1/admin/quiz/list', { token });
 }
 
-// Wrapper for adminQuizRemove
 export function requestQuizRemove(token: string, quizid: number) {
-  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid, {
-    qs: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizid}`, { token });
 }
 
-// Wrapper for adminQuizCreate
 export function requestQuizCreate(token: string, name: string, description: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz', {
-    json: { token: token, name: name, description: description }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', '/v1/admin/quiz', { token, name, description });
 }
 
-// Wrapper for adminQuizNameUpdate
 export function requestQuizNameUpdate(token: string, quizid: number, name: string) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/name', {
-    json: { token: token, name: name }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/name`, { token, name });
 }
 
-// Wrapper for adminQuizDescriptionUpdate
 export function requestQuizDescriptionUpdate(token: string, quizid: number, description: string) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizid + '/description', {
-    json: { token: token, description: description }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('PUT', `/v1/admin/quiz/${quizid}/description`, { token, description });
 }
 
-// Wrapper for clear
 export function requestClear() {
-  const res = request('DELETE', SERVER_URL + '/v1/clear', {
-    qs: { }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('DELETE', '/v1/clear', {});
 }
 
-// Wrapper for adminAuthLogout
 export function requestLogout(token: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
-    json: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', '/v1/admin/auth/logout', { token });
 }
 
-// Wrapper for adminUpdateUserPassword
 export function requestAdminUpdateUserPassword(token: string, oldPassword: string, newPassword: string) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/user/password', {
-    json: { token: token, oldPassword: oldPassword, newPassword: newPassword }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('PUT', '/v1/admin/user/password', { token, oldPassword, newPassword });
 }
 
-// Wrapper for trashview
 export function requestTrashView(token: string) {
-  const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-    qs: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('GET', '/v1/admin/quiz/trash', { token });
 }
 
-// Wrapper for adminQuizTrashEmpty
 export function requestEmptyTrash(token: string, quizIds: string) {
-  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/trash/empty', {
-    qs: { token: token, quizIds: quizIds }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('DELETE', '/v1/admin/quiz/trash/empty', { token, quizIds });
 }
 
-// Wrapper for adminQuizTransfer
 export function requestQuizTransfer(token: string, quizid: number, userEmail: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/transfer', {
-    json: { token: token, userEmail: userEmail }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', `/v1/admin/quiz/${quizid}/transfer`, { token, userEmail });
 }
 
-// Wrapper for adminUserDetailsUpdate
 export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/user/details', {
-    json: { token: token, email: email, nameFirst: nameFirst, nameLast: nameLast }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('PUT', '/v1/admin/user/details', { token, email, nameFirst, nameLast });
 }
 
-// Request quizRestore
 export function requestQuizRestore(quizId: number, token: string) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/restore', {
-    json: {
-      token: token,
-    }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/restore`, { token });
 }
 
-// Wrapper for adminQuizQuestionCreate
 export function requestQuizQuestionCreate(token: string, quizid: number, questionBody: QuestionBody) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question', {
-    json: {
-      token: token,
-      questionBody: questionBody,
-    }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', `/v1/admin/quiz/${quizid}/question`, { token, questionBody });
 }
 
-// Wrapper for adminQuizQuestionDelete
 export function requestQuizQuestionDelete(token: string, quizid: number, questionid: number) {
-  const res = request('DELETE', SERVER_URL + '/v1/admin/quiz/' + quizid + '/question/' + questionid, {
-    qs: {
-      token: token,
-    }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('DELETE', `/v1/admin/quiz/${quizid}/question/${questionid}`, { token });
 }
 
-// Wrapper for adminQuizQuestionMove
 export function requestQuizQuestionMove(token: string, quizId: number, questionId: number, newPosition: number) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/move', {
-    json: { token: token, newPosition: newPosition }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}/move`, { token, newPosition });
 }
 
-// Wrapper for adminQuizQuestionDuplicate
 export function requestQuizQuestionDuplicate(token: string, quizId: number, questionId: number) {
-  const res = request('POST', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
-    json: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, { token });
 }
 
-// Wrapper for quizUpdate
 export function requestQuizUpdate(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
-  const res = request('PUT', SERVER_URL + '/v1/admin/quiz/' + quizId + '/question/' + questionId, {
-    json: {
-      token: token,
-      questionBody: questionBody,
-    }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token, questionBody });
 }
 
-// Wrapper for adminQuizQuestionDuplicateV2
+export function requestNonExistentRoute() {
+  return requestHelper('POST', '/non-existent-route', {});
+}
+
+export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
+}
+
+export function requestTrashViewV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
+}
+
+export function requestQuizRestoreV2(quizId: number, token: string) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
+}
+
 export function requestQuizQuestionDuplicateV2(token: string, quizId: number, questionId: number) {
-  const res = request('POST', SERVER_URL + '/v2/admin/quiz/' + quizId + '/question/' + questionId + '/duplicate', {
-    headers: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
