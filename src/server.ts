@@ -220,10 +220,6 @@ app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const description = req.body.description;
   const token = req.headers.token;
-
-  console.log(req.params, '\n', req.body, '\n', req.headers, '\n');
-
-
   res.json(adminQuizDescriptionUpdate(token, quizId, description));
 });
 

@@ -5,7 +5,7 @@ import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizDescri
 import HTTPError from 'http-errors';
 
 // Tests for adminQuizDescriptionUpdate
-describe.skip('PUT /v1/admin/quiz/{quizid}/description', () => {
+describe('PUT /v1/admin/quiz/{quizid}/description', () => {
   let ownsQuizUser: TokenReturn;
   let quizId: QuizIdReturn;
   beforeEach(() => {
@@ -107,4 +107,3 @@ describe('PUT /v2/admin/quiz/{quizid}/description', () => {
     });
   });
 });
-
