@@ -7,7 +7,7 @@ import {
   requestAuthRegister,
   requestUserDetails,
   requestClear,
-  requestLogout
+  requestLogoutV2
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -24,18 +24,18 @@ describe('POST /v1/admin/auth/logout', () => {
 
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
-      expect(requestLogout(userToken.token)).toEqual({});
+      expect(requestLogoutV2(userToken.token)).toEqual({});
       expect(() => requestUserDetails(userToken.token)).toThrow(HTTPError[401]);
     });
   });
 
   describe('Error Cases', () => {
     test('Token is empty', () => {
-      expect(() => requestLogout('')).toThrow(HTTPError[401]);
+      expect(() => requestLogoutV2('')).toThrow(HTTPError[401]);
     });
 
     test('Token is invalid', () => {
-      expect(() => requestLogout('invalidToken')).toThrow(HTTPError[401]);
+      expect(() => requestLogoutV2('invalidToken')).toThrow(HTTPError[401]);
     });
   });
 });

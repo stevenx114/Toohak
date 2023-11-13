@@ -53,14 +53,14 @@ describe('DELETE /v1/admin/quiz/{quizid}', () => {
   });
   describe('Error Cases', () => {
     test('Token is empty', () => {
-      expect(() => requestQuizRemove('', quizOneId.quizId).toThrow(HTTPError[401]));
+      expect(() => requestQuizRemove('', quizOneId.quizId)).toThrow(HTTPError[401]);
     });
 
     test('Token is invalid', () => {
-      expect(() => requestQuizRemove(ownsQuizUserToken.token + '1', quizOneId.quizId).toThrow(HTTPError[401]));
+      expect(() => requestQuizRemove(ownsQuizUserToken.token + '1', quizOneId.quizId)).toThrow(HTTPError[401]);
     });
     test('Quiz Id does not refer to a quiz that this user owns', () => {
-      expect(() => requestQuizRemove(noQuizUserToken.token, quizOneId.quizId).toThrow(HTTPError[403]));
+      expect(() => requestQuizRemove(noQuizUserToken.token, quizOneId.quizId)).toThrow(HTTPError[403]);
     });
   });
 });

@@ -1,6 +1,24 @@
 {
-  "users": [],
+  "users": [
+    {
+      "userId": 192150066766,
+      "name": "firstname lastname",
+      "email": "sample@gmail.com",
+      "password": "samplepassword1",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    }
+  ],
   "quizzes": [],
-  "tokens": [],
+  "tokens": [
+    {
+      "sessionId": "878652446780",
+      "authUserId": 192150066766
+    }
+  ],
   "trash": []
 }
