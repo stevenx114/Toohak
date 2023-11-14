@@ -1,7 +1,7 @@
 import {
   getData,
   setData,
-  Quiz,
+  Quiz, 
   Token,
   Answer
 } from './dataStore';
@@ -28,11 +28,7 @@ import {
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
-  SessionList,
-  sessions
 } from './types';
-
-import HTTPError from 'http-errors';
 
 /**
  * Given basic details about a new quiz, create one for the logged in user.

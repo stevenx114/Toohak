@@ -168,10 +168,6 @@ export function requestQuizRestoreV2(quizId: number, token: string) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
 }
 
-// Wrapper for adminQuizSessionView
 export function requestQuizSessionView(token: string, quizId: number) {
-  const res = request('GET', SERVER_URL + '/v1/admin/quiz/' + quizId + '/sessions', {
-    headers: { token: token }
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, { token });
 }
