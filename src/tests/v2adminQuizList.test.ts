@@ -1,31 +1,32 @@
 import {
-    validDetails,
-    QuizIdReturn,
-    TokenReturn,
+  validDetails,
+  QuizIdReturn,
+  TokenReturn,
 } from '../types';
-  
+
 import {
   requestAuthRegister,
-  requestQuizCreate,
   requestClear,
-  requestQuizList,
-  requestLogout
+  requestQuizCreate, // change to v2 once merged
+  requestQuizListV2,
+  requestLogout // change to v2 once merged
 } from './wrapper';
-  
+
 import HTTPError from 'http-errors';
 
 beforeEach(() => {
   requestClear();
 });
-  
-// Tests for adminQuizList
-describe('GET /v1/admin/quiz/list', () => {
+
+// Tests for adminQuizListV2
+describe('GET /v2/admin/quiz/list', () => {
   let user: TokenReturn;
   let quiz: QuizIdReturn;
   let quiz1: QuizIdReturn;
   beforeEach(() => {
-    user = requestAuthRegisterV2(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    requestClear();
+    user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
+    quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   // Error cases
@@ -38,7 +39,7 @@ describe('GET /v1/admin/quiz/list', () => {
   });
 
   test('Token does not refer to valid logged in user session', () => {
-    requestLogoutV2(user.token);
+    requestLogout(user.token);
     expect(() => requestQuizListV2(user.token)).toThrow(HTTPError[401]);
   });
 
@@ -55,7 +56,7 @@ describe('GET /v1/admin/quiz/list', () => {
   });
 
   test('valid input of 2 quizzes', () => {
-    quiz1 = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
+    quiz1 = requestQuizCreate(user.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
     expect(requestQuizListV2(user.token)).toStrictEqual({
       quizzes: [
         {
