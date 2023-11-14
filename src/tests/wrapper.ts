@@ -160,7 +160,6 @@ export function requestNonExistentRoute() {
   return requestHelper('POST', '/non-existent-route', {});
 }
 
-
 export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
 }

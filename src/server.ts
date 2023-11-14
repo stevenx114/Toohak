@@ -38,7 +38,6 @@ import {
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
   adminQuizQuestionDelete,
-  adminQuizCreateV2
 } from './quiz';
 
 // Set up web app
