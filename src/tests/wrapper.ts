@@ -159,3 +159,15 @@ export function requestQuizListV2(token: string) {
 export function requestNonExistentRoute() {
   return requestHelper('POST', '/non-existent-route', {});
 }
+
+export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
+}
+
+export function requestTrashViewV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
+}
+
+export function requestQuizRestoreV2(quizId: number, token: string) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
+}
