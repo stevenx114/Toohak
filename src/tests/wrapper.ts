@@ -84,6 +84,10 @@ export function requestQuizList(token: string) {
   return requestHelper('GET', '/v1/admin/quiz/list', { token });
 }
 
+export function requestQuizListV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/list', {}, { token });
+}
+
 export function requestQuizRemove(token: string, quizid: number) {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizid}`, { token });
 }
@@ -150,10 +154,6 @@ export function requestQuizQuestionDuplicate(token: string, quizId: number, ques
 
 export function requestQuizUpdate(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/question/${questionId}`, { token, questionBody });
-}
-
-export function requestQuizListV2(token: string) {
-  return requestHelper('GET', '/v2/admin/quiz/list', { token });
 }
 
 export function requestNonExistentRoute() {
