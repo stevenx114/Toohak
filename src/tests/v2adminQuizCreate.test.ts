@@ -40,12 +40,12 @@ describe('POST v2/admin/quiz', () => {
     { name: '12' }, // < 2 chars
     { name: 'qwerty'.repeat(6) }, // > 30 chars
   ])('invalid name input: $name', ({ name }) => {
-    expect(() => requestQuizCreateV2(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION).toThrow(HTTPError[400]));
+    expect(() => requestQuizCreateV2(userToken.token, name, validDetails.DESCRIPTION).toThrow(HTTPError[400]));
   });
 
   test('description too long', () => {
-    const longDescription = 'description'.repeat(10);
-    expect(() => requestQuizCreateV2(userToken.token, validDetails.QUIZ_NAME, longDescription).toThrow(HTTPError[400]));
+    // const longDescription = 'description'.repeat(100);
+    expect(() => requestQuizCreateV2(userToken.token, validDetails.QUIZ_NAME, 'description'.repeat(100)).toThrow(HTTPError[400]));
   });
 
   test('existing quiz name', () => {
