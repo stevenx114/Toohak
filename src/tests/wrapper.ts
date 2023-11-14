@@ -92,6 +92,10 @@ export function requestQuizCreate(token: string, name: string, description: stri
   return requestHelper('POST', '/v1/admin/quiz', { token, name, description });
 }
 
+export function requestQuizCreateV2(token: string, name: string, description: string) {
+  return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
+}
+
 export function requestQuizNameUpdate(token: string, quizid: number, name: string) {
   return requestHelper('PUT', `/v1/admin/quiz/${quizid}/name`, { token, name });
 }
@@ -156,11 +160,15 @@ export function requestNonExistentRoute() {
   return requestHelper('POST', '/non-existent-route', {});
 }
 
-// Wrapper for adminQuizCreateV2
-export function requestQuizCreateV2(token: string, name: string, description: string) {
-  const res = request('POST', SERVER_URL + '/v2/admin/quiz', {
-    headers: { 'Content-type': 'application/json', token: token },
-    json: { name: name, description: description }
-  });
-  return JSON.parse(res.body.toString());
+
+export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
+}
+
+export function requestTrashViewV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/trash', {}, { token });
+}
+
+export function requestQuizRestoreV2(quizId: number, token: string) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
 }

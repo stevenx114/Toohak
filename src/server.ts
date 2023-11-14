@@ -223,6 +223,27 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
 
+// adminQuizDescriptionUpdate v2
+app.put('/v2/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const description = req.body.description;
+  const token = req.headers.token;
+  res.json(adminQuizDescriptionUpdate(token, quizId, description));
+});
+
+// viewTrash v2
+app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(viewQuizTrash(token));
+});
+
+// quizRestore v2
+app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.headers.token;
+  res.json(quizRestore(quizId, token));
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
