@@ -172,30 +172,6 @@ export const adminQuizList = (token: string): QuizListReturn | ErrorObject => {
 };
 
 /**
- *
- * Provide a list of all quizzes that are owned by the currently logged in user.
- *
- * @param {String} token
- * @returns {Object} quizId
- *
- */
-export const adminQuizListV2 = (token: string): QuizListReturn | ErrorObject => {
-  const data = getData();
-
-  const curToken = getToken(token);
-  if (!curToken) {
-    throw HTTPError(401, 'Token does not refer to valid logged in user session');
-  }
-  const userId = curToken.authUserId;
-  const curUser = getUser(userId);
-  const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
-  const quizInfo = curQuizzes.map(quiz => ({ quizId: quiz.quizId, name: quiz.name }));
-  return {
-    quizzes: quizInfo
-  };
-};
-
-/**
  * Update the name of the relevant quiz.
  *
  * @param {string} token
