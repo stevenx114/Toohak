@@ -111,11 +111,9 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
     throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
-  if (indexOfQuizInData !== -1) {
-    data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
-    data.trash.push(data.quizzes[indexOfQuizInData]);
-    data.quizzes.splice(indexOfQuizInData, 1);
-  }
+  data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  data.trash.push(data.quizzes[indexOfQuizInData]);
+  data.quizzes.splice(indexOfQuizInData, 1);
 
   setData(data);
   return {};
@@ -581,9 +579,7 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
   userToTransfer.quizzesOwned.push(quizId);
 
   const indexToRemove = curUser.quizzesOwned.indexOf(quizId);
-  if (indexToRemove !== -1) {
-    curUser.quizzesOwned.splice(indexToRemove, 1);
-  }
+  curUser.quizzesOwned.splice(indexToRemove, 1);
 
   setData(data);
   return { };
