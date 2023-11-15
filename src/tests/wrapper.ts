@@ -168,6 +168,10 @@ export function requestQuizRestoreV2(quizId: number, token: string) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
 }
 
+export function requestQuizUpdateV2(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody }, { token });
+}
+
 export function requestLogoutV2(token: string) {
   return requestHelper('POST', '/v2/admin/auth/logout', {}, { token });
 }
