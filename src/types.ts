@@ -64,7 +64,7 @@ export interface QuestionBody {
   duration: number;
   points: number;
   answers: AnswerSimple[];
-  thumbnailURL: string;
+  thumbnailUrl?: string;
 }
 
 export interface QuestionIdReturn {

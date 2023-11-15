@@ -183,3 +183,8 @@ export function requestQuizQuestionMoveV2(token: string, quizId: number, questio
 export function requestQuizQuestionDuplicateV2(token: string, quizId: number, questionId: number) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
+
+
+export function requestQuizCreateV2(token: string, name: string, description: string) {
+  return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
+}
