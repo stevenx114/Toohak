@@ -236,6 +236,15 @@ app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   res.json(quizRestore(quizId, token));
 });
 
+// adminQuizQuestionMoveV2
+app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { newPosition } = req.body;
+  res.json(adminQuizQuestionMove(token, quizId, questionId, newPosition));
+});
+
 // adminQuizQuestionDuplicateV2
 app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const token = req.headers.token as string;
