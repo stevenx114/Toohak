@@ -20,7 +20,6 @@ import {
   QuizListReturn,
   EmptyObject,
   trashedQuizReturn,
-  getUserByEmail,
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn
@@ -31,7 +30,8 @@ import {
   getToken,
   getQuiz,
   getQuestion,
-} from './helper'
+  getUserByEmail
+} from './helper';
 
 /**
  * Given basic details about a new quiz, create one for the logged in user.
