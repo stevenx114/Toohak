@@ -97,6 +97,7 @@ export interface QuestionBody {
   duration: number;
   points: number;
   answers: AnswerSimple[];
+  thumbnailURL: string;
 }
 
 export interface QuestionIdReturn {

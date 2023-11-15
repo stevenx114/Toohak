@@ -379,7 +379,7 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
 
   if (!findToken) {
     throw HTTPError(401, 'Invalid token');
-  }
+  } 
 
   const user = getUser(findToken.authUserId);
   const hasQuizId = user.quizzesOwned.find(quiz => quiz === quizid);
@@ -401,7 +401,14 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     throw HTTPError(400, 'The length of an answer is shorter than 1 character long, or longer than 30 characters long');
   } else if (!CorrectAnswer) {
     throw HTTPError(400, 'Question must have a correct answer');
+  } else if (!questionBody.thumbnailURL) {
+    throw HTTPError(400, 'Thumbnail URL cannot be empty');
+  } else if (!questionBody.thumbnailURL.includes('.jpg') || !questionBody.thumbnailURL.includes('.jpeg') || !questionBody.thumbnailURL.includes('.png')) {
+    throw HTTPError(400, "Thumbnail URL is not the correct file type");
+  } else if (!questionBody.thumbnailURL.startsWith('http://') || !questionBody.thumbnailURL.startsWith('https://')) {
+    throw HTTPError(400, "Invalid Thumbnail URL");
   }
+
   const seenAnswers: string[] = [];
   for (const answer of questionBody.answers) {
     if (seenAnswers.includes(answer.answer)) {
