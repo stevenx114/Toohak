@@ -15,10 +15,6 @@ import {
 } from 'custom-uuid';
 
 import {
-  getUser,
-  getToken,
-  getQuiz,
-  getQuestion,
   ErrorObject,
   QuizIdReturn,
   QuizListReturn,
@@ -29,6 +25,13 @@ import {
   QuestionIdReturn,
   QuestionDuplicateReturn
 } from './types';
+
+import {
+  getUser,
+  getToken,
+  getQuiz,
+  getQuestion,
+} from './helper'
 
 /**
  * Given basic details about a new quiz, create one for the logged in user.
