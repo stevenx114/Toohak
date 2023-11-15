@@ -112,6 +112,13 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   res.json(adminQuizCreate(token, name, description));
 });
 
+// adminQuizCreateV2
+app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { name, description } = req.body;
+  res.json(adminQuizCreate(token, name, description));
+});
+
 // adminQuizRemove
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
