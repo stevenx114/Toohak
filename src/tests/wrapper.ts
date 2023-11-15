@@ -84,8 +84,6 @@ export function requestQuizList(token: string) {
   return requestHelper('GET', '/v1/admin/quiz/list', { token });
 }
 
-
-
 export function requestQuizRemove(token: string, quizid: number) {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizid}`, { token });
 }
@@ -156,6 +154,10 @@ export function requestQuizUpdate(quizId: number, questionId: number, token: str
 
 export function requestNonExistentRoute() {
   return requestHelper('POST', '/non-existent-route', {});
+}
+
+export function requestQuizCreateV2(token: string, name: string, description: string) {
+  return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
 }
 
 export function requestQuizListV2(token: string) {

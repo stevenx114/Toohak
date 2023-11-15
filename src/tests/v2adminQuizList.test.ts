@@ -7,9 +7,9 @@ import {
 import {
   requestAuthRegister,
   requestClear,
-  requestQuizCreateV2, 
+  requestQuizCreateV2,
   requestQuizListV2,
-  requestLogoutV2 
+  requestLogoutV2
 } from './wrapper';
 
 import HTTPError from 'http-errors';
