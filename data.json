@@ -1,114 +1,37 @@
 {
   "users": [
     {
-      "userId": 264146913970,
+      "userId": 998786792011,
       "name": "firstname lastname",
       "email": "sample@gmail.com",
       "password": "samplepassword1",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "quizzesOwned": [
-        544972457504
+        724003823207
       ],
-      "previousPasswords": [
-        "samplepassword1"
-      ]
-    },
-    {
-      "userId": 204727173007,
-      "name": "firstname lastname",
-      "email": "sample2@gmail.com",
-      "password": "samplepassword1",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "quizzesOwned": [],
       "previousPasswords": [
         "samplepassword1"
       ]
     }
   ],
-  "quizzes": [
-    {
-      "quizId": 544972457504,
-      "name": "quizName",
-      "timeCreated": 1699890285,
-      "timeLastEdited": 1699890285,
-      "description": "description",
-      "numQuestions": 3,
-      "questions": [
-        {
-          "questionId": 66088466562,
-          "question": "question1",
-          "duration": 3,
-          "points": 3,
-          "answers": [
-            {
-              "answerId": 5208141222,
-              "answer": "answer1",
-              "colour": "green",
-              "correct": false
-            },
-            {
-              "answerId": 8594731539,
-              "answer": "answer2",
-              "colour": "red",
-              "correct": true
-            }
-          ]
-        },
-        {
-          "questionId": 944661278950,
-          "question": "question2",
-          "duration": 4,
-          "points": 4,
-          "answers": [
-            {
-              "answerId": 2358294456,
-              "answer": "answer1",
-              "colour": "brown",
-              "correct": false
-            },
-            {
-              "answerId": 6365916210,
-              "answer": "answer2",
-              "colour": "brown",
-              "correct": true
-            }
-          ]
-        },
-        {
-          "questionId": 608006284847,
-          "question": "question3",
-          "duration": 5,
-          "points": 5,
-          "answers": [
-            {
-              "answerId": 5679300201,
-              "answer": "answer1",
-              "colour": "purple",
-              "correct": false
-            },
-            {
-              "answerId": 2204106567,
-              "answer": "answer2",
-              "colour": "brown",
-              "correct": true
-            }
-          ]
-        }
-      ],
-      "duration": 12
-    }
-  ],
+  "quizzes": [],
   "tokens": [
     {
-      "sessionId": "709319050955",
-      "authUserId": 264146913970
-    },
-    {
-      "sessionId": "938107424937",
-      "authUserId": 204727173007
+      "sessionId": "762112916802",
+      "authUserId": 998786792011
     }
   ],
-  "trash": []
+  "trash": [
+    {
+      "quizId": 724003823207,
+      "name": "quizName",
+      "timeCreated": 1700031029,
+      "timeLastEdited": 1700031029,
+      "description": "description",
+      "numQuestions": 0,
+      "questions": [],
+      "duration": 0
+    }
+  ]
 }
