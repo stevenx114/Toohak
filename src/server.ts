@@ -236,6 +236,12 @@ app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   res.json(quizRestore(quizId, token));
 });
 
+// adminAuthLogoutV2
+app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(adminAuthLogout(token));
+});
+
 // adminQuizQuestionMoveV2
 app.put('/v2/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const token = req.headers.token as string;
