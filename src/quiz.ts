@@ -22,7 +22,8 @@ import {
   trashedQuizReturn,
   QuestionBody,
   QuestionIdReturn,
-  QuestionDuplicateReturn
+  QuestionDuplicateReturn,
+  NewQuestionBody
 } from './types';
 
 import {
@@ -404,14 +405,20 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     throw HTTPError(400, 'The length of an answer is shorter than 1 character long, or longer than 30 characters long');
   } else if (!CorrectAnswer) {
     throw HTTPError(400, 'Question must have a correct answer');
-  } else if (!questionBody.thumbnailURL) {
+  } else if (questionBody.thumbnailUrl === '') {
     throw HTTPError(400, 'Thumbnail URL cannot be empty');
-  } else if (!questionBody.thumbnailURL.includes('.jpg') || !questionBody.thumbnailURL.includes('.jpeg') || !questionBody.thumbnailURL.includes('.png')) {
-    throw HTTPError(400, "Thumbnail URL is not the correct file type");
-  } else if (!questionBody.thumbnailURL.startsWith('http://') || !questionBody.thumbnailURL.startsWith('https://')) {
-    throw HTTPError(400, "Invalid Thumbnail URL");
   }
-
+  
+  if (questionBody.thumbnailUrl) {
+    if (!questionBody.thumbnailUrl.endsWith('.png')  && !questionBody.thumbnailUrl.endsWith('jpeg')  && !questionBody.thumbnailUrl.endsWith('.jpg') ) {
+      throw HTTPError(400, 'Incorrect file type');
+    }
+  
+    if (questionBody.thumbnailUrl.startsWith('http://') === false && questionBody.thumbnailUrl.startsWith('https://') === false) {
+      throw HTTPError(400, "Invalid Thumbnail URL");
+    }
+  }
+  
   const seenAnswers: string[] = [];
   for (const answer of questionBody.answers) {
     if (seenAnswers.includes(answer.answer)) {
@@ -457,6 +464,12 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     questionId: newQuestionId
   };
 };
+
+// const checkThumbnailUrl = (question: QuestionBody) => {
+//   // check that thumbnailUrl is correct type
+//   const lowercaseFilename = question.thumbnailUrl.toLowerCase();
+//   return lowercaseFilename.includes('jpg') || lowercaseFilename.includes('png') || lowercaseFilename.includes('jpeg');
+// };
 
 /**
  * Move a question from one particular position in the quiz to another

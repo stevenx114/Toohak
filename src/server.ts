@@ -37,7 +37,8 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminQuizQuestionCreateV2
 } from './quiz';
 
 // Set up web app
@@ -266,6 +267,14 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const questionId = parseInt(req.params.questionid);
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
+
+// adminQuizCreateV2
+app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { name, description } = req.body;
+  res.json(adminQuizCreate(token, name, description));
+});
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
