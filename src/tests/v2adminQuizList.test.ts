@@ -7,9 +7,9 @@ import {
 import {
   requestAuthRegister,
   requestClear,
-  requestQuizCreate, // change to v2 once merged
+  requestQuizCreateV2, 
   requestQuizListV2,
-  requestLogout // change to v2 once merged
+  requestLogoutV2 
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -26,7 +26,7 @@ describe('GET /v2/admin/quiz/list', () => {
   beforeEach(() => {
     requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   // Error cases
@@ -39,7 +39,7 @@ describe('GET /v2/admin/quiz/list', () => {
   });
 
   test('Token does not refer to valid logged in user session', () => {
-    requestLogout(user.token);
+    requestLogoutV2(user.token);
     expect(() => requestQuizListV2(user.token)).toThrow(HTTPError[401]);
   });
 
@@ -56,7 +56,7 @@ describe('GET /v2/admin/quiz/list', () => {
   });
 
   test('valid input of 2 quizzes', () => {
-    quiz1 = requestQuizCreate(user.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
+    quiz1 = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
     expect(requestQuizListV2(user.token)).toStrictEqual({
       quizzes: [
         {
