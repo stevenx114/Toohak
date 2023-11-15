@@ -171,3 +171,15 @@ export function requestQuizRestoreV2(quizId: number, token: string) {
 export function requestQuizUpdateV2(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody }, { token });
 }
+
+export function requestLogoutV2(token: string) {
+  return requestHelper('POST', '/v2/admin/auth/logout', {}, { token });
+}
+
+export function requestQuizQuestionMoveV2(token: string, quizId: number, questionId: number, newPosition: number) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}/move`, { newPosition }, { token });
+}
+
+export function requestQuizQuestionDuplicateV2(token: string, quizId: number, questionId: number) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
+}
