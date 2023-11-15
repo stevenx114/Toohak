@@ -136,6 +136,10 @@ export function requestQuizQuestionCreate(token: string, quizid: number, questio
   return requestHelper('POST', `/v1/admin/quiz/${quizid}/question`, { token, questionBody });
 }
 
+export function requestQuizQuestionCreateV2(token: string, quizid: number, questionBody: QuestionBody) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizid}/question`, { questionBody }, { token });
+}
+
 export function requestQuizQuestionDelete(token: string, quizid: number, questionid: number) {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizid}/question/${questionid}`, { token });
 }
