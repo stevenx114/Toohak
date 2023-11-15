@@ -46,6 +46,10 @@ export const adminQuizCreate = (token: string, name: string, description: string
   const specialChar = /[^a-zA-Z0-9\s]/;
   const curToken = getToken(token);
 
+  if (!token) {
+    throw HTTPError(401, 'Token is empty');
+  }
+
   if (!curToken) {
     throw HTTPError(401, 'Token does not refer to valid logged in user session');
   }
@@ -89,6 +93,67 @@ export const adminQuizCreate = (token: string, name: string, description: string
     quizId: newQuizId
   };
 };
+
+// /**
+//  * Given basic details about a new quiz, create one for the logged in user.
+//  *
+//  * @param {string} token
+//  * @param {string} name
+//  * @param {string} description
+//  * @returns {object} QuizIdReturn | ErrorObject
+//  */
+// export const adminQuizCreateV2 = (token: string, name: string, description: string): QuizIdReturn | ErrorObject => {
+//   const data = getData();
+//   const specialChar = /[^a-zA-Z0-9\s]/;
+//   const curToken = getToken(token);
+
+//   if (!token) {
+//     throw HTTPError(401, 'Token is empty');
+//   }
+
+//   if (!curToken) {
+//     throw HTTPError(401, 'Token does not refer to valid logged in user session');
+//   }
+//   const curUserId = curToken.authUserId;
+//   const curUser = getUser(curUserId);
+//   const curQuizzes = data.quizzes.filter(quiz => curUser.quizzesOwned.includes(quiz.quizId));
+//   const curQuizzesNames = curQuizzes.map(quiz => quiz.name);
+//   const newQuizId = parseInt(generateCustomUuid('0123456789', 12));
+
+//   if (!name) {
+//     throw HTTPError(400, 'name cannot be empty');
+//   } else if (name.length < 3) {
+//     throw HTTPError(400, 'name needs to be at least 3 characters');
+//   } else if (name.length > 30) {
+//     throw HTTPError(400, 'name cannot exceed 30 characters');
+//   } else if (description.length > 100) {
+//     throw HTTPError(400, 'description cannot exceed 100 characters');
+//   } else if (specialChar.test(name)) {
+//     throw HTTPError(400, 'name can only contain alphanumeric and space characters');
+//   } else if (curQuizzesNames.includes(name)) {
+//     throw HTTPError(400, 'Name is already used by the current logged in user for another quiz');
+//   }
+
+//   data.quizzes.push(
+//     {
+//       quizId: newQuizId,
+//       name: name,
+//       timeCreated: Math.floor((new Date()).getTime() / 1000),
+//       timeLastEdited: Math.floor((new Date()).getTime() / 1000),
+//       description: description,
+//       numQuestions: 0,
+//       questions: [],
+//       duration: 0
+//     }
+//   );
+
+//   curUser.quizzesOwned.push(newQuizId); // Updates the quizzes owned by current user
+//   setData(data);
+
+//   return {
+//     quizId: newQuizId
+//   };
+// };
 
 /**
  * Given a particular quiz, permanently remove the quiz.
