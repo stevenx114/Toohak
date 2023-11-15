@@ -168,19 +168,6 @@ export function requestQuizRestoreV2(quizId: number, token: string) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
 }
 
-// Wrapper for playerJoin
-export function requestPlayerJoin(sessionId: number, name: string) {
-  const res = request('POST', SERVER_URL + '/v1/player/join', {
-    json: { sessionId: sessionId, name: name }
-  });
-  return JSON.parse(res.body.toString());
-}
-
-// Wrapper for playerQuestionInfo
 export function requestplayerQuestionInfo(playerId: number, questionPosition: number) {
-  const res = request('GET', SERVER_URL + '/v1/player/' + playerId + '/question/' + questionPosition, {
-    qs: {},
-    headers: {}
-  });
-  return JSON.parse(res.body.toString());
+  return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}`, {}, {});
 }
