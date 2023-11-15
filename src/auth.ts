@@ -6,6 +6,12 @@ import {
 } from './dataStore';
 
 import {
+  getToken,
+  getUser,
+  getHashOf
+} from './helper';
+
+import {
   generateCustomUuid
 } from 'custom-uuid';
 
@@ -18,8 +24,6 @@ import {
   EmptyObject,
   TokenReturn,
   UserDetailsReturn,
-  getToken,
-  getUser,
 } from './types';
 
 /**
@@ -40,7 +44,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
     userId: newUserId,
     name: `${nameFirst} ${nameLast}`,
     email: email,
-    password: password,
+    password: getHashOf(password),
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
     quizzesOwned: [],
@@ -92,7 +96,7 @@ export const adminAuthLogin = (email: string, password: string): TokenReturn | E
   // Finds the user given their email
   const currUser = data.users.find(user => user.email === email);
   // Checks if the password matches the user's set password
-  if (password !== currUser.password) {
+  if (getHashOf(password) !== currUser.password) {
     currUser.numFailedPasswordsSinceLastLogin += 1;
     throw HTTPError(400, 'Password is not correct for the given email');
   }
@@ -205,15 +209,17 @@ export const adminUserDetailsUpdate = (token: string, email: string, nameFirst: 
 export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, newPassword: string): ErrorObject | EmptyObject => {
   const data = getData();
   const curToken = getToken(sessionId);
+  const hashedNewPassword = getHashOf(newPassword);
+  const hashedOldPassword = getHashOf(oldPassword);
   if (!curToken) {
     throw HTTPError(401, 'Token does not refer to a valid logged in user session');
   }
   const curUser = getUser(curToken.authUserId);
-  if (oldPassword !== curUser.password) {
+  if (hashedOldPassword !== curUser.password) {
     throw HTTPError(400, 'Old password is not the correct old password');
-  } else if (oldPassword === newPassword) {
+  } else if (hashedOldPassword === hashedNewPassword) {
     throw HTTPError(400, 'Old Password and New Password match exactly');
-  } else if (curUser.previousPasswords.includes(newPassword)) {
+  } else if (curUser.previousPasswords.includes(hashedNewPassword)) {
     throw HTTPError(400, 'New Password has already been used before by this user');
   } else if (newPassword.length < 8) {
     throw HTTPError(400, 'New Password is less than 8 characters');
@@ -222,8 +228,8 @@ export const adminUpdateUserPassword = (sessionId: string, oldPassword: string, 
   } else if (!/\d/.test(newPassword)) {
     throw HTTPError(400, 'New Password does not contain at least one number');
   }
-  curUser.password = newPassword;
-  curUser.previousPasswords.push(oldPassword);
+  curUser.password = hashedNewPassword;
+  curUser.previousPasswords.push(hashedOldPassword);
   setData(data);
   return {};
 };
