@@ -6,6 +6,12 @@ import {
 } from './dataStore';
 
 import {
+  getToken,
+  getUser,
+  getHashof
+} from './helper'
+
+import {
   generateCustomUuid
 } from 'custom-uuid';
 
@@ -18,8 +24,6 @@ import {
   EmptyObject,
   TokenReturn,
   UserDetailsReturn,
-  getToken,
-  getUser,
 } from './types';
 
 /**
@@ -40,7 +44,7 @@ export const adminAuthRegister = (email: string, password: string, nameFirst: st
     userId: newUserId,
     name: `${nameFirst} ${nameLast}`,
     email: email,
-    password: password,
+    password: getHashof(password),
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
     quizzesOwned: [],
