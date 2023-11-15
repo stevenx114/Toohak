@@ -100,6 +100,12 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   res.json(adminQuizList(token));
 });
 
+// adminQuizListV2
+app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(adminQuizList(token));
+});
+
 // adminQuizCreate
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;

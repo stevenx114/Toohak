@@ -1,6 +1,48 @@
 {
-  "users": [],
-  "quizzes": [],
-  "tokens": [],
+  "users": [
+    {
+      "userId": 243619973483,
+      "name": "firstname lastname",
+      "email": "sample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [
+        646662995731,
+        430084109857
+      ],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 646662995731,
+      "name": "quizName",
+      "timeCreated": 1700051026,
+      "timeLastEdited": 1700051026,
+      "description": "description",
+      "numQuestions": 0,
+      "questions": [],
+      "duration": 0
+    },
+    {
+      "quizId": 430084109857,
+      "name": "nameValid",
+      "timeCreated": 1700051026,
+      "timeLastEdited": 1700051026,
+      "description": "",
+      "numQuestions": 0,
+      "questions": [],
+      "duration": 0
+    }
+  ],
+  "tokens": [
+    {
+      "sessionId": "735699528814",
+      "authUserId": 243619973483
+    }
+  ],
   "trash": []
 }
