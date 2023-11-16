@@ -1,7 +1,25 @@
 {
-  "users": [],
+  "users": [
+    {
+      "userId": 980156275309,
+      "name": "firstname lastname",
+      "email": "sample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    }
+  ],
   "quizzes": [],
-  "tokens": [],
+  "tokens": [
+    {
+      "sessionId": "149028416689",
+      "authUserId": 980156275309
+    }
+  ],
   "trash": [],
   "sessions": []
 }
