@@ -145,6 +145,13 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   res.json(adminQuizRemove(token, quizId));
 });
 
+// adminQuizRemoveV2
+app.delete('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  res.json(adminQuizRemove(token, quizId));
+});
+
 // viewTrash
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   const token = req.query.token as string;
