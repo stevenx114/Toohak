@@ -119,6 +119,6 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
     }
   }`);
   
-  return { result };
+  return result;
 };
 
