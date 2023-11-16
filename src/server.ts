@@ -280,6 +280,14 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   res.json(adminQuizTransfer(token, quizId, userEmail));
 });
 
+// adminQuizTransferV2
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.headers.token;
+  const { userEmail } = req.body;
+  res.json(adminQuizTransfer(token, quizId, userEmail));
+});
+
 // adminQuizQuestionCreate
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
