@@ -9,6 +9,7 @@ import HTTPError from 'http-errors';
 
 const QUESTION = { questionId: expect.any(Number) };
 const NUMBER = expect.any(Number);
+const STRING = expect.any(String);
 
 import {
   requestQuizQuestionCreateV2,
@@ -16,7 +17,7 @@ import {
   requestQuizCreateV2,
   requestLogoutV2,
   requestClear,
-  requestQuizInfo
+  requestQuizInfoV2
 } from './wrapper';
 
 const VALID_Q_BODY_1: QuestionBody = {
@@ -36,7 +37,7 @@ const VALID_Q_BODY_1: QuestionBody = {
   thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
 };
 const VALID_Q_BODY_2: QuestionBody = {
-  question: 'question4',
+  question: 'question2',
   duration: 7,
   points: 6,
   answers: [
@@ -413,18 +414,18 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
 
   // Success Cases
   // Tests for the successful creation of questionId
-  test.skip('timeLastEdited is maintained', () => {
-    const initialTime = requestQuizInfo(user.token, quiz.quizId).timeLastEdited;
+  test('timeLastEdited is maintained', () => {
+    const initialTime = requestQuizInfoV2(user.token, quiz.quizId).timeLastEdited;
     expect(requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_Q_BODY_1)).toStrictEqual(QUESTION);
-    const finalTime = requestQuizInfo(user.token, quiz.quizId).timeLastEdited;
+    const finalTime = requestQuizInfoV2(user.token, quiz.quizId).timeLastEdited;
     expect(finalTime).toBeGreaterThanOrEqual(initialTime);
   });
 
-  test.skip('Successful creation of question', () => {
+  test('Successful creation of question', () => {
     const question1 = requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_Q_BODY_1);
     const question2 = requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_Q_BODY_2);
     const question3 = requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_Q_BODY_3);
-    expect(requestQuizInfo(user.token, quiz.quizId).toStrictEqual({
+    expect(requestQuizInfoV2(user.token, quiz.quizId)).toStrictEqual({
       quizId: quiz.quizId,
       name: validDetails.QUIZ_NAME,
       timeCreated: NUMBER,
@@ -436,15 +437,19 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
           questionId: question1.questionId,
           question: 'question1',
           duration: 3,
-          thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
+          thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
           points: 3,
           answers: [
             {
+              answerId: NUMBER,
               answer: 'Australia',
+              colour: STRING,
               correct: true
             },
             {
+              answerId: NUMBER,
               answer: 'America',
+              colour: STRING,
               correct: false
             }
           ]
@@ -453,39 +458,46 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
           questionId: question2.questionId,
           question: 'question2',
           duration: 7,
-          thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
+          thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
           points: 6,
           answers: [
             {
+              answerId: NUMBER,
               answer: 'Newton',
+              colour: STRING,
               correct: false
             },
             {
+              answerId: NUMBER,
               answer: 'Einstein',
+              colour: STRING,
               correct: true
             }
           ]
         },
         {
           questionId: question3.questionId,
-          question: 'question1',
+          question: 'question3',
           duration: 8,
-          thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
+          thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
           points: 3,
           answers: [
             {
+              answerId: NUMBER,
               answer: 'Leopard',
+              colour: STRING,
               correct: true
             },
             {
+              answerId: NUMBER,
               answer: 'zebra',
+              colour: STRING,
               correct: true
             }
           ]
         },
       ],
-      duration: 18,
-      thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
-    }));
+      duration: 18
+    });
   });
 });
