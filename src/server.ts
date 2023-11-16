@@ -41,7 +41,7 @@ import {
 } from './quiz';
 
 import {
-  adminQuizSessionStart, adminQuizSessionStatusView
+  adminQuizSessionStart, adminQuizSessionStatusView, sessionQuizAnswer
 } from './session';
 
 // Set up web app
@@ -350,6 +350,14 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionid);
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
+});
+
+// adminSessionQuestionAnswer
+app.get('/v1/player/:playerid/question/:questionposistion/answer', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosistion = parseInt(req.params.questionposistion);
+  const answerId = req.body.answerIds;
+  res.json(sessionQuizAnswer(playerId, questionPosistion, answerId));
 });
 
 // ====================================================================
