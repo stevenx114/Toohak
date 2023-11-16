@@ -50,6 +50,21 @@ export interface DataStore {
   trash?: Quiz[];
 }
 
+export interface Player {
+  playerId: number;
+  score: number;
+  name: string;
+  sessionId: number;
+}
+
+export interface Session {
+  sessionId: number;
+  quizId: number;
+  currentQuestion: number;
+  state: string;
+  players: Player[];
+}
+
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {

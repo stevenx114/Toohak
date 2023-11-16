@@ -101,9 +101,22 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   res.json(adminQuizList(token));
 });
 
+// adminQuizListV2
+app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(adminQuizList(token));
+});
+
 // adminQuizCreate
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
+  res.json(adminQuizCreate(token, name, description));
+});
+
+// adminQuizCreateV2
+app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const { name, description } = req.body;
   res.json(adminQuizCreate(token, name, description));
 });
 
@@ -245,6 +258,15 @@ app.post('/v2/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   res.json(quizRestore(quizId, token));
 });
 
+// adminUpdateQuiz v2
+app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const questionId = parseInt(req.params.questionid as string);
+  const questionBody = req.body.questionBody;
+  const token = req.headers.token;
+  res.json(adminUpdateQuiz(quizId, questionId, token, questionBody));
+});
+
 // adminAuthLogoutV2
 app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -268,13 +290,13 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
 
-// adminQuizCreateV2
-app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+// adminQuizNameUpdateV2
+app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const token = req.headers.token as string;
-  const { name, description } = req.body;
-  res.json(adminQuizCreate(token, name, description));
+  const quizId = parseInt(req.params.quizid);
+  const { name } = req.body;
+  res.json(adminQuizNameUpdate(token, quizId, name));
 });
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
