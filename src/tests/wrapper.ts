@@ -191,3 +191,7 @@ export function requestQuizQuestionMoveV2(token: string, quizId: number, questio
 export function requestQuizQuestionDuplicateV2(token: string, quizId: number, questionId: number) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
+
+export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
+}
