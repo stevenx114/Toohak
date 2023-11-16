@@ -212,6 +212,7 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
     numQuestions: quiz.numQuestions,
     questions: quiz.questions,
     duration: quiz.duration,
+    thumbnailUrl: quiz.thumbnailUrl
   };
 };
 
