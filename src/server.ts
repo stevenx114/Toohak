@@ -267,7 +267,7 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
 // adminQuizInfoV2
 app.get('/v2/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const token = req.query.token as string;
+  const token = req.headers.token as string;
   res.json(adminQuizInfo(token, quizId));
 });
 
