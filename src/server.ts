@@ -168,7 +168,6 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   res.json(adminQuizNameUpdate(token, quizId, name));
 });
 
-
 // adminQuizNameUpdateV2
 app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -304,9 +303,6 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const questionId = parseInt(req.params.questionid);
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
-
-
-
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
