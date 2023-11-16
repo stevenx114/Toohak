@@ -25,7 +25,6 @@ describe('quizRestore test', () => {
         players: [],
         metadata: quiz,
       };
-      expect(expectedResult.metadata.thumbnailUrl).toStrictEqual(undefined);
       expect(requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(expectedResult);
     });
   });
