@@ -3,7 +3,8 @@ import {
   Quiz,
   User,
   Question,
-  Token
+  Token,
+  Session
 } from './dataStore';
 
 import crypto from 'crypto';
@@ -31,6 +32,11 @@ export const getUserByEmail = (email: string): User | undefined => {
 export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
   const quiz = getQuiz(quizId);
   return quiz.questions.find(q => q.questionId === questionId);
+};
+
+export const getSession = (sessionId: number): Session | undefined => {
+  const data = getData();
+  return data.sessions.find(session => session.sessionId === sessionId);
 };
 
 export function getHashOf(password: string) {

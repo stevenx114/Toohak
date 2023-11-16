@@ -223,3 +223,7 @@ export function requestQuizSessionStart(token: string, quizId: number, autoStart
 export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
 }
+
+export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
+}
