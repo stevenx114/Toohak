@@ -85,7 +85,7 @@ export interface Answer {
 }
 
 export interface QuestionBody {
-  questionId: string;
+  question: string;
   duration: number;
   points: number;
   answers: AnswerSimple[] | Answer[];

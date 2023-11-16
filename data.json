@@ -1,7 +1,86 @@
 {
-  "users": [],
-  "quizzes": [],
-  "tokens": [],
+  "users": [
+    {
+      "userId": 625389802098,
+      "name": "firstname lastname",
+      "email": "sample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [
+        42318587998
+      ],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    },
+    {
+      "userId": 883177229757,
+      "name": "firstname lastname",
+      "email": "asample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 42318587998,
+      "name": "quizName",
+      "timeCreated": 1700136744,
+      "timeLastEdited": 1700136744,
+      "description": "description",
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 618195857051,
+          "question": "question",
+          "duration": 3,
+          "points": 3,
+          "answers": [
+            {
+              "answerId": 9128992267,
+              "answer": "answer1",
+              "colour": "purple",
+              "correct": false
+            },
+            {
+              "answerId": 400811807,
+              "answer": "answer2",
+              "colour": "blue",
+              "correct": true
+            }
+          ]
+        }
+      ],
+      "duration": 3,
+      "thumnailUrl": ""
+    }
+  ],
+  "tokens": [
+    {
+      "sessionId": "655221083171",
+      "authUserId": 625389802098
+    },
+    {
+      "sessionId": "904931317265",
+      "authUserId": 883177229757
+    }
+  ],
   "trash": [],
-  "sessions": []
+  "sessions": [
+    {
+      "sessionId": 33972015093,
+      "quizId": 42318587998,
+      "atQuestion": 0,
+      "state": "LOBBY",
+      "numPlayers": 0,
+      "players": [],
+      "autoStartNum": 3
+    }
+  ]
 }

@@ -325,7 +325,7 @@ app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
 });
 
 // adminQuizNameUpdateV2
-app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const sessionId = parseInt(req.params.sessionid);
   const quizId = parseInt(req.params.quizid);
