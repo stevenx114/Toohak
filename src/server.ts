@@ -244,6 +244,14 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
 });
 
+// adminUserDetailsUpdateV2
+app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token;
+  const { email, nameFirst, nameLast } = req.body;
+
+  res.json(adminUserDetailsUpdate(token, email, nameFirst, nameLast));
+});
+
 // quizRestore
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);
