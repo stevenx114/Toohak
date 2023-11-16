@@ -148,10 +148,10 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
 };
 
 /**
- * 
- * @param quizId 
- * @param token 
- * @returns 
+ *
+ * @param quizId
+ * @param token
+ * @returns
  */
 export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
   const data = getData();
@@ -160,17 +160,17 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
 
   if (!findToken) {
     throw HTTPError(401, 'Invalid token');
-  } 
+  }
 
   const user = getUser(findToken.authUserId);
   if (!user.quizzesOwned.includes(quiz.quizId)) {
     throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
   }
-  
+
   const viewSessionList = {
     activeSessions: [],
     inactiveSessions: [],
-  }
+  };
 
   for (const session of data.sessions) {
     if (session.quizId === quizId) {

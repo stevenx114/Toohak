@@ -1,7 +1,7 @@
 import {
   getData,
   setData,
-  Quiz, 
+  Quiz,
   Token,
   Answer
 } from './dataStore';

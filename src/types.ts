@@ -127,3 +127,7 @@ export interface SessionStatusViewReturn {
   metadata: Quiz;
 }
 
+export interface SessionList {
+  activeSessions: number[],
+  inactiveSessions: number[],
+} 
