@@ -98,6 +98,12 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(adminUserDetails(token));
 });
 
+// adminUserDetails
+app.get('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(adminUserDetails(token));
+});
+
 // adminQuizList
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
