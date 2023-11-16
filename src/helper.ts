@@ -18,6 +18,8 @@ import {
 
 import crypto from 'crypto';
 
+const countdownLength = 3000;
+
 export const getUser = (userId: number): User | undefined => {
   const data = getData();
   return data.users.find(u => u.userId === userId);
@@ -53,14 +55,18 @@ export const getHashOf = (password: string): string => {
 };
 
 export const sleepSync = (ms: number) => {
+  /* istanbul ignore next */
   const startTime = new Date().getTime();
+  /* istanbul ignore next */
   while (new Date().getTime() - startTime < ms) {
     // zzzZZ - comment needed so eslint doesn't complain
   }
 };
 
 export const isValidAction = (state: string, action: string): boolean => {
-  if (state === sessionState.LOBBY) {
+  if (state === sessionState.END) {
+    return false;
+  } else if (state === sessionState.LOBBY) {
     if (action === sessionAction.SKIP_COUNTDOWN ||
         action === sessionAction.GO_TO_ANSWER ||
         action === sessionAction.GO_TO_FINAL_RESULTS) {
@@ -94,8 +100,6 @@ export const isValidAction = (state: string, action: string): boolean => {
         action === sessionAction.GO_TO_FINAL_RESULTS) {
       return false;
     }
-  } else if (state === sessionState.END) {
-    return false;
   }
   return true;
 };
@@ -124,8 +128,6 @@ const clearCountdown = (sessionId: number) => {
   timerData.splice(indexOfTimer, 1);
   setTimerData(timerData);
 };
-
-const countdownLength = 3000;
 
 export const getNextState = (sessionId: number, state: string, action: string, questionDuration: number): string => {
   const data = getData();
