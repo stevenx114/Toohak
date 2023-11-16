@@ -23,6 +23,7 @@ import {
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
+  sessionState
 } from './types';
 
 import {
@@ -113,6 +114,11 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
 
   if (!user.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
+  }
+  const activeSessions = data.sessions.filter(s => s.quizId === quizId);
+  const endedSessions = activeSessions.filter(s => s.state === sessionState.END);
+  if (endedSessions.length === activeSessions.length) {
+    throw HTTPError(400, 'All sessions for this quiz in END state');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
