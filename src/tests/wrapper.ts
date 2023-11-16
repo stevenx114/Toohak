@@ -160,6 +160,10 @@ export function requestLogoutV2(token: string) {
   return requestHelper('POST', '/v2/admin/auth/logout', {}, { token });
 }
 
+export function requestQuizListV2(token: string) {
+  return requestHelper('GET', '/v2/admin/quiz/list', {}, { token });
+}
+
 export function requestQuizCreateV2(token: string, name: string, description: string) {
   return requestHelper('POST', '/v2/admin/quiz', { name, description }, { token });
 }
@@ -168,13 +172,8 @@ export function requestQuizInfoV2(token: string, quizid: number) {
   return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
 
-export function requestAdminUpdateUserPasswordV2(token: string, oldPassword: string, newPassword: string) {
-  return requestHelper('PUT', '/v2/admin/user/password', { oldPassword, newPassword }, { token });
-
-}
-
-export function requestQuizListV2(token: string) {
-  return requestHelper('GET', '/v2/admin/quiz/list', {}, { token });
+export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
+  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
 
 export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
@@ -193,6 +192,10 @@ export function requestQuizQuestionCreateV2(token: string, quizid: number, quest
   return requestHelper('POST', `/v2/admin/quiz/${quizid}/question`, { questionBody }, { token });
 }
 
+export function requestAdminUpdateUserPasswordV2(token: string, oldPassword: string, newPassword: string) {
+  return requestHelper('PUT', '/v2/admin/user/password', { oldPassword, newPassword }, { token });
+}
+
 export function requestQuizUpdateV2(quizId: number, questionId: number, token: string, questionBody: QuestionBody) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody }, { token });
 }
@@ -209,14 +212,6 @@ export function requestQuizSessionStart(token: string, quizId: number, autoStart
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
 }
 
-export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
-  return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
-}
-
 export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
-}
-
-export function requestQuizInfoV2(token: string, quizid: number) {
-  return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }

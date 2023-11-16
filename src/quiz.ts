@@ -148,7 +148,7 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
     timeCreated: quiz.timeCreated,
     timeLastEdited: quiz.timeLastEdited,
     description: quiz.description,
-    numQuestions: quiz.numQuestions, 
+    numQuestions: quiz.numQuestions,
     questions: quiz.questions,
     duration: quiz.duration,
     thumbnailUrl: quiz.thumbnailUrl
@@ -460,8 +460,6 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     answers: answers,
     thumbnailUrl: questionBody.thumbnailUrl,
   };
-
-  console.log(quiz);
 
   quiz.questions.push(newQuestion);
 
