@@ -1,4 +1,4 @@
-import { Answer, Player, Quiz } from "./dataStore";
+import { Player, Quiz } from "./dataStore";
 
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
@@ -83,7 +83,7 @@ export interface QuestionBody {
   question: string;
   duration: number;
   points: number;
-  answers: AnswerSimple[] | Answer[];
+  answers: AnswerSimple[];
   thumbnailUrl?: string;
 }
 
