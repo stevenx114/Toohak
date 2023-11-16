@@ -1,3 +1,8 @@
+import {
+  Player,
+  Quiz
+} from './dataStore';
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
@@ -97,5 +102,28 @@ export type EmptyObject = Record<string, string>;
 
 export interface SessionIdReturn {
   sessionId: number;
+}
+
+export const VALID_Q_BODY: QuestionBody = {
+  question: 'question',
+  duration: 3,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ]
+};
+
+export interface SessionStatusViewReturn {
+  state: string;
+  atQuestion: number;
+  players: Player[];
+  metadata: Quiz;
 }
 

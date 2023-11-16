@@ -69,15 +69,18 @@ export interface Session {
   autoStartNum: number;
 }
 
-// Data for sessions and timers
-export interface session {
+export interface Timer {
+  timeoutId: ReturnType<typeof setTimeout>;
   sessionId: number;
-  quizId: number;
-  currentQuestion: number;
-  state: string;
 }
 
-export const sessions: session[] = []; // Array of sessions
+let timerData: Timer[] = [];
+
+export const getTimerData = (): Timer[] => timerData;
+
+export const setTimerData = (newTimerData: Timer[]) => {
+  timerData = newTimerData;
+};
 
 const dataFilePath = 'data.json';
 
