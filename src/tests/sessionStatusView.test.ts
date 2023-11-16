@@ -1,5 +1,5 @@
 import { QuizIdReturn, SessionIdReturn, TokenReturn, VALID_Q_BODY, validDetails } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizSessionStart } from './wrapper';
+import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStatus } from './wrapper';
 import HTTPError from 'http-errors';
 
 const expectedValidReturn = JSON.parse(`{
@@ -51,32 +51,26 @@ describe('quizRestore test', () => {
 
   describe('Valid Input test', () => {
     test('All inputs are valid', () => {
-      // Do something here
-      expect(requestQuizSessionResultsCSV(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(quizSessionResultsViewCSVReturn);
+      expect(requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(expectedValidReturn);
     });
   });
 
   describe('Invalid Input Tests', () => {
-    test.skip('Session Id does not refer to a valid session within this quiz', () => {
-      expect(() => requestQuizSessionResultsCSV(token.token, quizId.quizId, sessionId.sessionId + 1)).toThrow(HTTPError[400]);
-    });
-
-    test.skip('Session is not in FINAL_RESULTS state', () => {
-      // Change ssesion state to something else other than FINAL_RESULTS
-      expect(() => requestQuizSessionResultsCSV(token.token, quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[400]);
+    test('Session Id does not refer to a valid session within this quiz', () => {
+      expect(() => requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId + 1)).toThrow(HTTPError[400]);
     });
 
     test('Token is empty', () => {
-      expect(() => requestQuizSessionResultsCSV('', quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[401]);
+      expect(() => requestSessionStatus('', quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[401]);
     });
 
     test('Token is invalid and does not refer to a valid loggin in user', () => {
-      expect(() => requestQuizSessionResultsCSV(token.token + 'a', quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[401]);
+      expect(() => requestSessionStatus(token.token + 'a', quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[401]);
     });
 
     test('Valid token is provided, but user is not authorised to view this session', () => {
       const token2: TokenReturn = requestAuthRegister('a' + validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      expect(() => requestQuizSessionResultsCSV(token2.token, quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[403]);
+      expect(() => requestSessionStatus(token2.token, quizId.quizId, sessionId.sessionId)).toThrow(HTTPError[403]);
     });
   });
 });
