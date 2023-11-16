@@ -11,9 +11,10 @@ import {
     requestQuizQuestionCreateV2,
     requestQuizCreateV2,
     requestClear,
-    requestQuizInfo,
+    requestQuizInfoV2,
     requestAuthRegister,
-    requestQuizSessionStart
+    requestQuizSessionStart,
+    requestSessionStateUpdate
   } from './wrapper';
   
   import HTTPError from 'http-errors';
@@ -54,10 +55,11 @@ interface QuestionObject { questionId: number };
   
     // Error Cases
     test('Question Id does not refer to a valid question', () => {
+      requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
       requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId); // Question doesnt exist anymore
       expect(() => requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId)).toThrow(HTTPError[400]);
     });
-    
+
     test('Session is not in END state', () => {
       expect(() => requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId)).toThrow(HTTPError[400]);
     });
@@ -80,9 +82,9 @@ interface QuestionObject { questionId: number };
 
     // Success cases
     test('Successfuly return of empty object and removal of question', () => {
-    //   requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
+      requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
       requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId);
-      expect(requestQuizInfo(user.token, quiz.quizId)).toStrictEqual({
+      expect(requestQuizInfoV2(user.token, quiz.quizId)).toStrictEqual({
         quizId: quiz.quizId,
         name: validDetails.QUIZ_NAME,
         timeCreated: expect.any(Number),
