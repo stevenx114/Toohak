@@ -13,7 +13,7 @@ export enum validDetails {
   DESCRIPTION_2 = 'description2',
 }
 
-export enum SessionState {
+export enum sessionState {
   LOBBY = 'LOBBY',
   QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
   QUESTION_OPEN = 'QUESTION_OPEN',
@@ -23,7 +23,7 @@ export enum SessionState {
   END = 'END'
 }
 
-export enum SessionAction {
+export enum sessionAction {
   NEXT_QUESTION = 'NEXT_QUESTION',
   SKIP_COUNTDOWN = 'SKIP_COUNTDOWN',
   GO_TO_ANSWER = 'GO_TO_ANSWER',
@@ -109,4 +109,29 @@ export interface questionBody {
 
 export interface SessionIdReturn {
   sessionId: number;
+}
+
+import { Player, Quiz } from './dataStore';
+
+export const VALID_Q_BODY: QuestionBody = {
+  question: 'question',
+  duration: 3,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ]
+};
+
+export interface SessionStatusViewReturn {
+  state: string;
+  atQuestion: number;
+  players: Player[];
+  metadata: Quiz;
 }
