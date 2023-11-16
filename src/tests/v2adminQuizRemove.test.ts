@@ -10,6 +10,7 @@ import {
   requestClear,
   requestQuizRemoveV2,
   requestQuizList,
+  requestQuizSessionStart
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -17,6 +18,8 @@ import HTTPError from 'http-errors';
 afterEach(() => {
   requestClear();
 });
+
+const autoStart = 3;
 
 // Tests for adminQuizRemove function
 describe('DELETE /v1/admin/quiz/{quizid}', () => {
@@ -59,12 +62,18 @@ describe('DELETE /v1/admin/quiz/{quizid}', () => {
     test('Token is empty', () => {
       expect(() => requestQuizRemoveV2('', quizOneId.quizId)).toThrow(HTTPError[401]);
     });
-
     test('Token is invalid', () => {
       expect(() => requestQuizRemoveV2(ownsQuizUserToken.token + '1', quizOneId.quizId)).toThrow(HTTPError[401]);
     });
     test('Quiz Id does not refer to a quiz that this user owns', () => {
       expect(() => requestQuizRemoveV2(noQuizUserToken.token, quizOneId.quizId)).toThrow(HTTPError[403]);
     });
+    test('All sessions for this quiz must be in END state', () => {
+      const sessionIdOne = requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart).sessionId;
+      const sessionIdTwo = requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart).sessionId;
+      requestSessionStateUpdate(ownsQuizUserToken.token, quizOneId.quizId, sessionIdOne, sessionState.END);
+      requestSessionStateUpdate(ownsQuizUserToken.token, quizOneId.quizId, sessionIdTwo, sessionState.END);
+      expect(() => requestQuizRemoveV2(ownsQuizUserToken.token, quizOneId.quizId).toThrow(HTTPError[400]));
+    })
   });
 });
