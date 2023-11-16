@@ -1,7 +1,85 @@
 {
-  "users": [],
-  "quizzes": [],
-  "tokens": [],
+  "users": [
+    {
+      "userId": 687462958445,
+      "name": "firstname lastname",
+      "email": "sample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [
+        557862670353
+      ],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    },
+    {
+      "userId": 224343307007,
+      "name": "firstname lastname",
+      "email": "asample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 557862670353,
+      "name": "quizName",
+      "timeCreated": 1700141788,
+      "timeLastEdited": 1700141788,
+      "description": "description",
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 890545362240,
+          "question": "question",
+          "duration": 3,
+          "points": 3,
+          "answers": [
+            {
+              "answerId": 4628354016,
+              "answer": "answer1",
+              "colour": "red",
+              "correct": false
+            },
+            {
+              "answerId": 6762205723,
+              "answer": "answer2",
+              "colour": "blue",
+              "correct": true
+            }
+          ]
+        }
+      ],
+      "duration": 3
+    }
+  ],
+  "tokens": [
+    {
+      "sessionId": "664844697110",
+      "authUserId": 687462958445
+    },
+    {
+      "sessionId": "891473248927",
+      "authUserId": 224343307007
+    }
+  ],
   "trash": [],
-  "sessions": []
+  "sessions": [
+    {
+      "sessionId": 735270826015,
+      "quizId": 557862670353,
+      "atQuestion": 0,
+      "state": "LOBBY",
+      "numPlayers": 0,
+      "players": [],
+      "autoStartNum": 3
+    }
+  ]
 }

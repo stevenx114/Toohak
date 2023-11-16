@@ -24,19 +24,9 @@ describe('quizRestore test', () => {
         state: sessionState.LOBBY,
         atQuestion: 0,
         players: [],
-        metadata: {
-          quizId: quizId.quizId,
-          name: quiz.name,
-          timeCreated: quiz.timeCreated,
-          timeLastEdited: quiz.timeLastEdited,
-          description: quiz.description,
-          numQuestions: quiz.numQuestions,
-          questions: quiz.questions,
-          duration: quiz.duration,
-          thumbnailUrl: quiz.thumbnailUrl,
-        }
+        metadata: quiz,
       }
-      
+      expect(expectedResult.metadata.thumbnailUrl).toStrictEqual(undefined);
       expect(requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(expectedResult);
     });
   });
