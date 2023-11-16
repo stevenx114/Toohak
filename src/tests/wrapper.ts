@@ -227,3 +227,7 @@ export function requestUserDetailsV2(token: string) {
 export function requestSubmitAnswer(playerId: number, questionPosistion: number, answerId: number[]) {
   return requestHelper('PUT', `/v1/player/${playerId}/question/${questionPosistion}/answer`, { answerId }, {});
 }
+
+export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
+}

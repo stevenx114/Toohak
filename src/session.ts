@@ -2,13 +2,18 @@ import {
   sessionState,
   ErrorObject,
   SessionIdReturn,
+<<<<<<< HEAD
   EmptyObject
+=======
+  SessionStatusViewReturn
+>>>>>>> 4bcee2c0aa2ff3921407e713c8000ab73c3fed55
 } from './types';
 
 import {
   getToken,
   getUser,
-  getQuiz
+  getQuiz,
+  getSession
 } from './helper';
 
 import {
@@ -70,6 +75,7 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
 };
 
 /**
+<<<<<<< HEAD
  * Submits Answers for a session
  *
  * @param {number} playerId
@@ -85,3 +91,36 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
   return {};
 };
 
+=======
+ * Retrieves the status of a quiz session for an admin user.
+ *
+ * @param {string} token - The authentication token.
+ * @param {number} quizId - The ID of the quiz.
+ * @param {number} sessionId - The ID of the quiz session.
+ * @throws {ErrorObject} Throws an error if any validation fails.
+ * @returns {SessionStatusViewReturn} Returns the status of the quiz session.
+ */
+export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
+  let session;
+  let user;
+  const quiz = getQuiz(quizId);
+  if (!(session = getSession(sessionId))) {
+    throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
+  } else if (!token) {
+    throw HTTPError(401, 'Token is empty');
+  } else if (!(user = getUser(getToken(token)?.authUserId))) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  } else if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
+  }
+
+  const quizObject = {
+    state: session.state,
+    atQuestion: session.atQuestion,
+    players: session.players,
+    metadata: quiz,
+  };
+
+  return quizObject;
+};
+>>>>>>> 4bcee2c0aa2ff3921407e713c8000ab73c3fed55
