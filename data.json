@@ -1,21 +1,21 @@
 {
   "users": [
     {
-      "userId": 687462958445,
+      "userId": 264651053271,
       "name": "firstname lastname",
       "email": "sample@gmail.com",
       "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "quizzesOwned": [
-        557862670353
+        736048706078
       ],
       "previousPasswords": [
         "samplepassword1"
       ]
     },
     {
-      "userId": 224343307007,
+      "userId": 888323575433,
       "name": "firstname lastname",
       "email": "asample@gmail.com",
       "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
@@ -29,27 +29,27 @@
   ],
   "quizzes": [
     {
-      "quizId": 557862670353,
+      "quizId": 736048706078,
       "name": "quizName",
-      "timeCreated": 1700141788,
-      "timeLastEdited": 1700141788,
+      "timeCreated": 1700142009,
+      "timeLastEdited": 1700142009,
       "description": "description",
       "numQuestions": 1,
       "questions": [
         {
-          "questionId": 890545362240,
+          "questionId": 8480715776,
           "question": "question",
           "duration": 3,
           "points": 3,
           "answers": [
             {
-              "answerId": 4628354016,
+              "answerId": 7735636126,
               "answer": "answer1",
-              "colour": "red",
+              "colour": "purple",
               "correct": false
             },
             {
-              "answerId": 6762205723,
+              "answerId": 7031667724,
               "answer": "answer2",
               "colour": "blue",
               "correct": true
@@ -62,19 +62,19 @@
   ],
   "tokens": [
     {
-      "sessionId": "664844697110",
-      "authUserId": 687462958445
+      "sessionId": "988023171746",
+      "authUserId": 264651053271
     },
     {
-      "sessionId": "891473248927",
-      "authUserId": 224343307007
+      "sessionId": "487725941225",
+      "authUserId": 888323575433
     }
   ],
   "trash": [],
   "sessions": [
     {
-      "sessionId": 735270826015,
-      "quizId": 557862670353,
+      "sessionId": 617863410254,
+      "quizId": 736048706078,
       "atQuestion": 0,
       "state": "LOBBY",
       "numPlayers": 0,

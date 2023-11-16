@@ -70,6 +70,15 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
   };
 };
 
+/**
+ * Retrieves the status of a quiz session for an admin user.
+ *
+ * @param {string} token - The authentication token.
+ * @param {number} quizId - The ID of the quiz.
+ * @param {number} sessionId - The ID of the quiz session.
+ * @throws {ErrorObject} Throws an error if any validation fails.
+ * @returns {SessionStatusViewReturn} Returns the status of the quiz session.
+ */
 export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
   let session;
   let user;
@@ -88,17 +97,7 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
     state: session.state,
     atQuestion: session.atQuestion,
     players: session.players,
-    metadata: {
-      quizId: quizId,
-      name: quiz.name,
-      timeCreated: quiz.timeCreated,
-      timeLastEdited: quiz.timeLastEdited,
-      description: quiz.description,
-      numQuestions: quiz.numQuestions,
-      questions: quiz.questions,
-      duration: quiz.duration,
-      thumbnailUrl: quiz.thumbnailUrl,
-    }
+    metadata: quiz,
   };
 
   return quizObject;
