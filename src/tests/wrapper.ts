@@ -201,5 +201,5 @@ export function requestQuizNameUpdateV2(token: string, quizid: number, name: str
 }
 
 export function requestQuizInfoV2(token: string, quizid: number) {
-  return requestHelper('GET', `/v2/admin/quiz/${quizid}`, { token });
+  return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
