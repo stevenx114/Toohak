@@ -224,11 +224,10 @@ export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
 }
 
+export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
+}
 
 export function requestEmptyTrashV2(token: string, quizIds: string) {
   return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
-}
-
-export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
-  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
 }
