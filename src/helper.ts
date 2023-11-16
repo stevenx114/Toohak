@@ -29,6 +29,11 @@ export const getUserByEmail = (email: string): User | undefined => {
   return data.users.find(u => u.email === email);
 };
 
+export const getPlayer = (playerId: number): Player | undefined => {
+  const data = getData();
+  return data.players.find(p => p.playId === playerId);
+}
+
 export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
   const quiz = getQuiz(quizId);
   return quiz.questions.find(q => q.questionId === questionId);
