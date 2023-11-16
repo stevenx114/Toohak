@@ -125,7 +125,7 @@ export const VALID_Q_BODY: QuestionBody = {
 export interface SessionStatusViewReturn {
     state: string;
     atQuestion: number;
-    players: String[];
+    players: string[];
     metadata: {
       quizId: number;
       name: string;

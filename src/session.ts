@@ -71,11 +71,11 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
 };
 
 export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
-   let session;
-   let user;
+  let session;
+  let user;
 
   if (!(session = getSession(sessionId))) {
-    throw HTTPError(400, "Session Id does not refer to a valid session within this quiz");
+    throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
   } else if (!token) {
     throw HTTPError(401, 'Token is empty');
   } else if (!(user = getUser(getToken(token)?.authUserId))) {
@@ -83,7 +83,7 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
   } else if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
     throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
   }
- 
+
   const result = JSON.parse(`{
     "state": "LOBBY",
     "atQuestion": 3,
@@ -118,7 +118,6 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
       "thumbnailUrl": "http://google.com/some/image/path.jpg"
     }
   }`);
-  
+
   return result;
 };
-
