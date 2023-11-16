@@ -36,6 +36,7 @@ export interface Quiz {
   numQuestions?: number;
   questions?: Question[];
   duration?: number;
+  thumbnailUrl?: string;
 }
 
 export interface Token {
