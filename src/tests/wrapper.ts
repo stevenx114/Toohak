@@ -207,3 +207,7 @@ export function requestQuizNameUpdateV2(token: string, quizid: number, name: str
 export function requestQuizInfoV2(token: string, quizid: number) {
   return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
+
+export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
+}
