@@ -71,32 +71,15 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
   };
 };
 
-/**
-<<<<<<< HEAD
- * Submits Answers for a session
- *
- * @param {number} playerId
- * @param {number} questionPosistion
- * @param {Array<number>} answerIds
- * @returns {object} EmptyObject | ErrorObject
- */
-export const sessionQuizAnswer = (playerId: number, questionPosistion: number, answerIds: number): EmptyObject | ErrorObject => {
-  const data = getData();
-  const session = data.sessions.
-
-
-  return {};
-};
-
-=======
- * Retrieves the status of a quiz session for an admin user.
- *
- * @param {string} token - The authentication token.
- * @param {number} quizId - The ID of the quiz.
- * @param {number} sessionId - The ID of the quiz session.
- * @throws {ErrorObject} Throws an error if any validation fails.
- * @returns {SessionStatusViewReturn} Returns the status of the quiz session.
- */
+/** 
+* Retrieves the status of a quiz session for an admin user.
+*
+* @param {string} token - The authentication token.
+* @param {number} quizId - The ID of the quiz.
+* @param {number} sessionId - The ID of the quiz session.
+* @throws {ErrorObject} Throws an error if any validation fails.
+* @returns {SessionStatusViewReturn} Returns the status of the quiz session.
+**/
 export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
   let session;
   let user;
@@ -120,4 +103,34 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
 
   return quizObject;
 };
->>>>>>> 4bcee2c0aa2ff3921407e713c8000ab73c3fed55
+
+/**
+ * Submits Answers for a session
+ *
+ * @param {number} playerId
+ * @param {number} questionPosistion
+ * @param {Array<number>} answerIds
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const sessionQuizAnswer = (playerId: number, questionPosistion: number, answerIds: number[]): EmptyObject | ErrorObject => {
+  const data = getData();
+  const session = data.sessions.find(currSession => currSession.players.some(player => player.playerId === playerId));
+  const quiz = getQuiz(session.quizId);
+  if (!session) {
+    throw HTTPError(400, 'If player ID does not exist');
+  } else if (questionPosistion != session.atQuestion) {
+    throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');
+  } else if (session.state != sessionState.QUESTION_OPEN) {
+    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  } else if (answerIds.find(answerId => answerId > quiz.questions[questionPosistion - 1].answers.length)) {
+    throw HTTPError(400, 'Answer IDs are not valid for this particular question');
+  } else if ((new Set(answerIds).size !== answerIds.length)) {
+    throw HTTPError(400, 'There are duplicate answer IDs provided');
+  } else if (answerIds.length < 1) {
+    throw HTTPError(400, 'Less than 1 answer ID was submitted');
+  }
+
+  // Do something hear yhear for submitting answer
+
+  return {};
+}
