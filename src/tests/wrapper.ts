@@ -203,3 +203,7 @@ export function requestQuizSessionStart(token: string, quizId: number, autoStart
 export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
+
+export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
+}
