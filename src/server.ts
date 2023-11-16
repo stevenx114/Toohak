@@ -107,7 +107,7 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(adminUserDetails(token));
 });
 
-// adminUserDetails
+// adminUserDetailsV2
 app.get('/v2/admin/user/details', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   res.json(adminUserDetails(token));
