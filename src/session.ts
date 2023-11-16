@@ -115,7 +115,7 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
 export const sessionQuizAnswer = (playerId: number, questionPosistion: number, answerIds: number[]): EmptyObject | ErrorObject => {
   const data = getData();
   const session = data.sessions.find(currSession => currSession.players.some(player => player.playerId === playerId));
-  const quiz = getQuiz(session.quizId);
+  const quiz = getQuiz(session?.quizId);
   if (!session) {
     throw HTTPError(400, 'If player ID does not exist');
   } else if (questionPosistion != session.atQuestion) {
