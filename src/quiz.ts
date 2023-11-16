@@ -614,7 +614,7 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
  * @param {number} quizId
  * @param {number} questionId
  * @param {string} token
- * @returns 
+ * @returns
  */
 export const adminQuizQuestionDelete = (quizId: number, questionId: number, token: string): ErrorObject | Record<string, never> => {
   const data = getData();
@@ -623,20 +623,20 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, toke
   if (!curToken) {
     throw HTTPError(401, 'Invalid token');
   }
-  
+
   const user = getUser(curToken.authUserId);
   if (!user.quizzesOwned.includes(quiz.quizId)) {
     throw HTTPError(403, 'User is not the owner of the quiz');
   }
-  
+
   const question = quiz.questions.find(question => question.questionId === questionId);
   if (!question) {
     throw HTTPError(400, 'Invalid question id');
   }
-  
+
   for (const session of data.sessions) {
     if (session.quizId === quizId && session.state !== 'END') {
-        throw HTTPError(400, 'Session must be in END state');
+      throw HTTPError(400, 'Session must be in END state');
     }
   }
 
