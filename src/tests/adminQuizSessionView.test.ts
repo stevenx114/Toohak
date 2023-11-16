@@ -1,8 +1,5 @@
 import {
   validDetails,
-  TokenReturn,
-  ErrorObject,
-  QuizIdReturn,
   QuestionBody
 } from '../types';
 
@@ -22,8 +19,6 @@ import HTTPError from 'http-errors';
 interface QuizId { quizId: number }
 interface TokenObject { token: string }
 interface SessionObject { sessionId: number }
-
-const ERROR = expect.any(String);
 
 const QUESTION_BODY_1: QuestionBody = {
   question: 'question',

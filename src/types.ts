@@ -130,4 +130,4 @@ export interface SessionStatusViewReturn {
 export interface SessionList {
   activeSessions: number[],
   inactiveSessions: number[],
-} 
+}

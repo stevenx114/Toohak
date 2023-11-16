@@ -4,7 +4,8 @@ import {
   SessionIdReturn,
   EmptyObject,
   SessionStatusViewReturn,
-  sessionAction
+  sessionAction,
+  SessionList
 } from './types';
 
 import {
@@ -156,7 +157,7 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
 export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
   const data = getData();
   const quiz = getQuiz(quizId);
-  const findToken = getToken(token) as Token;
+  const findToken = getToken(token);
 
   if (!findToken) {
     throw HTTPError(401, 'Invalid token');
