@@ -128,6 +128,10 @@ export function requestUserDetailsUpdate(token: string, email: string, nameFirst
   return requestHelper('PUT', '/v1/admin/user/details', { token, email, nameFirst, nameLast });
 }
 
+export function requestUserDetailsUpdateV2(token: string, email: string, nameFirst: string, nameLast: string) {
+  return requestHelper('PUT', '/v2/admin/user/details', { email, nameFirst, nameLast }, { token });
+}
+
 export function requestQuizRestore(quizId: number, token: string) {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/restore`, { token });
 }
