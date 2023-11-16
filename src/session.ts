@@ -39,7 +39,7 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
   const curUserId = curToken.authUserId;
   const curUser = getUser(curUserId);
   const numActiveSessions = data.sessions.filter(session => session.state !== sessionState.END).length;
-  
+
   if (autoStartNum > 50) {
     throw HTTPError(400, 'autoStartNum cannot be greater than 50');
   } else if (numActiveSessions >= 10) {
