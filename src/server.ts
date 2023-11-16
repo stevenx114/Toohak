@@ -258,6 +258,13 @@ app.put('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   res.json(adminUpdateQuiz(quizId, questionId, token, questionBody));
 });
 
+// adminUpdateUserPassword v2
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+  const { oldPassword, newPassword } = req.body;
+  const token = req.headers.token as string;
+  res.json(adminUpdateUserPassword(token, oldPassword, newPassword));
+});
+
 // adminAuthLogoutV2
 app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
   const token = req.headers.token as string;
