@@ -3,7 +3,8 @@ import {
   QuestionBody,
   TokenReturn,
   QuizIdReturn,
-  SessionIdReturn
+  SessionIdReturn,
+  sessionState
 } from '../types';
 
 import {
@@ -11,7 +12,8 @@ import {
   requestAuthRegister,
   requestQuizQuestionCreate,
   requestQuizCreate,
-  requestQuizSessionStart
+  requestQuizSessionStart,
+  requestSessionStatus
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -60,7 +62,7 @@ describe('Tests for /v1/admin/quiz/{quizid}/session/start', () => {
     test('Successful session start', () => {
       session = requestQuizSessionStart(user.token, quiz.quizId, validAutoStartNum);
       expect(session).toStrictEqual({ sessionId: NUMBER });
-      // expect(requestQuizSessionStatus(user.token, quiz.quizId, session.sessionId).state).toStrictEqual{'LOBBY'};
+      expect(requestSessionStatus(user.token, quiz.quizId, session.sessionId).state).toStrictEqual(sessionState.LOBBY);
     });
   });
 
