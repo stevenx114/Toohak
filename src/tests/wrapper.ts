@@ -221,7 +221,7 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
 }
 
 export function requestQuizSessionView(quizId: number, token: string) {
-  return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, { token });
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, {}, { token });
 }
 
 export function requestQuizSessionStart(token: string, quizId: number, autoStartNum: number) {
