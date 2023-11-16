@@ -99,12 +99,12 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
     const user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     // Try to add question into another quiz from the second user.
     expect(() => requestQuizQuestionCreateV2(user2.token, quiz.quizId, VALID_Q_BODY_1)).toThrow(HTTPError[403]);
-  }); 
+  });
 
   // Tests for invalid question body
   test.each([
     {
-      testCase: "Question string < 5 chars",
+      testCase: 'Question string < 5 chars',
       QuestionBody: {
         question: 'pog',
         duration: 3,
@@ -122,7 +122,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question string < 5 chars
     {
-      testCase: "Question string > 50 chars",
+      testCase: 'Question string > 50 chars',
       QuestionBody: {
         question: 'question'.repeat(10),
         duration: 3,
@@ -141,7 +141,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question string > 50 chars
     {
-      testCase: "Question duration < 0",
+      testCase: 'Question duration < 0',
       QuestionBody: {
         question: 'question',
         duration: 0,
@@ -160,7 +160,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question duration < 0
     {
-      testCase: "Question duration > 3 mins",
+      testCase: 'Question duration > 3 mins',
       QuestionBody: {
         question: 'question',
         duration: 3000,
@@ -179,7 +179,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question duration > 3 mins
     {
-      testCase: "Question has > 6 answers",
+      testCase: 'Question has > 6 answers',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -218,7 +218,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question has > 6 answers
     {
-      testCase: "Question has < 2 answers",
+      testCase: 'Question has < 2 answers',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -233,7 +233,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question has < 2 answers
     {
-      testCase: "Question points < 1",
+      testCase: 'Question points < 1',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -252,7 +252,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question points < 1
     {
-      testCase: "Question points > 10",
+      testCase: 'Question points > 10',
       QuestionBody: {
         question: 'question',
         duration: 11,
@@ -271,7 +271,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question points > 10
     {
-      testCase: "Question answer < 1 char",
+      testCase: 'Question answer < 1 char',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -290,7 +290,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question answer < 1 char
     {
-      testCase: "Question answer > 30 chars",
+      testCase: 'Question answer > 30 chars',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -309,7 +309,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question answer > 30 chars
     {
-      testCase: "Question has duplicate answers",
+      testCase: 'Question has duplicate answers',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -328,7 +328,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question has duplicate answers
     {
-      testCase: "Question has no correct answers",
+      testCase: 'Question has no correct answers',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -347,7 +347,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       }
     }, // Question has no correct answers
     {
-      testCase: "Thumbnail is empty",
+      testCase: 'Thumbnail is empty',
       QuestionBody: {
         question: 'question',
         duration: 3,
@@ -363,7 +363,7 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
           }
         ],
         thumbnailUrl: '',
-      } 
+      }
     }, // Thumbnail is empty
     {
       testCase: "Doesnt start with 'http://'",
@@ -435,14 +435,14 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
           thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
           points: 3,
           answers: [
-              {
-                answer: 'Australia',
-                correct: true
-              },
-              {
-                answer: 'America',
-                correct: false
-              }
+            {
+              answer: 'Australia',
+              correct: true
+            },
+            {
+              answer: 'America',
+              correct: false
+            }
           ]
         },
         {
@@ -482,7 +482,6 @@ describe('Tests for adminQuizQuestionCreateV2', () => {
       ],
       duration: 18,
       thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
-    }))
+    }));
   });
 });
-  

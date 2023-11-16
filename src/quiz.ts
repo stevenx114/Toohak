@@ -23,7 +23,6 @@ import {
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
-  NewQuestionBody
 } from './types';
 
 import {
@@ -448,7 +447,7 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
 
   if (!findToken) {
     throw HTTPError(401, 'Invalid token');
-  } 
+  }
 
   const user = getUser(findToken.authUserId);
   const hasQuizId = user.quizzesOwned.find(quiz => quiz === quizid);
@@ -473,17 +472,17 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
   } else if (questionBody.thumbnailUrl === '') {
     throw HTTPError(400, 'Thumbnail URL cannot be empty');
   }
-  
+
   if (questionBody.thumbnailUrl) {
-    if (!questionBody.thumbnailUrl.endsWith('.png')  && !questionBody.thumbnailUrl.endsWith('jpeg')  && !questionBody.thumbnailUrl.endsWith('.jpg') ) {
+    if (!questionBody.thumbnailUrl.endsWith('.png') && !questionBody.thumbnailUrl.endsWith('jpeg') && !questionBody.thumbnailUrl.endsWith('.jpg')) {
       throw HTTPError(400, 'Incorrect file type');
     }
-  
+
     if (questionBody.thumbnailUrl.startsWith('http://') === false && questionBody.thumbnailUrl.startsWith('https://') === false) {
-      throw HTTPError(400, "Invalid Thumbnail URL");
+      throw HTTPError(400, 'Invalid Thumbnail URL');
     }
   }
-  
+
   const seenAnswers: string[] = [];
   for (const answer of questionBody.answers) {
     if (seenAnswers.includes(answer.answer)) {
