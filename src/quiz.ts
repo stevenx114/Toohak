@@ -454,6 +454,7 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     duration: questionBody.duration,
     points: questionBody.points,
     answers: answers,
+    thumbnailUrl: questionBody.thumbnailUrl,
   };
 
   quiz.questions.push(newQuestion);
