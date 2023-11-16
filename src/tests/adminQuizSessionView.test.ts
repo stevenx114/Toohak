@@ -15,13 +15,13 @@ import {
   requestQuizQuestionCreateV2,
   requestQuizSessionStart,
   requestSessionStateUpdate
-} from './wrapper';  
+} from './wrapper';
 
 import HTTPError from 'http-errors';
 
-interface QuizId { quizId: number };
-interface TokenObject { token: string };
-interface SessionObject { sessionId: number };
+interface QuizId { quizId: number }
+interface TokenObject { token: string }
+interface SessionObject { sessionId: number }
 
 const ERROR = expect.any(String);
 
@@ -79,7 +79,7 @@ const QUESTION_BODY_3: QuestionBody = {
 };
 
 afterEach(() => {
-    requestClear();
+  requestClear();
 });
 
 // Tests for adminQuizSessionView
@@ -164,4 +164,4 @@ describe('GET adminQuizSessionView', () => {
       ]
     });
   });
-}); 
+});
