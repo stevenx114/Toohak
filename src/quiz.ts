@@ -111,7 +111,7 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   const user = getUser(userId);
 
   if (!user.quizzesOwned.includes(quizId)) {
-    throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
