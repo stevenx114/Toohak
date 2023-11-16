@@ -1,3 +1,8 @@
+import { 
+  Player, 
+  Quiz 
+} from './dataStore';
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
@@ -74,7 +79,7 @@ export interface QuizListReturn {
 
 export interface AnswerSimple {
   answer: string;
-  correct: true | false;
+  correct: boolean;
 }
 
 export interface QuestionBody {
@@ -95,23 +100,9 @@ export interface QuestionDuplicateReturn {
 
 export type EmptyObject = Record<string, string>;
 
-export interface questionAnswer {
-  answer: string;
-  correct: boolean;
-}
-
-export interface questionBody {
-  question: string;
-  duration: number;
-  points: number,
-  answers: questionAnswer[];
-}
-
 export interface SessionIdReturn {
   sessionId: number;
 }
-
-import { Player, Quiz } from './dataStore';
 
 export const VALID_Q_BODY: QuestionBody = {
   question: 'question',
