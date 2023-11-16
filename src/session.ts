@@ -1,7 +1,8 @@
 import {
   sessionState,
   ErrorObject,
-  SessionIdReturn
+  SessionIdReturn,
+  EmptyObject
 } from './types';
 
 import {
@@ -67,3 +68,20 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     sessionId: newSessionId
   };
 };
+
+/**
+ * Submits Answers for a session
+ *
+ * @param {number} playerId
+ * @param {number} questionPosistion
+ * @param {Array<number>} answerIds
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const sessionQuizAnswer = (playerId: number, questionPosistion: number, answerIds: number): EmptyObject | ErrorObject => {
+  const data = getData();
+  const session = data.sessions.
+
+
+  return {};
+};
+
