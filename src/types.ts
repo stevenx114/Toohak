@@ -1,6 +1,6 @@
-import { 
-  Player, 
-  Quiz 
+import {
+  Player,
+  Quiz
 } from './dataStore';
 
 export enum validDetails {
