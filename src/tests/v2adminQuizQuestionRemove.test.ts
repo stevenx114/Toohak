@@ -48,25 +48,25 @@ interface QuestionObject { questionId: number };
     let user: TokenObject;
     let quiz: QuizId;
     let question: QuestionObject;
-    // let session: SessionObject;
+    let session: SessionObject;
     beforeEach(() => {
       requestClear();
       user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
       quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
       question = requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_Q_BODY);
-      // session = requestQuizSessionStart(user.token, quiz.quizId, 1); // session is in LOBBY state
+      session = requestQuizSessionStart(user.token, quiz.quizId, 1); // session is in LOBBY state
     });
   
     // Error Cases
     test('Question Id does not refer to a valid question', () => {
-      // requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
+      requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
       requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId); // Question doesnt exist anymore
       expect(() => requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId)).toThrow(HTTPError[400]);
     });
 
-    // test('Session is not in END state', () => {
-    //   expect(() => requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId)).toThrow(HTTPError[400]);
-    // });
+    test('Session is not in END state', () => {
+      expect(() => requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId)).toThrow(HTTPError[400]);
+    });
   
     test('Token is empty', () => {
       expect(() => requestQuizQuestionDeleteV2('', quiz.quizId, question.questionId)).toThrow(HTTPError[401]);
@@ -85,8 +85,8 @@ interface QuestionObject { questionId: number };
     });
 
     // Success cases
-    test.skip('Successfuly return of empty object and removal of question', () => {
-      // requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
+    test('Successfuly return of empty object and removal of question', () => {
+      requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
       requestQuizQuestionDeleteV2(user.token, quiz.quizId, question.questionId);
       expect(requestQuizInfoV2(user.token, quiz.quizId)).toStrictEqual({
         quizId: quiz.quizId,
