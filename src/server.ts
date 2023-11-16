@@ -41,7 +41,8 @@ import {
 } from './quiz';
 
 import {
-  adminQuizSessionStart
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate
 } from './session';
 
 // Set up web app
@@ -307,6 +308,15 @@ app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { name } = req.body;
   res.json(adminQuizNameUpdate(token, quizId, name));
+});
+
+// adminQuizSessionStateUpdate
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const { action } = req.body;
+  res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
 // ====================================================================
