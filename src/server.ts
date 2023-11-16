@@ -273,6 +273,13 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(adminQuizEmptyTrash(token, quizIds));
 });
 
+// adminQuizEmptyTrashV2
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizIds = req.query.quizIds;
+  res.json(adminQuizEmptyTrash(token, quizIds));
+});
+
 // adminQuizTransfer
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);

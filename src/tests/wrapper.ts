@@ -223,3 +223,7 @@ export function requestQuizSessionStart(token: string, quizId: number, autoStart
 export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
 }
+
+export function requestEmptyTrashV2(token: string, quizIds: string) {
+  return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
+}
