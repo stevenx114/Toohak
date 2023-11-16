@@ -13,6 +13,7 @@ export interface Question {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailUrl?: string;
 }
 
 export interface User {
@@ -35,6 +36,7 @@ export interface Quiz {
   numQuestions?: number;
   questions?: Question[];
   duration?: number;
+  thumbnailUrl?: string;
 }
 
 export interface Token {
@@ -47,6 +49,7 @@ export interface DataStore {
   quizzes: Quiz[];
   tokens?: Token[];
   trash?: Quiz[];
+  sessions?: Session[];
 }
 
 export interface Player {
@@ -59,9 +62,11 @@ export interface Player {
 export interface Session {
   sessionId: number;
   quizId: number;
-  currentQuestion: number;
+  atQuestion: number;
   state: string;
+  numPlayers: number;
   players: Player[];
+  autoStartNum: number;
 }
 
 const dataFilePath = 'data.json';

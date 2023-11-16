@@ -22,6 +22,10 @@ import {
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;

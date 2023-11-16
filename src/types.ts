@@ -13,6 +13,24 @@ export enum validDetails {
   DESCRIPTION_2 = 'description2',
 }
 
+export enum sessionState {
+  LOBBY = 'LOBBY',
+  QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
+  QUESTION_OPEN = 'QUESTION_OPEN',
+  QUESTION_CLOSE = 'QUESTION_CLOSE',
+  ANSWER_SHOW = 'ANSWER_SHOW',
+  FINAL_RESULTS = 'FINAL_RESULTS',
+  END = 'END'
+}
+
+export enum sessionAction {
+  NEXT_QUESTION = 'NEXT_QUESTION',
+  SKIP_COUNTDOWN = 'SKIP_COUNTDOWN',
+  GO_TO_ANSWER = 'GO_TO_ANSWER',
+  GO_TO_FINAL_RESULTS = 'GO_TO_FINAL_RESULTS',
+  END = 'END'
+}
+
 export interface ErrorObject {
   error: string;
   statusCode?: number;
@@ -56,7 +74,7 @@ export interface QuizListReturn {
 
 export interface AnswerSimple {
   answer: string;
-  correct: true | false;
+  correct: boolean;
 }
 
 export interface QuestionBody {
@@ -64,6 +82,7 @@ export interface QuestionBody {
   duration: number;
   points: number;
   answers: AnswerSimple[];
+  thumbnailUrl?: string;
 }
 
 export interface QuestionIdReturn {
@@ -76,14 +95,6 @@ export interface QuestionDuplicateReturn {
 
 export type EmptyObject = Record<string, string>;
 
-export interface questionAnswer {
-  answer: string;
-  correct: boolean;
-}
-
-export interface questionBody {
-  question: string;
-  duration: number;
-  points: number,
-  answers: questionAnswer[];
+export interface SessionIdReturn {
+  sessionId: number;
 }

@@ -136,6 +136,10 @@ export function requestQuizQuestionCreate(token: string, quizid: number, questio
   return requestHelper('POST', `/v1/admin/quiz/${quizid}/question`, { token, questionBody });
 }
 
+export function requestQuizQuestionCreateV2(token: string, quizid: number, questionBody: QuestionBody) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizid}/question`, { questionBody }, { token });
+}
+
 export function requestQuizQuestionDelete(token: string, quizid: number, questionid: number) {
   return requestHelper('DELETE', `/v1/admin/quiz/${quizid}/question/${questionid}`, { token });
 }
@@ -196,6 +200,18 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
 
+export function requestQuizSessionStart(token: string, quizId: number, autoStartNum: number) {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
+}
+
 export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
+}
+
+export function requestUserDetailsV2(token: string) {
+  return requestHelper('GET', '/v2/admin/user/details', { }, { token });
+}
+
+export function requestQuizInfoV2(token: string, quizid: number) {
+  return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
