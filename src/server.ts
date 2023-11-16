@@ -107,6 +107,12 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   res.json(adminUserDetails(token));
 });
 
+// adminUserDetailsV2
+app.get('/v2/admin/user/details', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  res.json(adminUserDetails(token));
+});
+
 // adminQuizList
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const token = req.query.token as string;
@@ -324,7 +330,7 @@ app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   res.json(adminQuizNameUpdate(token, quizId, name));
 });
 
-// adminQuizNameUpdateV2
+// adminQuizSessionViewV2
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const sessionId = parseInt(req.params.sessionid);

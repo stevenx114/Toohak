@@ -204,6 +204,10 @@ export function requestQuizNameUpdateV2(token: string, quizid: number, name: str
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
 
+export function requestUserDetailsV2(token: string) {
+  return requestHelper('GET', '/v2/admin/user/details', { }, { token });
+}
+
 export function requestQuizInfoV2(token: string, quizid: number) {
   return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
