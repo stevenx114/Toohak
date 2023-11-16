@@ -196,6 +196,10 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
 
+export function requestQuizSessionStart(token: string, quizId: number, autoStartNum: number) {
+  return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
+}
+
 export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
