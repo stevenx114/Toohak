@@ -635,10 +635,8 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, toke
   }
   
   for (const session of data.sessions) {
-    if (session.quizId === quizId) {
-      if (session.state !== 'END') {
+    if (session.quizId === quizId && session.state !== 'END') {
         throw HTTPError(400, 'Session must be in END state');
-      } 
     }
   }
 
