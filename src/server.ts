@@ -224,6 +224,13 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
   res.json(adminUpdateUserPassword(token, oldPassword, newPassword));
 });
 
+// adminUpdateUserPassword v2
+app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+  const { oldPassword, newPassword } = req.body;
+  const token = req.headers.token as string;
+  res.json(adminUpdateUserPassword(token, oldPassword, newPassword));
+});
+
 // adminUserDetailsUpdate
 app.put('/v1/admin/user/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
