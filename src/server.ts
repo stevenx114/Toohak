@@ -40,6 +40,10 @@ import {
   adminQuizQuestionDelete,
 } from './quiz';
 
+import {
+  adminQuizSessionStart
+} from './session';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -302,6 +306,22 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
+});
+
+// adminQuizSessionStart
+app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const { autoStartNum } = req.body;
+  res.json(adminQuizSessionStart(token, quizId, autoStartNum));
+});
+
+// adminQuizNameUpdateV2
+app.put('/v2/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const { name } = req.body;
+  res.json(adminQuizNameUpdate(token, quizId, name));
 });
 
 // ====================================================================
