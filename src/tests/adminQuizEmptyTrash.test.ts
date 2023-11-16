@@ -15,6 +15,10 @@ import {
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('Tests for adminQuizEmptyTrash', () => {
   let token: TokenReturn;
   let quiz: QuizIdReturn;

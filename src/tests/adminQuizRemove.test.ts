@@ -14,6 +14,10 @@ import {
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizRemove function
 describe('DELETE /v1/admin/quiz/{quizid}', () => {
   let ownsQuizUserToken: TokenReturn;

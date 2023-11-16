@@ -16,6 +16,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('POST /v1/admin/auth/logout', () => {
   let userToken: TokenReturn;
   beforeEach(() => {
