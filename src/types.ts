@@ -1,3 +1,5 @@
+import { Answer, Player } from "./dataStore";
+
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
   PASSWORD = 'samplepassword1',
@@ -77,13 +79,6 @@ export interface AnswerSimple {
   correct: boolean;
 }
 
-export interface Answer {
-  answerId: number;
-  answer: string;
-  colour: string;
-  correct: boolean;
-}
-
 export interface QuestionBody {
   question: string;
   duration: number;
@@ -125,7 +120,7 @@ export const VALID_Q_BODY: QuestionBody = {
 export interface SessionStatusViewReturn {
     state: string;
     atQuestion: number;
-    players: string[];
+    players: Player[];
     metadata: {
       quizId: number;
       name: string;
