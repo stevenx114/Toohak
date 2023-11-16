@@ -13,7 +13,7 @@ export enum validDetails {
   DESCRIPTION_2 = 'description2',
 }
 
-export enum sessionState {
+export enum SessionState {
   LOBBY = 'LOBBY',
   QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
   QUESTION_OPEN = 'QUESTION_OPEN',
@@ -23,7 +23,7 @@ export enum sessionState {
   END = 'END'
 }
 
-export enum sessionAction {
+export enum SessionAction {
   NEXT_QUESTION = 'NEXT_QUESTION',
   SKIP_COUNTDOWN = 'SKIP_COUNTDOWN',
   GO_TO_ANSWER = 'GO_TO_ANSWER',
