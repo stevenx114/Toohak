@@ -195,3 +195,7 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
 export function requestQuizNameUpdateV2(token: string, quizid: number, name: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
+
+export function requestQuizInfoV2(token: string, quizid: number) {
+  return requestHelper('GET', `/v2/admin/quiz/${quizid}`, { token });
+}
