@@ -1,10 +1,10 @@
-import { TokenReturn, questionBody } from '../types';
+import { TokenReturn, QuestionBody } from '../types';
 import { QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
 import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizUpdateV2 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
-const validQuestionDetails: questionBody = {
+const validQuestionDetails: QuestionBody = {
   question: 'Who is the Monarch of England?',
   duration: 1,
   points: 1,
@@ -22,7 +22,7 @@ describe('quizUpdate', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;
   let questionId: QuestionIdReturn;
-  let questionBody: questionBody;
+  let questionBody: QuestionBody;
 
   beforeEach(() => {
     requestClear();

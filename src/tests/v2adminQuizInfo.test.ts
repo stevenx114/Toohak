@@ -8,7 +8,7 @@ import {
     requestAuthRegister,
     requestQuizInfoV2,
     requestClear,
-    requestQuizCreate
+    requestQuizCreateV2
   } from './wrapper';
   
   import HTTPError from 'http-errors';
@@ -18,14 +18,14 @@ import {
   });
   
   // Tests for adminQuizInfo function
-  describe('GET /v1/admin/quiz/{quizid}', () => {
+  describe('GET /v2/admin/quiz/{quizid}', () => {
     let ownsQuizUserToken: TokenReturn;
     let noQuizUserToken: TokenReturn;
     let quizId: QuizIdReturn;
     beforeEach(() => {
       ownsQuizUserToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
       noQuizUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
-      quizId = requestQuizCreate(ownsQuizUserToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+      quizId = requestQuizCreateV2(ownsQuizUserToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     });
   
     // Success cases for adminQuizInfo function
@@ -37,7 +37,7 @@ import {
           timeCreated: expect.any(Number),
           timeLastEdited: expect.any(Number),
           description: validDetails.DESCRIPTION,
-          numQuestions: expect.any(Number),
+          numQuestions: expect.any(Number), 
           questions: [],
           duration: 0,
           thumbnailUrl: expect.any(String)
