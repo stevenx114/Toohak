@@ -168,6 +168,11 @@ export function requestQuizInfoV2(token: string, quizid: number) {
   return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
 
+export function requestAdminUpdateUserPasswordV2(token: string, oldPassword: string, newPassword: string) {
+  return requestHelper('PUT', '/v2/admin/user/password', { oldPassword, newPassword }, { token });
+
+}
+
 export function requestQuizListV2(token: string) {
   return requestHelper('GET', '/v2/admin/quiz/list', {}, { token });
 }
@@ -208,3 +213,10 @@ export function requestQuizNameUpdateV2(token: string, quizid: number, name: str
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
 
+export function requestUserDetailsV2(token: string) {
+  return requestHelper('GET', '/v2/admin/user/details', { }, { token });
+}
+
+export function requestQuizInfoV2(token: string, quizid: number) {
+  return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
+}
