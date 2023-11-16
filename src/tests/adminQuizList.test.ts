@@ -18,6 +18,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizList
 describe('GET /v1/admin/quiz/list', () => {
   let user: TokenReturn;

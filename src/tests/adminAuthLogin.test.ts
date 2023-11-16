@@ -13,6 +13,10 @@ import {
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for function adminAuthLogin
 describe('Tests for adminAuthLogin', () => {
   let token: TokenReturn;

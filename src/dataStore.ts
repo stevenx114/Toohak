@@ -69,6 +69,19 @@ export interface Session {
   autoStartNum: number;
 }
 
+export interface Timer {
+  timeoutId: ReturnType<typeof setTimeout>;
+  sessionId: number;
+}
+
+let timerData: Timer[] = [];
+
+export const getTimerData = (): Timer[] => timerData;
+
+export const setTimerData = (newTimerData: Timer[]) => {
+  timerData = newTimerData;
+};
+
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {

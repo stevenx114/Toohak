@@ -33,6 +33,10 @@ const VALID_Q_BODY: QuestionBody = {
   ]
 };
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('Tests for adminQuizQuestionDelete', () => {
   requestClear();
   let registerReturn: TokenReturn;
