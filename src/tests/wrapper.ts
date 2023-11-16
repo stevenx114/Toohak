@@ -188,6 +188,10 @@ export function requestLogoutV2(token: string) {
   return requestHelper('POST', '/v2/admin/auth/logout', {}, { token });
 }
 
+export function requestQuizQuestionDeleteV2(token: string, quizid: number, questionid: number) {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizid}/question/${questionid}`, {}, { token });
+}
+
 export function requestQuizQuestionMoveV2(token: string, quizId: number, questionId: number, newPosition: number) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}/move`, { newPosition }, { token });
 }
