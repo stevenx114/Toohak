@@ -235,3 +235,7 @@ export function requestSessionStatus(token: string, quizid: number, sessionId: n
 export function requestEmptyTrashV2(token: string, quizIds: string) {
   return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
 }
+
+export function requestPlayerQuestionResults(questionId: number, questionPosition: number) {
+  return requestHelper('GET', `/v1/player/${questionId}/question/${questionPosition}/results`, {});
+}

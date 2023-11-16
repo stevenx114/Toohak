@@ -44,6 +44,10 @@ import {
   adminQuizSessionStart, adminQuizSessionStatusView
 } from './session';
 
+import {
+  playerQuestionResults
+} from './player'
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -366,6 +370,13 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
 });
+
+// playerQuestionResults
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionResults(playerId, questionPosition));
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
