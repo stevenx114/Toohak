@@ -98,3 +98,19 @@ export type EmptyObject = Record<string, string>;
 export interface SessionIdReturn {
   sessionId: number;
 }
+
+export const VALID_Q_BODY: QuestionBody = {
+  question: 'question',
+  duration: 3,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ]
+};
