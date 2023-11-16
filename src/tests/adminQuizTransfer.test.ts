@@ -18,6 +18,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizTransfer function
 describe('POST v1/admin/quiz/:quizid/transfer', () => {
   let userOne: TokenReturn;
