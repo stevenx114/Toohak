@@ -123,3 +123,20 @@ export interface SessionStatusViewReturn {
   players: Player[];
   metadata: Quiz;
 }
+
+interface UserScore {
+  name: string;
+  score: number;
+}
+
+export interface QuestionResults {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
+
+export interface SessionResultsReturn {
+  usersRankedByScore: UserScore[];
+  questionResults: QuestionResults[];
+}
