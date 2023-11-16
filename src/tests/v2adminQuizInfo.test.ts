@@ -6,7 +6,7 @@ import {
   
   import {
     requestAuthRegister,
-    requestQuizInfo,
+    requestQuizInfoV2,
     requestClear,
     requestQuizCreate
   } from './wrapper';
@@ -31,7 +31,7 @@ import {
     // Success cases for adminQuizInfo function
     describe('Success Cases', () => {
       test.skip('Correct details', () => {
-        expect(requestQuizInfo(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
+        expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
           quizId: quizId.quizId,
           name: validDetails.QUIZ_NAME,
           timeCreated: expect.any(Number),
@@ -48,13 +48,13 @@ import {
     // Error cases for adminQuizInfo function
     describe('Error cases', () => {
       test('Token is empty', () => {
-        expect(() => requestQuizInfo('', quizId.quizId)).toThrow(HTTPError[401]);
+        expect(() => requestQuizInfoV2('', quizId.quizId)).toThrow(HTTPError[401]);
       });
       test('Token is invalid', () => {
-        expect(() => requestQuizInfo(ownsQuizUserToken.token + 1, quizId.quizId)).toThrow(HTTPError[401]);
+        expect(() => requestQuizInfoV2(ownsQuizUserToken.token + 1, quizId.quizId)).toThrow(HTTPError[401]);
       });
       test('Quiz ID does not refer to a quiz that this user owns', () => {
-        expect(() => requestQuizInfo(noQuizUserToken.token, quizId.quizId)).toThrow(HTTPError[403]);
+        expect(() => requestQuizInfoV2(noQuizUserToken.token, quizId.quizId)).toThrow(HTTPError[403]);
       });
     });
   });
