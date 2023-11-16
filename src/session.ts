@@ -2,11 +2,8 @@ import {
   sessionState,
   ErrorObject,
   SessionIdReturn,
-<<<<<<< HEAD
-  EmptyObject
-=======
+  EmptyObject,
   SessionStatusViewReturn
->>>>>>> 4bcee2c0aa2ff3921407e713c8000ab73c3fed55
 } from './types';
 
 import {
