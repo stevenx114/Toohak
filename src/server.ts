@@ -37,11 +37,13 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete,
+  adminQuizQuestionDelete
 } from './quiz';
 
 import {
-  adminQuizSessionStart, adminQuizSessionStatusView
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
+  adminQuizSessionStatusView
 } from './session';
 
 // Set up web app
@@ -365,6 +367,15 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionid);
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
+});
+
+// adminQuizSessionStateUpdate
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const { action } = req.body;
+  res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
 // ====================================================================

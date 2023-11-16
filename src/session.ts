@@ -2,14 +2,18 @@ import {
   sessionState,
   ErrorObject,
   SessionIdReturn,
-  SessionStatusViewReturn
+  EmptyObject,
+  SessionStatusViewReturn,
+  sessionAction
 } from './types';
 
 import {
   getToken,
   getUser,
   getQuiz,
-  getSession
+  getSession,
+  isValidAction,
+  getNextState
 } from './helper';
 
 import {
@@ -68,6 +72,46 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
   return {
     sessionId: newSessionId
   };
+};
+
+/**
+ * Update the state of a particular session by sending an action command
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @param {number} sessionId
+ * @param {string} action
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessionId: number, action: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  }
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+  const curSession = getSession(sessionId);
+  const curState = curSession.state;
+
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
+  } else if (curSession.quizId !== quizId) {
+    throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
+  } else if (!(action in sessionAction)) {
+    throw HTTPError(400, 'Action provided is not a valid Action');
+  } else if (!isValidAction(curState, action)) {
+    throw HTTPError(400, 'Action cannot be run in the current state');
+  }
+
+  const curQuiz = getQuiz(quizId);
+  const atQuestionIndex = curSession.atQuestion;
+  const nextQuestion = curQuiz.questions[atQuestionIndex];
+  const questionDuration = nextQuestion.duration;
+  curSession.state = getNextState(sessionId, curState, action, questionDuration);
+  setData(data);
+
+  return {};
 };
 
 /**
