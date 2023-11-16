@@ -13,7 +13,7 @@ import {
   requestLogout,
   requestQuizQuestionCreate,
   requestClear,
-  requestQuizQuestionDuplicate
+  requestQuizQuestionDuplicateV2
 } from './wrapper';
 
 import {
@@ -74,7 +74,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
       const initialTime = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
-      const questionIdNew = requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId);
+      const questionIdNew = requestQuizQuestionDuplicateV2(userToken.token, userQuizId.quizId, questionId1.questionId);
       expect(questionIdNew).toEqual({ newQuestionId: expect.any(Number) });
       const timeLastEdited = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
       quizQuestions = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
@@ -89,21 +89,21 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
 
   describe('Error Cases', () => {
     test('Question Id does not refer to a valid question within this quiz', () => {
-      expect(() => requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, -1)).toThrow(HTTPError[400]);
+      expect(() => requestQuizQuestionDuplicateV2(userToken.token, userQuizId.quizId, -1)).toThrow(HTTPError[400]);
     });
 
     test('Token is empty', () => {
-      expect(() => requestQuizQuestionDuplicate('', userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
+      expect(() => requestQuizQuestionDuplicateV2('', userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
     });
 
     test('Token does not refer to valid logged in user session', () => {
       requestLogout(userToken.token);
-      expect(() => requestQuizQuestionDuplicate(userToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
+      expect(() => requestQuizQuestionDuplicateV2(userToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
       const noQuizzesUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-      expect(() => requestQuizQuestionDuplicate(noQuizzesUserToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[403]);
+      expect(() => requestQuizQuestionDuplicateV2(noQuizzesUserToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[403]);
     });
   });
 });

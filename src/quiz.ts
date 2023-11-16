@@ -15,20 +15,23 @@ import {
 } from 'custom-uuid';
 
 import {
-  getUser,
-  getToken,
-  getQuiz,
-  getQuestion,
   ErrorObject,
   QuizIdReturn,
   QuizListReturn,
   EmptyObject,
   trashedQuizReturn,
-  getUserByEmail,
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
 } from './types';
+
+import {
+  getUser,
+  getToken,
+  getQuiz,
+  getQuestion,
+  getUserByEmail
+} from './helper';
 
 /**
  * Given basic details about a new quiz, create one for the logged in user.
@@ -42,6 +45,10 @@ export const adminQuizCreate = (token: string, name: string, description: string
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;
   const curToken = getToken(token);
+
+  if (!token) {
+    throw HTTPError(401, 'Token is empty');
+  }
 
   if (!curToken) {
     throw HTTPError(401, 'Token does not refer to valid logged in user session');
@@ -75,7 +82,7 @@ export const adminQuizCreate = (token: string, name: string, description: string
       description: description,
       numQuestions: 0,
       questions: [],
-      duration: 0
+      duration: 0,
     }
   );
 
@@ -144,6 +151,7 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
     numQuestions: quiz.numQuestions,
     questions: quiz.questions,
     duration: quiz.duration,
+    thumbnailUrl: quiz.thumbnailUrl
   };
 };
 
@@ -401,7 +409,20 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     throw HTTPError(400, 'The length of an answer is shorter than 1 character long, or longer than 30 characters long');
   } else if (!CorrectAnswer) {
     throw HTTPError(400, 'Question must have a correct answer');
+  } else if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'Thumbnail URL cannot be empty');
   }
+
+  if (questionBody.thumbnailUrl) {
+    if (!questionBody.thumbnailUrl.endsWith('.png') && !questionBody.thumbnailUrl.endsWith('jpeg') && !questionBody.thumbnailUrl.endsWith('.jpg')) {
+      throw HTTPError(400, 'Incorrect file type');
+    }
+
+    if (questionBody.thumbnailUrl.startsWith('http://') === false && questionBody.thumbnailUrl.startsWith('https://') === false) {
+      throw HTTPError(400, 'Invalid Thumbnail URL');
+    }
+  }
+
   const seenAnswers: string[] = [];
   for (const answer of questionBody.answers) {
     if (seenAnswers.includes(answer.answer)) {
@@ -437,6 +458,7 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     duration: questionBody.duration,
     points: questionBody.points,
     answers: answers,
+    thumbnailUrl: questionBody.thumbnailUrl,
   };
 
   quiz.questions.push(newQuestion);
@@ -447,6 +469,12 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     questionId: newQuestionId
   };
 };
+
+// const checkThumbnailUrl = (question: QuestionBody) => {
+//   // check that thumbnailUrl is correct type
+//   const lowercaseFilename = question.thumbnailUrl.toLowerCase();
+//   return lowercaseFilename.includes('jpg') || lowercaseFilename.includes('png') || lowercaseFilename.includes('jpeg');
+// };
 
 /**
  * Move a question from one particular position in the quiz to another

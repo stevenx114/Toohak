@@ -19,6 +19,11 @@ beforeEach(() => {
   requestClear();
   token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
 });
+
+afterEach(() => {
+  requestClear();
+});
+
 describe('Tests for adminUpdateUserPassword', () => {
   const newPassword = 'newPassword1';
   const newerPassword = 'newPassword2';

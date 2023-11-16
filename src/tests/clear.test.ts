@@ -17,6 +17,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('Clear Function implementation', () => {
   let token: TokenReturn;
 

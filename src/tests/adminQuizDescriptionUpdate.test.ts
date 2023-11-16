@@ -4,6 +4,10 @@ import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizDescri
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizDescriptionUpdate
 describe('PUT /v1/admin/quiz/{quizid}/description', () => {
   let ownsQuizUser: TokenReturn;
