@@ -98,4 +98,3 @@ export type EmptyObject = Record<string, string>;
 export interface SessionIdReturn {
   sessionId: number;
 }
-
