@@ -77,11 +77,18 @@ export interface AnswerSimple {
   correct: boolean;
 }
 
+export interface Answer {
+  answerId: number;
+  answer: string;
+  colour: string;
+  correct: boolean;
+}
+
 export interface QuestionBody {
-  question: string;
+  questionId: string;
   duration: number;
   points: number;
-  answers: AnswerSimple[];
+  answers: AnswerSimple[] | Answer[];
   thumbnailUrl?: string;
 }
 
@@ -114,3 +121,20 @@ export const VALID_Q_BODY: QuestionBody = {
     }
   ]
 };
+
+export interface SessionStatusViewReturn {
+    state: string;
+    atQuestion: number;
+    players: String[];
+    metadata: {
+      quizId: number;
+      name: string;
+      timeCreated: number;
+      timeLastEdited: number;
+      description: string;
+      numQuestions: number;
+      questions: QuestionBody[],
+      duration: number;
+      thumbnailUrl: string;
+    }
+}

@@ -1,13 +1,15 @@
 import {
   sessionState,
   ErrorObject,
-  SessionIdReturn
+  SessionIdReturn,
+  SessionStatusViewReturn
 } from './types';
 
 import {
   getToken,
   getUser,
-  getQuiz
+  getQuiz,
+  getSession
 } from './helper';
 
 import {
@@ -67,3 +69,56 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     sessionId: newSessionId
   };
 };
+
+export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
+   let session;
+   let user;
+
+  if (!(session = getSession(sessionId))) {
+    throw HTTPError(400, "Session Id does not refer to a valid session within this quiz");
+  } else if (!token) {
+    throw HTTPError(401, 'Token is empty');
+  } else if (!(user = getUser(getToken(token)?.authUserId))) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  } else if (!user.quizzesOwned.find(quiz => quiz === quizId)) {
+    throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
+  }
+ 
+  const result = JSON.parse(`{
+    "state": "LOBBY",
+    "atQuestion": 3,
+    "players": [
+      "Hayden"
+    ],
+    "metadata": {
+      "quizId": 5546,
+      "name": "This is the name of the quiz",
+      "timeCreated": 1683019484,
+      "timeLastEdited": 1683019484,
+      "description": "This quiz is so we can have a lot of fun",
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 5546,
+          "question": "Who is the Monarch of England?",
+          "duration": 4,
+          "thumbnailUrl": "http://google.com/some/image/path.jpg",
+          "points": 5,
+          "answers": [
+            {
+              "answerId": 2384,
+              "answer": "Prince Charles",
+              "colour": "red",
+              "correct": true
+            }
+          ]
+        }
+      ],
+      "duration": 44,
+      "thumbnailUrl": "http://google.com/some/image/path.jpg"
+    }
+  }`);
+  
+  return { result };
+};
+
