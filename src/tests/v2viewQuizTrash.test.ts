@@ -3,6 +3,10 @@ import { validDetails, TokenReturn, QuizIdReturn } from '../types';
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('tests for view Trash', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;

@@ -1,8 +1,11 @@
-import { TokenReturn, QuestionBody } from '../types';
-import { QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
+import { TokenReturn, QuestionBody, QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
 import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizUpdate } from './wrapper';
 
 import HTTPError from 'http-errors';
+
+afterEach(() => {
+  requestClear();
+});
 
 const validQuestionDetails: QuestionBody = {
   question: 'Who is the Monarch of England?',

@@ -3,6 +3,10 @@ import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizRemove
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('quizRestore test', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;
