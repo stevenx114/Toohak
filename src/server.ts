@@ -353,7 +353,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 });
 
 // adminSessionQuestionAnswer
-app.get('/v1/player/:playerid/question/:questionposistion/answer', (req: Request, res: Response) => {
+app.put('/v1/player/:playerid/question/:questionposistion/answer', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const questionPosistion = parseInt(req.params.questionposistion);
   const answerId = req.body.answerIds;
