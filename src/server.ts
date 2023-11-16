@@ -344,13 +344,15 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
   res.json(adminQuizSessionStart(token, quizId, autoStartNum));
 });
 
-// adminQuizSessionViewV2
+// adminQuizSessionView
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const sessionId = parseInt(req.params.sessionid);
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
 });
+
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
