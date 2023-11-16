@@ -204,7 +204,7 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
 
-export function requestQuizSessionView(token: string, quizId: number) {
+export function requestQuizSessionView(quizId: number, token: string) {
   return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, { token });
 }
 
@@ -223,4 +223,5 @@ export function requestUserDetailsV2(token: string) {
 export function requestQuizInfoV2(token: string, quizid: number) {
   return requestHelper('GET', `/v2/admin/quiz/${quizid}`, {}, { token });
 }
->>>>>>> master
+
+
