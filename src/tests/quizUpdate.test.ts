@@ -4,6 +4,10 @@ import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuesti
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 const validQuestionDetails: questionBody = {
   question: 'Who is the Monarch of England?',
   duration: 1,

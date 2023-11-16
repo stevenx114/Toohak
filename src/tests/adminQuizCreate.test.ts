@@ -15,6 +15,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for AdminQuizCreate function
 describe('POST v1/admin/quiz', () => {
   let userToken: TokenReturn;

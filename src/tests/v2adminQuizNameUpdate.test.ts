@@ -18,6 +18,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizNameUpdate function
 describe('PUT /v1/admin/quiz/{quizid}/name', () => {
   let newUser: TokenReturn;

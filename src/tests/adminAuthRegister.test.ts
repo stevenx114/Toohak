@@ -13,6 +13,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Success and error tests for /v1/admin/auth/register
 describe('POST /v1/admin/auth/register', () => {
   describe('Success Cases', () => {

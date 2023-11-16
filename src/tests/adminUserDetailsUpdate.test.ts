@@ -17,6 +17,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminUserDetailsUpdate function
 describe('PUT /v1/admin/user/details', () => {
   let token: TokenReturn;
