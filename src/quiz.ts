@@ -82,7 +82,8 @@ export const adminQuizCreate = (token: string, name: string, description: string
       description: description,
       numQuestions: 0,
       questions: [],
-      duration: 0
+      duration: 0,
+      thumnailUrl: ''
     }
   );
 
