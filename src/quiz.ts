@@ -634,11 +634,11 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, toke
     throw HTTPError(400, 'Invalid question id');
   }
   
-  for (const session of data.sessions) {
-    if (session.quizId === quizId && session.state !== 'END') {
-        throw HTTPError(400, 'Session must be in END state');
-    }
-  }
+  // for (const session of data.sessions) {
+  //   if (session.quizId === quizId && session.state !== 'END') {
+  //       throw HTTPError(400, 'Session must be in END state');
+  //   }
+  // }
 
   quiz.numQuestions--;
   quiz.questions = quiz.questions.filter(question => question.questionId !== questionId);
