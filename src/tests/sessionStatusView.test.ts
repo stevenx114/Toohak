@@ -1,5 +1,4 @@
 import { Quiz } from '../dataStore';
-import { getQuiz } from '../helper';
 import { QuizIdReturn, SessionIdReturn, SessionStatusViewReturn, TokenReturn, VALID_Q_BODY, sessionState, validDetails } from '../types';
 import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizInfoV2, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStatus } from './wrapper';
 import HTTPError from 'http-errors';
@@ -25,7 +24,7 @@ describe('quizRestore test', () => {
         atQuestion: 0,
         players: [],
         metadata: quiz,
-      }
+      };
       expect(expectedResult.metadata.thumbnailUrl).toStrictEqual(undefined);
       expect(requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(expectedResult);
     });

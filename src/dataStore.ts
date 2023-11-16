@@ -89,4 +89,3 @@ export const setData = (newData: DataStore) => {
   data = newData;
   writeData(data);
 };
-
