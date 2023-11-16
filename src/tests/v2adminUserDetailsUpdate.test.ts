@@ -6,7 +6,7 @@ import {
 
 import {
   requestAuthRegister,
-  requestUserDetails,
+  requestUserDetailsV2,
   requestClear,
   requestUserDetailsUpdateV2,
 } from './wrapper';
@@ -33,7 +33,7 @@ describe('PUT /v2/admin/user/details', () => {
   describe('Success Cases', () => {
     test('Successful implementation', () => {
       expect(requestUserDetailsUpdateV2(token.token, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2)).toEqual({});
-      userDetails = requestUserDetails(token.token);
+      userDetails = requestUserDetailsV2(token.token);
       expect(userDetails.user.email).toEqual(validDetails.EMAIL_2);
       expect(userDetails.user.name).toEqual(`${validDetails.FIRST_NAME_2} ${validDetails.LAST_NAME_2}`);
     });
