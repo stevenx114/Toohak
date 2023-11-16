@@ -176,6 +176,10 @@ export function requestQuizNameUpdateV2(token: string, quizid: number, name: str
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/name`, { name }, { token });
 }
 
+export function requestQuizRemoveV2(token: string, quizId: number) {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizId}`, {}, { token });
+}
+
 export function requestQuizDescriptionUpdateV2(token: string, quizid: number, description: string) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizid}/description`, { description }, { token });
 }
