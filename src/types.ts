@@ -1,4 +1,4 @@
-import { Answer, Player } from "./dataStore";
+import { Answer, Player, Quiz } from "./dataStore";
 
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
@@ -118,18 +118,8 @@ export const VALID_Q_BODY: QuestionBody = {
 };
 
 export interface SessionStatusViewReturn {
-    state: string;
-    atQuestion: number;
-    players: Player[];
-    metadata: {
-      quizId: number;
-      name: string;
-      timeCreated: number;
-      timeLastEdited: number;
-      description: string;
-      numQuestions: number;
-      questions: QuestionBody[],
-      duration: number;
-      thumbnailUrl: string;
-    }
+  state: string;
+  atQuestion: number;
+  players: Player[];
+  metadata: Quiz;
 }

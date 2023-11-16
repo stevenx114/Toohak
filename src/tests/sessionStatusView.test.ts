@@ -1,57 +1,43 @@
-import { QuizIdReturn, SessionIdReturn, TokenReturn, VALID_Q_BODY, validDetails } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStatus } from './wrapper';
+import { Quiz } from '../dataStore';
+import { getQuiz } from '../helper';
+import { QuizIdReturn, SessionIdReturn, SessionStatusViewReturn, TokenReturn, VALID_Q_BODY, sessionState, validDetails } from '../types';
+import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizInfoV2, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStatus } from './wrapper';
 import HTTPError from 'http-errors';
-
-const expectedValidReturn = JSON.parse(`{
-    "state": "LOBBY",
-    "atQuestion": 3,
-    "players": [
-      "Hayden"
-    ],
-    "metadata": {
-      "quizId": 5546,
-      "name": "This is the name of the quiz",
-      "timeCreated": 1683019484,
-      "timeLastEdited": 1683019484,
-      "description": "This quiz is so we can have a lot of fun",
-      "numQuestions": 1,
-      "questions": [
-        {
-          "questionId": 5546,
-          "question": "Who is the Monarch of England?",
-          "duration": 4,
-          "thumbnailUrl": "http://google.com/some/image/path.jpg",
-          "points": 5,
-          "answers": [
-            {
-              "answerId": 2384,
-              "answer": "Prince Charles",
-              "colour": "red",
-              "correct": true
-            }
-          ]
-        }
-      ],
-      "duration": 44,
-      "thumbnailUrl": "http://google.com/some/image/path.jpg"
-    }
-  }`);
 
 describe('quizRestore test', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;
   let sessionId: SessionIdReturn;
+  let quiz: Quiz;
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     requestQuizQuestionCreate(token.token, quizId.quizId, VALID_Q_BODY);
+    quiz = requestQuizInfoV2(token.token, quizId.quizId);
     sessionId = requestQuizSessionStart(token.token, quizId.quizId, 3);
   });
 
   describe('Valid Input test', () => {
     test('All inputs are valid', () => {
-      expect(requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(expectedValidReturn);
+      const expectedResult: SessionStatusViewReturn = {
+        state: sessionState.LOBBY,
+        atQuestion: 0,
+        players: [],
+        metadata: {
+          quizId: quizId.quizId,
+          name: quiz.name,
+          timeCreated: quiz.timeCreated,
+          timeLastEdited: quiz.timeLastEdited,
+          description: quiz.description,
+          numQuestions: quiz.numQuestions,
+          questions: quiz.questions,
+          duration: quiz.duration,
+          thumbnailUrl: quiz.thumbnailUrl,
+        }
+      }
+      
+      expect(requestSessionStatus(token.token, quizId.quizId, sessionId.sessionId)).toStrictEqual(expectedResult);
     });
   });
 
