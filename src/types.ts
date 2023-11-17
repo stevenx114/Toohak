@@ -202,3 +202,9 @@ export interface SessionList {
 export interface PlayerIdReturn {
   playerId: number;
 }
+
+export interface PlayerStatusReturn {
+  state: string,
+  numQuestions: number,
+  atQuestion: number
+}
