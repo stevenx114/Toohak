@@ -23,6 +23,7 @@ import {
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
+  sessionState
 } from './types';
 
 import {
@@ -111,7 +112,11 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   const user = getUser(userId);
 
   if (!user.quizzesOwned.includes(quizId)) {
-    throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
+    throw HTTPError(403, 'Quiz ID does not refer to quiz that this user owns');
+  }
+  const activeSessions = data.sessions.filter(s => s.quizId === quizId);
+  if (activeSessions.find(s => s.state !== sessionState.END)) {
+    throw HTTPError(400, 'All sessions for this quiz in END state');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
@@ -142,17 +147,31 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
   if (!curUser.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
-  return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
-    numQuestions: quiz.numQuestions,
-    questions: quiz.questions,
-    duration: quiz.duration,
-    thumbnailUrl: quiz.thumbnailUrl
-  };
+
+  if (quiz.thumbnailUrl !== undefined) {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
+    };
+  } else {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+    };
+  }
 };
 
 /**
