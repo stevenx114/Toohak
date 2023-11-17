@@ -8,12 +8,17 @@ import {
   requestAuthRegister,
   requestQuizInfoV2,
   requestClear,
-  requestQuizCreateV2
+  requestQuizCreateV2,
+  requestThumbnailUpdate
 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
 beforeEach(() => {
+  requestClear();
+});
+
+afterEach(() => {
   requestClear();
 });
 
@@ -30,7 +35,7 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
 
   // Success cases for adminQuizInfo function
   describe('Success Cases', () => {
-    test.skip('Correct details', () => {
+    test('Correct details with no quiz thumbnailUrl', () => {
       expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
         quizId: quizId.quizId,
         name: validDetails.QUIZ_NAME,
@@ -40,7 +45,21 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
         numQuestions: expect.any(Number),
         questions: [],
         duration: 0,
-        thumbnailUrl: expect.any(String)
+      });
+    });
+    test('Correct details with quiz thumbnailUrl', () => {
+      const validUrl = 'http://google.com/some/image/path.jpg';
+      requestThumbnailUpdate(ownsQuizUserToken.token, quizId.quizId, validUrl);
+      expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
+        quizId: quizId.quizId,
+        name: validDetails.QUIZ_NAME,
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: validDetails.DESCRIPTION,
+        numQuestions: expect.any(Number),
+        questions: [],
+        duration: 0,
+        thumbnailUrl: validUrl
       });
     });
   });
