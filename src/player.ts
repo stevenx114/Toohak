@@ -191,6 +191,12 @@ export const playerChatSend = (playerId: number, messageBody: string): PlayerCha
   };
 };
 
+/**
+ *
+ * @param playerId: number
+ * @param questionPosition: number
+ * @returns QuestionResult
+ */
 export const playerQuestionResults = (playerId: number, questionPosition: number): QuestionResult | ErrorObject => {
   const curPlayer = getPlayer(playerId);
   if (!curPlayer) {
