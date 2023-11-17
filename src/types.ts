@@ -127,6 +127,7 @@ export interface SessionStatusViewReturn {
   metadata: Quiz;
 }
 
+<<<<<<< HEAD
 export interface PlayerQuestionAnswer {
   answerId: number;
   answer: string;
@@ -140,4 +141,13 @@ export interface PlayerQuestionInfoReturn {
   thumbnailURL: string;
   points: number;
   answers: PlayerQuestionAnswer[];
+}
+
+export interface SessionList {
+  activeSessions: number[],
+  inactiveSessions: number[],
+}
+
+export interface PlayerIdReturn {
+  playerId: number;
 }
