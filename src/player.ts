@@ -15,7 +15,8 @@ import {
   PlayerQuestionInfoReturn,
   sessionState,
   PlayerStatusReturn,
-  PlayerChatSendReturn
+  PlayerChatSendReturn,
+  PlayerChatReturn
 } from './types';
 
 import {
@@ -187,5 +188,23 @@ export const playerChatSend = (playerId: number, messageBody: string): PlayerCha
     message: {
       messageBody: messageBody
     }
+  };
+};
+
+/**
+ * Return all messages that are in the same session as the player
+ *
+ * @param {number} playerId
+ * @returns {object} PlayerChatReturn | ErrorObject
+ */
+export const playerChatView = (playerId: number): PlayerChatReturn | ErrorObject => {
+  const curPlayer = getPlayer(playerId);
+  if (!curPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const curSession = getSession(curPlayer.sessionId);
+  return {
+    messages: curSession.chat
   };
 };
