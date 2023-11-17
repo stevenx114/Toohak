@@ -54,7 +54,8 @@ import {
   playerJoin,
   playerChatSend,
   playerStatus,
-  playerQuestionResults
+  playerQuestionResults,
+  playerChatView
 } from './player';
 
 // Set up web app
@@ -444,6 +445,12 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionInfo(playerId, questionPosition));
+});
+
+// playerChatView
+app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerChatView(playerId));
 });
 
 // playerChatSend

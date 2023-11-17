@@ -240,3 +240,14 @@ export interface QuestionResult {
   averageAnswerTime: number;
   percentCorrent: number;
 }
+
+export interface PlayerChatReturn {
+  messages: Message[];
+}
+
+export interface Message {
+  messageBody: string,
+  playerId: number,
+  playerName: string,
+  timeSent: number
+}
