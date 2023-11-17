@@ -209,7 +209,6 @@ export interface PlayerQuestionInfoReturn {
   thumbnailURL: string;
   points: number;
   answers: PlayerQuestionAnswer[];
->>>>>>> 4e0bf341a3ff579da8ea4118dc424ffd6fd98701
 }
 
 export interface SessionList {
