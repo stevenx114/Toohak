@@ -127,6 +127,21 @@ export interface SessionStatusViewReturn {
   metadata: Quiz;
 }
 
+export interface PlayerQuestionAnswer {
+  answerId: number;
+  answer: string;
+  colour: string;
+}
+
+export interface PlayerQuestionInfoReturn {
+  questionId: number;
+  question: string;
+  duration: number;
+  thumbnailURL: string;
+  points: number;
+  answers: PlayerQuestionAnswer[];
+}
+
 export interface SessionList {
   activeSessions: number[],
   inactiveSessions: number[],

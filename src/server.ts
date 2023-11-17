@@ -53,6 +53,7 @@ import {
 } from './session';
 
 import {
+  playerQuestionInfo,
   playerJoin
 } from './player';
 
@@ -423,6 +424,13 @@ app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
   res.json(playerJoin(sessionId, name));
+});
+
+// playerQuestionInfo
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionInfo(playerId, questionPosition));
 });
 
 // ====================================================================
