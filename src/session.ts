@@ -179,6 +179,6 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
   validSessions.sort((session1, session2) => session1.sessionId - session2.sessionId);
   viewSessionList.inactiveSessions = validSessions.filter(s => s.state === sessionState.END).map(s => s.sessionId);
   viewSessionList.activeSessions = validSessions.filter(s => s.state !== sessionState.END).map(s => s.sessionId);
-  
+
   return viewSessionList;
 };
