@@ -321,6 +321,14 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.json(adminQuizQuestionDelete(quizId, questionId, token));
 });
 
+// adminQuizQuestionDeleteV2
+app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const questionId = parseInt(req.params.questionid);
+  res.json(adminQuizQuestionDelete(quizId, questionId, token));
+});
+
 // adminQuizQuestionMove
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
