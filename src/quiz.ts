@@ -23,6 +23,7 @@ import {
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
+  sessionState
 } from './types';
 
 import {
@@ -111,7 +112,11 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   const user = getUser(userId);
 
   if (!user.quizzesOwned.includes(quizId)) {
-    throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
+    throw HTTPError(403, 'Quiz ID does not refer to quiz that this user owns');
+  }
+  const activeSessions = data.sessions.filter(s => s.quizId === quizId);
+  if (activeSessions.find(s => s.state !== sessionState.END)) {
+    throw HTTPError(400, 'All sessions for this quiz in END state');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
@@ -142,17 +147,31 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
   if (!curUser.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
-  return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
-    numQuestions: quiz.numQuestions,
-    questions: quiz.questions,
-    duration: quiz.duration,
-    thumbnailUrl: quiz.thumbnailUrl
-  };
+
+  if (quiz.thumbnailUrl !== undefined) {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
+    };
+  } else {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+    };
+  }
 };
 
 /**
@@ -611,20 +630,20 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
 
 /**
  *
- * @param quizId
- * @param questionId
- * @param sessionId
+ * @param {number} quizId
+ * @param {number} questionId
+ * @param {string} token
  * @returns
  */
-export const adminQuizQuestionDelete = (quizId: number, questionId: number, sessionId: string): Error | Record<string, never> => {
+export const adminQuizQuestionDelete = (quizId: number, questionId: number, token: string): ErrorObject | Record<string, never> => {
   const data = getData();
   const quiz = getQuiz(quizId);
-  const token = getToken(sessionId);
-  if (!token) {
+  const curToken = getToken(token);
+  if (!curToken) {
     throw HTTPError(401, 'Invalid token');
   }
 
-  const user = getUser(token.authUserId);
+  const user = getUser(curToken.authUserId);
   if (!user.quizzesOwned.includes(quiz.quizId)) {
     throw HTTPError(403, 'User is not the owner of the quiz');
   }
@@ -632,6 +651,12 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, sess
   const question = quiz.questions.find(question => question.questionId === questionId);
   if (!question) {
     throw HTTPError(400, 'Invalid question id');
+  }
+
+  for (const session of data.sessions) {
+    if (session.quizId === quizId && session.state !== 'END') {
+      throw HTTPError(400, 'Session must be in END state');
+    }
   }
 
   quiz.numQuestions--;

@@ -65,12 +65,26 @@ export interface Player {
 export interface Session {
   sessionId: number;
   quizId: number;
+  quiz: Quiz;
   atQuestion: number;
   state: string;
   numPlayers: number;
   players: Player[];
   autoStartNum: number;
 }
+
+export interface Timer {
+  timeoutId: ReturnType<typeof setTimeout>;
+  sessionId: number;
+}
+
+let timerData: Timer[] = [];
+
+export const getTimerData = (): Timer[] => timerData;
+
+export const setTimerData = (newTimerData: Timer[]) => {
+  timerData = newTimerData;
+};
 
 const dataFilePath = 'data.json';
 

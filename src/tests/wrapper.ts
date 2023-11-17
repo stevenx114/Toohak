@@ -46,7 +46,7 @@ const requestHelper = (
 
   // NOTE: the error is rethrown in the test below. This is useful becasuse the
   // test suite will halt (stop) if there's an error, rather than carry on and
-  // potentially failing on a different expect statement without useful outputs
+  // potentially failinAg on a different expect statement without useful outputs
   switch (res.statusCode) {
     case 400: // BAD_REQUEST
     case 401: // UNAUTHORIZED
@@ -212,12 +212,20 @@ export function requestQuizUpdateV2(quizId: number, questionId: number, token: s
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody }, { token });
 }
 
+export function requestQuizQuestionDeleteV2(token: string, quizid: number, questionid: number) {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizid}/question/${questionid}`, {}, { token });
+}
+
 export function requestQuizQuestionMoveV2(token: string, quizId: number, questionId: number, newPosition: number) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}/move`, { newPosition }, { token });
 }
 
 export function requestQuizQuestionDuplicateV2(token: string, quizId: number, questionId: number) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
+}
+
+export function requestQuizSessionView(quizId: number, token: string) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, {}, { token });
 }
 
 export function requestQuizSessionStart(token: string, quizId: number, autoStartNum: number) {
@@ -238,4 +246,12 @@ export function requestEmptyTrashV2(token: string, quizIds: string) {
 
 export function requestPlayerQuestionResults(questionId: number, questionPosition: number) {
   return requestHelper('GET', `/v1/player/${questionId}/question/${questionPosition}/results`, {});
+}
+
+export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
+}
+
+export function requestPlayerJoin(sessionId: number, name: string) {
+  return requestHelper('POST', '/v1/player/join', { sessionId, name }, {});
 }

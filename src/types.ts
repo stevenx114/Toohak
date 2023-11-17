@@ -1,4 +1,7 @@
-import { Player, Quiz } from './dataStore';
+import {
+  Player,
+  Quiz
+} from './dataStore';
 
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
@@ -139,4 +142,13 @@ export interface QuestionResults {
 export interface SessionResultsReturn {
   usersRankedByScore: UserScore[];
   questionResults: QuestionResults[];
+}
+
+export interface SessionList {
+  activeSessions: number[],
+  inactiveSessions: number[],
+}
+
+export interface PlayerIdReturn {
+  playerId: number;
 }
