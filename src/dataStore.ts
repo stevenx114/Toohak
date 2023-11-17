@@ -57,6 +57,8 @@ export interface Player {
   score: number;
   name: string;
   sessionId: number;
+  questionsCorrect: bool[];
+  answerTime: number[];
 }
 
 export interface Session {
