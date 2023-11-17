@@ -239,3 +239,7 @@ export function requestEmptyTrashV2(token: string, quizIds: string) {
 export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
 }
+
+export function requestThumbnailUpdate(token: string, quizId: number, imgUrl: string) {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/thumbnail`, { imgUrl }, { token });
+}
