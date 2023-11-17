@@ -147,7 +147,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
     newState = sessionState.END;
   } else if (state === sessionState.LOBBY && action === sessionAction.NEXT_QUESTION) {
     newState = sessionState.QUESTION_COUNTDOWN;
-    curSession.atQuestion++;
+    //curSession.atQuestion++;
     startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
   } else if (state === sessionState.QUESTION_COUNTDOWN && action === sessionAction.SKIP_COUNTDOWN) {
     clearCountdown(sessionId);

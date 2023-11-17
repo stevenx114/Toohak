@@ -113,7 +113,7 @@ export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessi
   const curQuiz = curSession.quiz;
   const atQuestionIndex = curSession.atQuestion;
   const nextQuestion = curQuiz.questions[atQuestionIndex];
-  const questionDuration = nextQuestion.duration;
+  const questionDuration = nextQuestion?.duration;
   curSession.state = getNextState(sessionId, curState, action, questionDuration);
   setData(data);
 
@@ -195,23 +195,24 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
  */
 export const sessionQuizAnswer = (playerId: number, questionPosistion: number, answerIds: number[]): EmptyObject | ErrorObject => {
   const session = getSessionByPlayerId(playerId);
-  const quiz = getQuiz(session?.quizId);
+  const quiz = session?.quiz;
   const question = quiz?.questions[questionPosistion - 1];
   const player = getPlayer(session?.sessionId, playerId);
 
-  if (session.state != sessionState.QUESTION_OPEN) {
+  if (session?.state != sessionState.QUESTION_OPEN) {
     throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
   } else if (!session || !player) {
     throw HTTPError(400, 'If player ID does not exist');
-  } else if (questionPosistion != session.atQuestion || ! question) {
+  } else if (questionPosistion != session.atQuestion + 1 || ! question) {
     throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');
-  } else if ((new Set(answerIds).size !== answerIds.length)) {
+  } else if ((new Set(answerIds).size < answerIds?.length)) {
     throw HTTPError(400, 'There are duplicate answer IDs provided');
   } else if (answerIds.length < 1) {
     throw HTTPError(400, 'Less than 1 answer ID was submitted');
   }
 
-  for (const id of answerIds) {
+  for (let i = 0; i < answerIds?.length; i++) {
+    const id = answerIds[i];
     let currAnswer;
     if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');

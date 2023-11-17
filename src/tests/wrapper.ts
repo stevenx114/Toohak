@@ -236,8 +236,8 @@ export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
 }
 
-export function requestSubmitAnswer(playerId: number, questionPosistion: number, answerId: number[]) {
-  return requestHelper('PUT', `/v1/player/${playerId}/question/${questionPosistion}/answer`, { answerId }, {});
+export function requestSubmitAnswer(playerId: number, questionPosistion: number, answerIds: number[]) {
+  return requestHelper('PUT', `/v1/player/${playerId}/question/${questionPosistion}/answer`, { answerIds }, {});
 }
 
 export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
