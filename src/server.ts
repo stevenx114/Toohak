@@ -46,6 +46,10 @@ import {
   adminQuizSessionStatusView
 } from './session';
 
+import {
+  playerJoin
+} from './player';
+
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -384,6 +388,12 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionid);
   const { action } = req.body;
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
+});
+
+// playerJoin
+app.post('/v1/player/join', (req: Request, res: Response) => {
+  const { sessionId, name } = req.body;
+  res.json(playerJoin(sessionId, name));
 });
 
 // ====================================================================

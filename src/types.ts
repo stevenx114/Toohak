@@ -126,3 +126,7 @@ export interface SessionStatusViewReturn {
   players: Player[];
   metadata: Quiz;
 }
+
+export interface PlayerIdReturn {
+  playerId: number;
+}
