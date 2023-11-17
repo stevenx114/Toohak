@@ -124,6 +124,10 @@ export function requestQuizTransfer(token: string, quizid: number, userEmail: st
   return requestHelper('POST', `/v1/admin/quiz/${quizid}/transfer`, { token, userEmail });
 }
 
+export function requestQuizTransferV2(token: string, quizid: number, userEmail: string) {
+  return requestHelper('POST', `/v2/admin/quiz/${quizid}/transfer`, { userEmail }, { token });
+}
+
 export function requestUserDetailsUpdate(token: string, email: string, nameFirst: string, nameLast: string) {
   return requestHelper('PUT', '/v1/admin/user/details', { token, email, nameFirst, nameLast });
 }
@@ -226,4 +230,12 @@ export function requestUserDetailsV2(token: string) {
 
 export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
+}
+
+export function requestEmptyTrashV2(token: string, quizIds: string) {
+  return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
+}
+
+export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
 }

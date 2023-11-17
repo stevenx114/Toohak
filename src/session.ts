@@ -2,14 +2,18 @@ import {
   sessionState,
   ErrorObject,
   SessionIdReturn,
-  SessionStatusViewReturn
+  EmptyObject,
+  SessionStatusViewReturn,
+  sessionAction
 } from './types';
 
 import {
   getToken,
   getUser,
   getQuiz,
-  getSession
+  getSession,
+  isValidAction,
+  getNextState
 } from './helper';
 
 import {
@@ -52,10 +56,13 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
 
+  const curQuiz = getQuiz(quizId);
+  const quizCopy = JSON.parse(JSON.stringify(curQuiz));
   const newSessionId = parseInt(generateCustomUuid('0123456789', 12));
   const newSession: Session = {
     sessionId: newSessionId,
     quizId: quizId,
+    quiz: quizCopy,
     atQuestion: 0,
     state: sessionState.LOBBY,
     numPlayers: 0,
@@ -71,6 +78,46 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
 };
 
 /**
+ * Update the state of a particular session by sending an action command
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @param {number} sessionId
+ * @param {string} action
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessionId: number, action: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curToken = getToken(token);
+  if (!curToken) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  }
+  const curUserId = curToken.authUserId;
+  const curUser = getUser(curUserId);
+  const curSession = getSession(sessionId);
+  const curState = curSession.state;
+
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
+  } else if (curSession.quizId !== quizId) {
+    throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
+  } else if (!(action in sessionAction)) {
+    throw HTTPError(400, 'Action provided is not a valid Action');
+  } else if (!isValidAction(curState, action)) {
+    throw HTTPError(400, 'Action cannot be run in the current state');
+  }
+
+  const curQuiz = curSession.quiz;
+  const atQuestionIndex = curSession.atQuestion;
+  const nextQuestion = curQuiz.questions[atQuestionIndex];
+  const questionDuration = nextQuestion.duration;
+  curSession.state = getNextState(sessionId, curState, action, questionDuration);
+  setData(data);
+
+  return {};
+};
+
+/**
  * Retrieves the status of a quiz session for an admin user.
  *
  * @param {string} token - The authentication token.
@@ -82,7 +129,6 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
 export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
   let session;
   let user;
-  const quiz = getQuiz(quizId);
   if (!(session = getSession(sessionId))) {
     throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
   } else if (!token) {
@@ -97,7 +143,7 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
     state: session.state,
     atQuestion: session.atQuestion,
     players: session.players,
-    metadata: quiz,
+    metadata: session.quiz,
   };
 
   return quizObject;

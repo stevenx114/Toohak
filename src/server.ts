@@ -37,11 +37,13 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete,
+  adminQuizQuestionDelete
 } from './quiz';
 
 import {
-  adminQuizSessionStart, adminQuizSessionStatusView
+  adminQuizSessionStart,
+  adminQuizSessionStateUpdate,
+  adminQuizSessionStatusView
 } from './session';
 
 // Set up web app
@@ -273,10 +275,25 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   res.json(adminQuizEmptyTrash(token, quizIds));
 });
 
+// adminQuizEmptyTrashV2
+app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizIds = req.query.quizIds;
+  res.json(adminQuizEmptyTrash(token, quizIds));
+});
+
 // adminQuizTransfer
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid as string);
   const { token, userEmail } = req.body;
+  res.json(adminQuizTransfer(token, quizId, userEmail));
+});
+
+// adminQuizTransferV2
+app.post('/v2/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.headers.token;
+  const { userEmail } = req.body;
   res.json(adminQuizTransfer(token, quizId, userEmail));
 });
 
@@ -352,6 +369,14 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
 });
 
+// adminQuizSessionStateUpdate
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const { action } = req.body;
+  res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
+});
 
 
 // ====================================================================
