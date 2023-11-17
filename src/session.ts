@@ -22,7 +22,8 @@ import {
 import {
   getData,
   setData,
-  Session
+  Session,
+  Player
 } from './dataStore';
 
 import HTTPError from 'http-errors';
@@ -211,8 +212,15 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
     throw HTTPError(400, 'Less than 1 answer ID was submitted');
   }
 
-  for (let i = 0; i < answerIds?.length; i++) {
-    const id = answerIds[i];
+  if (!player.questionsCorrect) {
+    player.questionsCorrect = [];
+  }
+
+  if (!player.answerTime) {
+    player.answerTime = [];
+  }
+
+  for (const id of answerIds) { 
     let currAnswer;
     if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
@@ -223,10 +231,9 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
     } else  {
       player.questionsCorrect[questionPosistion - 1] = false;
     }
+
     player.answerTime[questionPosistion - 1] = Math.floor((new Date()).getTime() / 1000);
   }
-
-
-
+  
   return {};
 }

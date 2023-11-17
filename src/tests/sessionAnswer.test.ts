@@ -1,5 +1,6 @@
+import { Question } from '../dataStore';
 import { PlayerIdReturn, QuizIdReturn, SessionIdReturn, TokenReturn, VALID_Q_BODY, sessionAction, validDetails } from '../types';
-import { requestAuthRegister, requestClear, requestPlayerJoin, requestQuizCreate, requestQuizQuestionCreate, requestQuizSessionStart, requestQuizSessionView, requestSessionStateUpdate, requestSessionStatus, requestSubmitAnswer } from './wrapper';
+import { requestAuthRegister, requestClear, requestPlayerJoin, requestQuizCreate, requestQuizInfoV2, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStateUpdate, requestSubmitAnswer } from './wrapper';
 import HTTPError from 'http-errors';
 
 afterEach(() => {
@@ -11,7 +12,7 @@ describe('statusView test', () => {
   let sessionId: SessionIdReturn;
   let quizId: QuizIdReturn;
   let playerId: PlayerIdReturn;
-
+  let answerId: number;
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
@@ -21,21 +22,24 @@ describe('statusView test', () => {
     playerId = requestPlayerJoin(sessionId.sessionId, validDetails.FIRST_NAME)
     requestSessionStateUpdate(token.token, quizId.quizId, sessionId.sessionId, sessionAction.NEXT_QUESTION);
     requestSessionStateUpdate(token.token, quizId.quizId, sessionId.sessionId, sessionAction.SKIP_COUNTDOWN);
+    answerId = requestQuizInfoV2(token.token, quizId.quizId).questions[0].answers[0].answerId;
+   
+
   });
 
   describe('Valid Input test', () => {
     test('All inputs are valid', () => {
-      expect(requestSubmitAnswer(playerId.playerId, 1, [1])).toStrictEqual({});
+      expect(requestSubmitAnswer(playerId.playerId, 1, [answerId])).toStrictEqual({});
     });
   });
 
-  describe.skip('Invalid Input Tests', () => {
+  describe('Invalid Input Tests', () => {
     test('If player ID does not exist', () => {
-      expect(() => requestSubmitAnswer(playerId.playerId + 1, 1, [1])).toThrow(HTTPError[400]);
+      expect(() => requestSubmitAnswer(playerId.playerId + 1, 1, [answerId])).toThrow(HTTPError[400]);
     });
 
     test('If question position is not valid for the session this player is in && If session is not yet up to this question ', () => {
-      expect(() => requestSubmitAnswer(playerId.playerId, 99, [1])).toThrow(HTTPError[400]);
+      expect(() => requestSubmitAnswer(playerId.playerId, 99, [answerId])).toThrow(HTTPError[400]);
     });
 
     test('Answer IDs are not valid for this particular question', () => {
@@ -43,7 +47,7 @@ describe('statusView test', () => {
     });
 
     test('There are duplicate answerIds provided', () => {
-      expect(() => requestSubmitAnswer(playerId.playerId, 1, [1, 1])).toThrow(HTTPError[400]);
+      expect(() => requestSubmitAnswer(playerId.playerId, 1, [answerId, answerId])).toThrow(HTTPError[400]);
     });
 
     test('Less than 1 answerId was submitted', () => {
