@@ -37,7 +37,8 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminQuizThumbnailUpdate
 } from './quiz';
 
 import {
@@ -48,6 +49,7 @@ import {
 } from './session';
 
 import {
+  playerQuestionInfo,
   playerJoin
 } from './player';
 
@@ -398,10 +400,25 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
+// adminQuizThumbnailUpdate
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const { imgUrl } = req.body;
+  res.json(adminQuizThumbnailUpdate(token, quizId, imgUrl));
+});
+
 // playerJoin
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
   res.json(playerJoin(sessionId, name));
+});
+
+// playerQuestionInfo
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionInfo(playerId, questionPosition));
 });
 
 // ====================================================================

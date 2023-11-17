@@ -8,7 +8,7 @@ import {
   requestAuthRegister,
   requestAdminUpdateUserPasswordV2,
   requestAuthLogin,
-  requestUserDetails,
+  requestUserDetailsV2,
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -41,9 +41,9 @@ describe('Tests for adminUpdateUserPassword', () => {
       expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD)).toThrow(HTTPError[400]);
       expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD)).toThrow(HTTPError[400]);
       expect(() => requestAuthLogin(validDetails.EMAIL, validDetails.PASSWORD)).toThrow(HTTPError[400]);
-      expect(requestUserDetails(token.token).user.numFailedPasswordsSinceLastLogin).toEqual(3);
+      expect(requestUserDetailsV2(token.token).user.numFailedPasswordsSinceLastLogin).toEqual(3);
       requestAuthLogin(validDetails.EMAIL, newPassword);
-      expect(requestUserDetails(token.token).user.numSuccessfulLogins).toEqual(2);
+      expect(requestUserDetailsV2(token.token).user.numSuccessfulLogins).toEqual(2);
     });
   });
   describe('Error Cases', () => {

@@ -40,6 +40,10 @@ const VALID_QUESTION_BODY: QuestionBody = {
   thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for playerJoin function
 describe('POST v1/player/join', () => {
   let user: TokenObject;
