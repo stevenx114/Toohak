@@ -216,6 +216,10 @@ export function requestQuizUpdateV2(quizId: number, questionId: number, token: s
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}`, { questionBody }, { token });
 }
 
+export function requestQuizQuestionDeleteV2(token: string, quizid: number, questionid: number) {
+  return requestHelper('DELETE', `/v2/admin/quiz/${quizid}/question/${questionid}`, {}, { token });
+}
+
 export function requestQuizQuestionMoveV2(token: string, quizId: number, questionId: number, newPosition: number) {
   return requestHelper('PUT', `/v2/admin/quiz/${quizId}/question/${questionId}/move`, { newPosition }, { token });
 }

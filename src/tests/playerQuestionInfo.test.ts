@@ -3,6 +3,7 @@ import {
   TokenReturn,
   ErrorObject,
   QuizIdReturn,
+  QuestionBody
 } from '../types';
 
 import {

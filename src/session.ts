@@ -56,10 +56,13 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
 
+  const curQuiz = getQuiz(quizId);
+  const quizCopy = JSON.parse(JSON.stringify(curQuiz));
   const newSessionId = parseInt(generateCustomUuid('0123456789', 12));
   const newSession: Session = {
     sessionId: newSessionId,
     quizId: quizId,
+    quiz: quizCopy,
     atQuestion: 0,
     state: sessionState.LOBBY,
     numPlayers: 0,
@@ -104,7 +107,7 @@ export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessi
     throw HTTPError(400, 'Action cannot be run in the current state');
   }
 
-  const curQuiz = getQuiz(quizId);
+  const curQuiz = curSession.quiz;
   const atQuestionIndex = curSession.atQuestion;
   const nextQuestion = curQuiz.questions[atQuestionIndex];
   const questionDuration = nextQuestion.duration;
@@ -126,7 +129,6 @@ export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessi
 export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
   let session;
   let user;
-  const quiz = getQuiz(quizId);
   if (!(session = getSession(sessionId))) {
     throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
   } else if (!token) {
@@ -141,7 +143,7 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
     state: session.state,
     atQuestion: session.atQuestion,
     players: session.players,
-    metadata: quiz,
+    metadata: session.quiz,
   };
 
   return quizObject;
