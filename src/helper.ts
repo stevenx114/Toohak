@@ -8,7 +8,8 @@ import {
   getTimerData,
   setTimerData,
   Timer,
-  setData
+  setData,
+  Player
 } from './dataStore';
 
 import {
@@ -52,6 +53,14 @@ export const getSession = (sessionId: number): Session | undefined => {
 
 export const getHashOf = (password: string): string => {
   return crypto.createHash('sha256').update(password).digest('hex');
+};
+
+export const getSessionByPlayerId = (playerId: number): Session | undefined => {
+  return getData().sessions.find(currSession => currSession.players.some(player => player.playerId === playerId));
+};
+
+export const getPlayer = (sessionId: number, playerId: number): Player | undefined => {
+  return getData().sessions.find(session => session.sessionId === sessionId)?.players.find(player => player.playerId === playerId);
 };
 
 export const sleepSync = (ms: number) => {
