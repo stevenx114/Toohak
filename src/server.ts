@@ -42,14 +42,11 @@ import {
 } from './quiz';
 
 import {
-<<<<<<< HEAD
-  adminQuizSessionStart, adminQuizSessionStatusView, sessionQuizAnswer
-=======
   adminQuizSessionStart,
   adminQuizSessionStateUpdate,
   adminQuizSessionStatusView,
-  adminQuizSessionView
->>>>>>> 1b8d2eaccf3c3aa6a9e0f230896599313c6434b7
+  adminQuizSessionView,
+  sessionQuizAnswer
 } from './session';
 
 import {
