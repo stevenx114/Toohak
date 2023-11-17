@@ -208,3 +208,8 @@ export interface PlayerStatusReturn {
   numQuestions: number,
   atQuestion: number
 }
+
+export interface SessionFinalResultsReturn {
+  usersRankedByScore: UsersRankedByScore[];
+  questionResults: QuestionResults[];
+}
