@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   sessionState,
   ErrorObject,
@@ -179,4 +178,3 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
 
   return viewSessionList;
 };
-
