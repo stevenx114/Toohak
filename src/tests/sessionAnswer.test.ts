@@ -30,8 +30,12 @@ describe('statusView test', () => {
   });
 
   describe('Valid Input test', () => {
-    test('All inputs are valid', () => {
+    test('All inputs are valid with correct answer', () => {
       expect(requestSubmitAnswer(playerId.playerId, 1, [correctId])).toStrictEqual({});
+    });
+
+    test('All inputs are valid with incorrect answer', () => {
+      expect(requestSubmitAnswer(playerId.playerId, 1, [answerId])).toStrictEqual({});
     });
   });
 

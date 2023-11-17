@@ -52,6 +52,7 @@ import {
 import {
   playerQuestionInfo,
   playerJoin,
+  playerChatSend,
   playerStatus
 } from './player';
 
@@ -443,6 +444,13 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionInfo(playerId, questionPosition));
+});
+
+// playerChatSend
+app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const { messageBody } = req.body;
+  res.json(playerChatSend(playerId, messageBody));
 });
 
 // ====================================================================

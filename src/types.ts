@@ -225,3 +225,11 @@ export interface PlayerStatusReturn {
   numQuestions: number,
   atQuestion: number
 }
+
+interface MessageReturn {
+  messageBody: string;
+}
+
+export interface PlayerChatSendReturn {
+  message: MessageReturn;
+}

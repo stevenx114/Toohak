@@ -71,6 +71,7 @@ export interface Session {
   numPlayers: number;
   players: Player[];
   autoStartNum: number;
+  chat?: string[];
 }
 
 export interface Timer {

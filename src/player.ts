@@ -14,12 +14,14 @@ import {
   PlayerIdReturn,
   PlayerQuestionInfoReturn,
   sessionState,
-  PlayerStatusReturn
+  PlayerStatusReturn,
+  PlayerChatSendReturn
 } from './types';
 
 import {
   getSession,
-  getQuiz
+  getQuiz,
+  getPlayer
 } from './helper';
 
 /**
@@ -66,6 +68,7 @@ export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | Er
   };
 
   session.players.push(newPlayer);
+  data.players.push(newPlayer);
   setData(data);
 
   return { playerId: newPlayer.playerId };
@@ -156,3 +159,33 @@ export const playerStatus = (playerId: number): PlayerStatusReturn | ErrorObject
   };
 };
 
+/**
+ *
+ * @param playerId: number
+ * @param messageBody: string
+ * @returns MessageReturn
+ */
+export const playerChatSend = (playerId: number, messageBody: string): PlayerChatSendReturn | ErrorObject => {
+  const data = getData();
+  const curPlayer = getPlayer(playerId);
+  if (!curPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+  if (messageBody.length < 1 || messageBody.length > 100) {
+    throw HTTPError(400, 'Message body is less than 1 character or more than 100 characters');
+  }
+  const messageObject = {
+    playerId: playerId,
+    playerName: curPlayer.name,
+    timeSent: Math.floor((new Date()).getTime() / 1000),
+    messageBody: messageBody
+  };
+  const curSession = getSession(curPlayer.sessionId);
+  curSession.chat.push(messageObject);
+  setData(data);
+  return {
+    message: {
+      messageBody: messageBody
+    }
+  };
+};
