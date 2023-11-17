@@ -259,3 +259,7 @@ export function requestPlayerJoin(sessionId: number, name: string) {
 export function requestplayerQuestionInfo(playerId: number, questionPosition: number) {
   return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}`, {}, {});
 }
+
+export function requestPlayerStatus(playerId: number) {
+  return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
+}
