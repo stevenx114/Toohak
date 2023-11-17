@@ -50,7 +50,8 @@ import {
 
 import {
   playerQuestionInfo,
-  playerJoin
+  playerJoin,
+  playerStatus
 } from './player';
 
 // Set up web app
@@ -412,6 +413,12 @@ app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
   res.json(playerJoin(sessionId, name));
+});
+
+// playerStatus
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerStatus(playerId));
 });
 
 // playerQuestionInfo
