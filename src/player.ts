@@ -16,6 +16,7 @@ import {
 
 import {
   getSession,
+  getQuiz
 } from './helper';
 
 export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | ErrorObject => {
@@ -68,33 +69,39 @@ export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | Er
  * @returns 
  */
 export const playerQuestionInfo = (playerId: number, questionPosition: number): PlayerQuestionInfoReturn | ErrorObject => {
-    const hasPlayerId = false;
-    for (const session of sessions) {
-        for (const player of players) {
+    const data = getData();
+    let currentSession;
+    let hasPlayerId = false;
+    for (const session of data.sessions) {
+        for (const player of session.players) {
             if (player.playerId === playerId) {
                 hasPlayerId = true;
-                const currentSession = session;
+                currentSession = session;
                 break;
             }
             
         }
     }
-
+    
     if (hasPlayerId === false) {
         throw HTTPError(400, "Player ID does not exist");
-    } else if (currentSession.status === 'LOBBY' || currentSession.status === 'END') {
+    } 
+    
+    const quiz = getQuiz(currentSession.quizId);
+    if (quiz.numQuestions < questionPosition || questionPosition < 0) {
+        throw HTTPError(400, "Invalid question position");
+    }
+
+    if (currentSession.state === 'LOBBY' || currentSession.state === 'END') {
         throw HTTPError(400, "Invalid session state");
-    } else if (currentSession.currentQuestion !== questionPosition) {
+    } else if (currentSession.atQuestion !== questionPosition) {
         throw HTTPError(400, "Incorrect question");
     }
 
-    const quiz = getQuiz(currentSession.quizId);
-    if (quiz.numQuestions < questionPosition) {
-        throw HTTPError(400, "Invalid question position");
-    }
+    
     const question = quiz.questions[questionPosition - 1];
-    const findAnswers = quiz.question.answers;
-    const newAnswerObj = findAsnwers.map(element => ({
+    const findAnswers = question.answers;
+    const newAnswerObj = findAnswers.map(element => ({
         answerId: element.answerId,
         answer: element.answer,
         colour: element.colour,
@@ -104,7 +111,7 @@ export const playerQuestionInfo = (playerId: number, questionPosition: number): 
         questionId: question.questionId,
         question: question.question,
         duration: question.duration,
-        thumbnailURL: question.thumbnailURL,
+        thumbnailUrl: question.thumbnailUrl,
         points: question.points,
         answers: newAnswerObj,
     }
