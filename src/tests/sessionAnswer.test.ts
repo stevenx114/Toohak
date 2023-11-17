@@ -1,25 +1,28 @@
-import { QuizIdReturn, SessionIdReturn, TokenReturn, VALID_Q_BODY, validDetails } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizSessionStart, requestSubmitAnswer } from './wrapper';
+import { PlayerIdReturn, QuizIdReturn, SessionIdReturn, TokenReturn, VALID_Q_BODY, sessionState, validDetails } from '../types';
+import { requestAuthRegister, requestClear, requestPlayerJoin, requestQuizCreate, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStateUpdate, requestSubmitAnswer } from './wrapper';
 import HTTPError from 'http-errors';
+
+afterEach(() => {
+  requestClear();
+});
 
 describe('statusView test', () => {
   let token: TokenReturn;
   let sessionId: SessionIdReturn;
   let quizId: QuizIdReturn;
-  let playerId = {
-   playerId: -42,
-  }
+  let playerId: PlayerIdReturn;
 
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     requestQuizQuestionCreate(token.token, quizId.quizId, VALID_Q_BODY);
-    // const playerId = ...
     sessionId = requestQuizSessionStart(token.token, quizId.quizId, 3);
+    playerId = requestPlayerJoin(sessionId.sessionId, validDetails.FIRST_NAME)
+    requestSessionStateUpdate(token.token, quizId.quizId, sessionId.sessionId, sessionState.QUESTION_OPEN)
   });
 
-  describe.skip('Valid Input test', () => {
+  describe('Valid Input test', () => {
     test('All inputs are valid', () => {
       expect(requestSubmitAnswer(playerId.playerId, 1, [1])).toStrictEqual({});
     });
@@ -30,19 +33,19 @@ describe('statusView test', () => {
       expect(() => requestSubmitAnswer(playerId.playerId, 1, [1])).toThrow(HTTPError[400]);
     });
 
-    test.skip('If question position is not valid for the session this player is in && If session is not yet up to this question ', () => {
+    test('If question position is not valid for the session this player is in && If session is not yet up to this question ', () => {
       expect(() => requestSubmitAnswer(playerId.playerId, 99, [1])).toThrow(HTTPError[400]);
     });
 
-    test.skip('Answer IDs are not valid for this particular question', () => {
+    test('Answer IDs are not valid for this particular question', () => {
       expect(() => requestSubmitAnswer(playerId.playerId, 1, [99])).toThrow(HTTPError[400]);
     });
 
-    test.skip('There are duplicate answerIds provided', () => {
+    test('There are duplicate answerIds provided', () => {
       expect(() => requestSubmitAnswer(playerId.playerId, 1, [1, 1])).toThrow(HTTPError[400]);
     });
 
-    test.skip('Less than 1 answerId was submitted', () => {
+    test('Less than 1 answerId was submitted', () => {
       expect(() => requestSubmitAnswer(playerId.playerId, 1, [1, 1])).toThrow(HTTPError[400]);
     });
   });
