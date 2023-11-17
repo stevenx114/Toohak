@@ -156,7 +156,6 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
  */
 export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
   const data = getData();
-  const quiz = getQuiz(quizId);
   const findToken = getToken(token);
 
   if (!findToken) {
