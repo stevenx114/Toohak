@@ -45,7 +45,8 @@ import {
   adminQuizSessionStart,
   adminQuizSessionStateUpdate,
   adminQuizSessionStatusView,
-  adminQuizSessionView
+  adminQuizSessionView,
+  adminQuizSessionResults
 } from './session';
 
 import {
@@ -427,6 +428,15 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionInfo(playerId, questionPosition));
 });
+
+// adminQuizSessionResults
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const sessionId = parseInt(req.params.sessionid);
+  const quizId = parseInt(req.params.quizid);
+  res.json(adminQuizSessionResults(token, quizId, sessionId));
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
