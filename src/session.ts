@@ -22,8 +22,7 @@ import {
 import {
   getData,
   setData,
-  Session,
-  Player
+  Session
 } from './dataStore';
 
 import HTTPError from 'http-errors';
@@ -200,11 +199,11 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
   const question = quiz?.questions[questionPosistion - 1];
   const player = getPlayer(session?.sessionId, playerId);
 
-  if (session?.state != sessionState.QUESTION_OPEN) {
+  if (session?.state !== sessionState.QUESTION_OPEN) {
     throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
   } else if (!session || !player) {
     throw HTTPError(400, 'If player ID does not exist');
-  } else if (questionPosistion != session.atQuestion + 1 || ! question) {
+  } else if (questionPosistion !== session.atQuestion) {
     throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');
   } else if ((new Set(answerIds).size < answerIds?.length)) {
     throw HTTPError(400, 'There are duplicate answer IDs provided');
@@ -220,20 +219,20 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
     player.answerTime = [];
   }
 
-  for (const id of answerIds) { 
+  for (const id of answerIds) {
     let currAnswer;
     if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
-    } 
+    }
 
     if (currAnswer.correct) {
       player.questionsCorrect[questionPosistion - 1] = true;
-    } else  {
+    } else {
       player.questionsCorrect[questionPosistion - 1] = false;
     }
 
     player.answerTime[questionPosistion - 1] = Math.floor((new Date()).getTime() / 1000);
   }
-  
+
   return {};
-}
+};

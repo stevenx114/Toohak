@@ -57,11 +57,11 @@ export const getHashOf = (password: string): string => {
 
 export const getSessionByPlayerId = (playerId: number): Session | undefined => {
   return getData().sessions.find(currSession => currSession.players.some(player => player.playerId === playerId));
-}
+};
 
 export const getPlayer = (sessionId: number, playerId: number): Player | undefined => {
   return getData().sessions.find(session => session.sessionId === sessionId)?.players.find(player => player.playerId === playerId);
-}
+};
 
 export const sleepSync = (ms: number) => {
   /* istanbul ignore next */
@@ -147,7 +147,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
     newState = sessionState.END;
   } else if (state === sessionState.LOBBY && action === sessionAction.NEXT_QUESTION) {
     newState = sessionState.QUESTION_COUNTDOWN;
-    //curSession.atQuestion++;
+    curSession.atQuestion++;
     startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
   } else if (state === sessionState.QUESTION_COUNTDOWN && action === sessionAction.SKIP_COUNTDOWN) {
     clearCountdown(sessionId);
