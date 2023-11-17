@@ -119,7 +119,7 @@ const startCountdown = (sessionId: number, newState: string, ms: number) => {
   const curSession = getSession(sessionId);
   const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
     curSession.state = newState;
-    curSession.questionStartTime = Math.floor((new Date()).getTime() / 1000);
+    curSession.questionStartTime = (new Date()).getTime();
     setData(data);
   }, ms);
   const newTimer: Timer = {
@@ -154,7 +154,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
   } else if (state === sessionState.QUESTION_COUNTDOWN && action === sessionAction.SKIP_COUNTDOWN) {
     clearCountdown(sessionId);
     newState = sessionState.QUESTION_OPEN;
-    curSession.questionStartTime = Math.floor((new Date()).getTime() / 1000);
+    curSession.questionStartTime = (new Date()).getTime();
     startCountdown(sessionId, sessionState.QUESTION_CLOSE, questionDuration * 1000);
   } else if (state === sessionState.QUESTION_OPEN && action === sessionAction.GO_TO_ANSWER) {
     newState = sessionState.ANSWER_SHOW;
