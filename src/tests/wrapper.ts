@@ -263,3 +263,7 @@ export function requestplayerQuestionInfo(playerId: number, questionPosition: nu
 export function requestPlayerStatus(playerId: number) {
   return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
 }
+
+export function requestQuizSessionResults(token: string, quizid: number, sessionId: number) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}/results`, {}, { token });
+}
