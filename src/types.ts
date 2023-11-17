@@ -123,7 +123,7 @@ export const VALID_Q_BODY: QuestionBody = {
 
 export const VALID_Q_BODY_1: QuestionBody = {
   question: 'question2',
-  duration: 2,
+  duration: 1,
   points: 3,
   answers: [
     {
@@ -140,7 +140,7 @@ export const VALID_Q_BODY_1: QuestionBody = {
 
 export const VALID_Q_BODY_2: QuestionBody = {
   question: 'question3',
-  duration: 3,
+  duration: 1,
   points: 3,
   answers: [
     {
@@ -157,7 +157,7 @@ export const VALID_Q_BODY_2: QuestionBody = {
 
 export const VALID_Q_BODY_3: QuestionBody = {
   question: 'question4',
-  duration: 4,
+  duration: 1,
   points: 3,
   answers: [
     {

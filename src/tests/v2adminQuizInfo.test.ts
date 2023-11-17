@@ -8,7 +8,8 @@ import {
   requestAuthRegister,
   requestQuizInfoV2,
   requestClear,
-  requestQuizCreateV2
+  requestQuizCreateV2,
+  requestThumbnailUpdate
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -26,15 +27,17 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
   let ownsQuizUserToken: TokenReturn;
   let noQuizUserToken: TokenReturn;
   let quizId: QuizIdReturn;
+  const validUrl = 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png';
   beforeEach(() => {
     ownsQuizUserToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     noQuizUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     quizId = requestQuizCreateV2(ownsQuizUserToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    requestThumbnailUpdate(ownsQuizUserToken.token, quizId.quizId, validUrl);
   });
 
   // Success cases for adminQuizInfo function
   describe('Success Cases', () => {
-    test.skip('Correct details', () => {
+    test('Correct details', () => {
       expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
         quizId: quizId.quizId,
         name: validDetails.QUIZ_NAME,
@@ -44,7 +47,7 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
         numQuestions: expect.any(Number),
         questions: [],
         duration: 0,
-        thumbnailUrl: expect.any(String)
+        thumbnailUrl: validUrl
       });
     });
   });
