@@ -4,7 +4,8 @@ import {
   SessionIdReturn,
   EmptyObject,
   SessionStatusViewReturn,
-  sessionAction
+  sessionAction,
+  SessionList
 } from './types';
 
 import {
@@ -145,4 +146,35 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
   };
 
   return quizObject;
+};
+
+/**
+ *
+ * @param quizId
+ * @param token
+ * @returns
+ */
+export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
+  const data = getData();
+  const findToken = getToken(token);
+
+  if (!findToken) {
+    throw HTTPError(401, 'Invalid token');
+  }
+
+  const user = getUser(findToken.authUserId);
+  if (!user.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
+  }
+
+  const viewSessionList = {
+    activeSessions: [],
+    inactiveSessions: [],
+  };
+
+  const validSessions = data.sessions.filter(s => s.quizId === quizId);
+  viewSessionList.inactiveSessions = validSessions.filter(s => s.state === sessionState.END).map(s => s.sessionId);
+  viewSessionList.activeSessions = validSessions.filter(s => s.state !== sessionState.END).map(s => s.sessionId);
+
+  return viewSessionList;
 };

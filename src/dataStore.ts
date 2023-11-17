@@ -62,6 +62,7 @@ export interface Player {
 export interface Session {
   sessionId: number;
   quizId: number;
+  quiz: Quiz;
   atQuestion: number;
   state: string;
   numPlayers: number;
