@@ -131,3 +131,7 @@ export interface SessionList {
   activeSessions: number[],
   inactiveSessions: number[],
 }
+
+export interface PlayerIdReturn {
+  playerId: number;
+}
