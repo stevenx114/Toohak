@@ -2,6 +2,8 @@ import {
   validDetails,
   QuizIdReturn,
   TokenReturn,
+  sessionState,
+  QuestionBody,
 } from '../types';
 
 import {
@@ -10,7 +12,9 @@ import {
   requestClear,
   requestQuizRemoveV2,
   requestQuizList,
-  requestQuizSessionStart
+  requestQuizSessionStart,
+  requestSessionStateUpdate,
+  requestQuizQuestionCreate
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -19,10 +23,26 @@ afterEach(() => {
   requestClear();
 });
 
+const VALID_Q_BODY: QuestionBody = {
+  question: 'question1',
+  duration: 3,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ]
+};
+
 const autoStart = 3;
 
 // Tests for adminQuizRemove function
-describe('DELETE /v1/admin/quiz/{quizid}', () => {
+describe('DELETE /v2/admin/quiz/{quizid}', () => {
   let ownsQuizUserToken: TokenReturn;
   let noQuizUserToken: TokenReturn;
   let quizOneId: QuizIdReturn;
@@ -69,11 +89,11 @@ describe('DELETE /v1/admin/quiz/{quizid}', () => {
       expect(() => requestQuizRemoveV2(noQuizUserToken.token, quizOneId.quizId)).toThrow(HTTPError[403]);
     });
     test('All sessions for this quiz must be in END state', () => {
+      requestQuizQuestionCreate(ownsQuizUserToken.token, quizOneId.quizId, VALID_Q_BODY);
       const sessionIdOne = requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart).sessionId;
-      const sessionIdTwo = requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart).sessionId;
+      requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart);
       requestSessionStateUpdate(ownsQuizUserToken.token, quizOneId.quizId, sessionIdOne, sessionState.END);
-      requestSessionStateUpdate(ownsQuizUserToken.token, quizOneId.quizId, sessionIdTwo, sessionState.END);
-      expect(() => requestQuizRemoveV2(ownsQuizUserToken.token, quizOneId.quizId).toThrow(HTTPError[400]));
-    })
+      expect(() => requestQuizRemoveV2(ownsQuizUserToken.token, quizOneId.quizId)).toThrow(HTTPError[400]);
+    });
   });
 });

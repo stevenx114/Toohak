@@ -112,11 +112,10 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   const user = getUser(userId);
 
   if (!user.quizzesOwned.includes(quizId)) {
-    throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
+    throw HTTPError(403, 'Quiz ID does not refer to quiz that this user owns');
   }
   const activeSessions = data.sessions.filter(s => s.quizId === quizId);
-  const endedSessions = activeSessions.filter(s => s.state === sessionState.END);
-  if (endedSessions.length === activeSessions.length) {
+  if (activeSessions.find(s => s.state !== sessionState.END)) {
     throw HTTPError(400, 'All sessions for this quiz in END state');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
