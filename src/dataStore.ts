@@ -67,6 +67,7 @@ export interface Session {
   quizId: number;
   quiz: Quiz;
   atQuestion: number;
+  questionStartTime?: number;
   state: string;
   numPlayers: number;
   players: Player[];

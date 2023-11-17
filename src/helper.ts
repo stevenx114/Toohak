@@ -120,6 +120,7 @@ const startCountdown = (sessionId: number, newState: string, ms: number) => {
   const curSession = getSession(sessionId);
   const timeoutId: ReturnType<typeof setTimeout> = setTimeout(() => {
     curSession.state = newState;
+    curSession.questionStartTime = (new Date()).getTime();
     setData(data);
   }, ms);
   const newTimer: Timer = {
@@ -146,6 +147,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
 
   if (action === sessionAction.END) {
     newState = sessionState.END;
+    curSession.atQuestion = 0;
   } else if (state === sessionState.LOBBY && action === sessionAction.NEXT_QUESTION) {
     newState = sessionState.QUESTION_COUNTDOWN;
     curSession.atQuestion++;
@@ -153,6 +155,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
   } else if (state === sessionState.QUESTION_COUNTDOWN && action === sessionAction.SKIP_COUNTDOWN) {
     clearCountdown(sessionId);
     newState = sessionState.QUESTION_OPEN;
+    curSession.questionStartTime = (new Date()).getTime();
     startCountdown(sessionId, sessionState.QUESTION_CLOSE, questionDuration * 1000);
   } else if (state === sessionState.QUESTION_OPEN && action === sessionAction.GO_TO_ANSWER) {
     newState = sessionState.ANSWER_SHOW;
@@ -165,6 +168,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
       startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
     } else if (action === sessionAction.GO_TO_FINAL_RESULTS) {
       newState = sessionState.FINAL_RESULTS;
+      curSession.atQuestion = 0;
     }
   } else if (state === sessionState.ANSWER_SHOW) {
     if (action === sessionAction.NEXT_QUESTION) {
@@ -173,6 +177,7 @@ export const getNextState = (sessionId: number, state: string, action: string, q
       startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
     } else if (action === sessionAction.GO_TO_FINAL_RESULTS) {
       newState = sessionState.FINAL_RESULTS;
+      curSession.atQuestion = 0;
     }
   }
   setData(data);
