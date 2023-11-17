@@ -271,3 +271,7 @@ export function requestPlayerChatSend(playerId: number, messageBody: string) {
 export function requestPlayerStatus(playerId: number) {
   return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
 }
+
+export function requestPlayerChatView(playerId: number) {
+  return requestHelper('GET', `/v1/player/${playerId}/chat`, {}, {});
+}

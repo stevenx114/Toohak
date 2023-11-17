@@ -216,3 +216,14 @@ interface MessageReturn {
 export interface PlayerChatSendReturn {
   message: MessageReturn;
 }
+
+export interface PlayerChatReturn {
+  messages: Message[];
+}
+
+export interface Message {
+  messageBody: string,
+  playerId: number,
+  playerName: string,
+  timeSent: number
+}
