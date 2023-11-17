@@ -68,7 +68,8 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     state: sessionState.LOBBY,
     numPlayers: 0,
     players: [],
-    autoStartNum: autoStartNum
+    autoStartNum: autoStartNum,
+    chat: []
   };
   data.sessions.push(newSession);
   setData(data);

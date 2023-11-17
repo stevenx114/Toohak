@@ -8,7 +8,8 @@ import {
   getTimerData,
   setTimerData,
   Timer,
-  setData
+  setData,
+  Player
 } from './dataStore';
 
 import {
@@ -48,6 +49,11 @@ export const getQuestion = (quizId: number, questionId: number): Question | unde
 export const getSession = (sessionId: number): Session | undefined => {
   const data = getData();
   return data.sessions.find(session => session.sessionId === sessionId);
+};
+
+export const getPlayer = (playerId: number): Player | undefined => {
+  const data = getData();
+  return data.players.find(player => player.playerId === playerId);
 };
 
 export const getHashOf = (password: string): string => {
