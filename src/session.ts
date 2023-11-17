@@ -195,13 +195,13 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
   const question = quiz?.questions[questionPosistion - 1];
   const player = getPlayer(session?.sessionId, playerId);
 
- if (!session || !player) {
+  if (session.state != sessionState.QUESTION_OPEN) {
+    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  } else if (!session || !player) {
     throw HTTPError(400, 'If player ID does not exist');
   } else if (questionPosistion != session.atQuestion || ! question) {
     throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');
-  } else if (session.state != sessionState.QUESTION_OPEN) {
-    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
-  }  else if ((new Set(answerIds).size !== answerIds.length)) {
+  } else if ((new Set(answerIds).size !== answerIds.length)) {
     throw HTTPError(400, 'There are duplicate answer IDs provided');
   } else if (answerIds.length < 1) {
     throw HTTPError(400, 'Less than 1 answer ID was submitted');
@@ -215,8 +215,13 @@ export const sessionQuizAnswer = (playerId: number, questionPosistion: number, a
 
     if (currAnswer.correct) {
       player.questionsCorrect[questionPosistion - 1] = true;
+    } else  {
+      player.questionsCorrect[questionPosistion - 1] = false;
     }
+    player.answerTime[questionPosistion - 1] = Math.floor((new Date()).getTime() / 1000);
   }
+
+
 
   return {};
 }
