@@ -21,7 +21,7 @@ afterEach(() => {
 describe('Tests for /v1/admin/quiz/{quizid}/thumbnail', () => {
   let user: TokenReturn;
   let quiz: QuizIdReturn;
-  let noQuizzesUser: QuizIdReturn;
+  let noQuizzesUser: TokenReturn;
   const validUrl = 'http://google.com/some/image/path.jpg';
   const invalidFileTypeUrl = 'http://google.com/some/image/path';
   const invalidProtocolUrl = 'google.com/some/image/path.jpg';
@@ -33,13 +33,16 @@ describe('Tests for /v1/admin/quiz/{quizid}/thumbnail', () => {
   });
 
   describe('Success Cases', () => {
-    const initialTime = requestQuizInfo(user.token, quiz.quizId).timeLastEdited;
-    expect(requestThumbnailUpdate(user.token, quiz.quizId, validUrl)).toStrictEqual({});
-    const updatedQuiz = requestQuizInfo(user.token, quiz.quizId);
-    expect(updatedQuiz.thumbnailUrl).toStrictEqual(validUrl);
-    expect(updatedQuiz.timeLastEdited).toBeGreaterThanOrEqual(initialTime);
-    expect(updatedQuiz.timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
+    test('Valid input', () => {
+      const initialTime = requestQuizInfo(user.token, quiz.quizId).timeLastEdited;
+      expect(requestThumbnailUpdate(user.token, quiz.quizId, validUrl)).toStrictEqual({});
+      const updatedQuiz = requestQuizInfo(user.token, quiz.quizId);
+      expect(updatedQuiz.thumbnailUrl).toStrictEqual(validUrl);
+      expect(updatedQuiz.timeLastEdited).toBeGreaterThanOrEqual(initialTime);
+      expect(updatedQuiz.timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
+    });
   });
+
   describe('Error Cases', () => {
     test('The imgUrl does not end with one of the following filetypes (case insensitive): jpg, jpeg, png', () => {
       expect(() => requestThumbnailUpdate(user.token, quiz.quizId, invalidFileTypeUrl)).toThrow(HTTPError[400]);
