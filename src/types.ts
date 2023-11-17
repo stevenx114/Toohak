@@ -179,6 +179,23 @@ export interface SessionStatusViewReturn {
   metadata: Quiz;
 }
 
+interface UserScore {
+  name: string;
+  score: number;
+}
+
+export interface QuestionResults {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
+
+export interface SessionResultsReturn {
+  usersRankedByScore: UserScore[];
+  questionResults: QuestionResults[];
+}
+
 export interface PlayerQuestionAnswer {
   answerId: number;
   answer: string;
@@ -215,6 +232,13 @@ interface MessageReturn {
 
 export interface PlayerChatSendReturn {
   message: MessageReturn;
+}
+
+export interface QuestionResult {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrent: number;
 }
 
 export interface PlayerChatReturn {
