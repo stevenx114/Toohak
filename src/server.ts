@@ -428,7 +428,6 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   res.json(playerQuestionInfo(playerId, questionPosition));
 });
 
-
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

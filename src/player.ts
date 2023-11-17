@@ -13,7 +13,8 @@ import {
   ErrorObject,
   PlayerIdReturn,
   PlayerQuestionInfoReturn,
-  sessionState
+  sessionState,
+  PlayerStatusReturn
 } from './types';
 
 import {
@@ -127,8 +128,8 @@ export const playerQuestionInfo = (playerId: number, questionPosition: number): 
 
 /**
  * Get the status of a guest player that has already joined a session
- * 
- * @param {number} playerId 
+ *
+ * @param {number} playerId
  * @returns {object} PlayerStatusReturn | ErrorObject
  */
 export const playerStatus = (playerId: number): PlayerStatusReturn | ErrorObject => {
