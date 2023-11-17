@@ -27,7 +27,6 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
   let ownsQuizUserToken: TokenReturn;
   let noQuizUserToken: TokenReturn;
   let quizId: QuizIdReturn;
-  const validUrl = 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png';
   beforeEach(() => {
     ownsQuizUserToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     noQuizUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);

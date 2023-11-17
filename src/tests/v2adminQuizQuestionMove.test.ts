@@ -3,7 +3,6 @@ import {
   QuizIdReturn,
   TokenReturn,
   QuestionIdReturn,
-  QuestionBody,
   VALID_Q_BODY_1,
   VALID_Q_BODY_2,
   VALID_Q_BODY_3

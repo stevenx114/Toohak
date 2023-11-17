@@ -1,6 +1,5 @@
 import {
   validDetails,
-  QuestionBody,
   TokenReturn,
   QuizIdReturn,
   SessionIdReturn,

@@ -3,7 +3,6 @@ import {
   QuizIdReturn,
   QuestionIdReturn,
   TokenReturn,
-  QuestionBody,
   VALID_Q_BODY
 } from '../types';
 

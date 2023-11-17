@@ -1,6 +1,5 @@
 import {
   validDetails,
-  QuestionBody,
   VALID_Q_BODY
 } from '../types';
 
