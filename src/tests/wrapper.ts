@@ -263,3 +263,7 @@ export function requestplayerQuestionInfo(playerId: number, questionPosition: nu
 export function requestPlayerChatSend(playerId: number, messageBody: number) {
   return requestHelper('POST', `/v1/player/${playerId}/chat`, { messageBody }, {});
 }
+
+export function requestPlayerStatus(playerId: number) {
+  return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
+}

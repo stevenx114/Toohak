@@ -1,5 +1,5 @@
 import { QuizIdReturn, TokenReturn, validDetails } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizRemove, requestQuizRestoreV2 } from './wrapper';
+import { requestAuthRegister, requestClear, requestQuizCreateV2, requestQuizRemoveV2, requestQuizRestoreV2 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
@@ -14,8 +14,8 @@ describe('quizRestore test', () => {
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    requestQuizRemove(token.token, quizId.quizId);
+    quizId = requestQuizCreateV2(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    requestQuizRemoveV2(token.token, quizId.quizId);
   });
 
   describe('Valid Input test', () => {
@@ -27,12 +27,12 @@ describe('quizRestore test', () => {
 
   describe('Invalid Input Tests', () => {
     test('Quiz name of the restored quiz is already used by another active quiz', () => {
-      requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+      requestQuizCreateV2(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
       expect(() => requestQuizRestoreV2(quizId.quizId, token.token)).toThrow(HTTPError[400]);
     });
 
     test('Quiz ID refers to a quiz that is not currently in the trash', () => {
-      quizId = requestQuizCreate(token.token, 'a' + validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+      quizId = requestQuizCreateV2(token.token, 'a' + validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
       expect(() => requestQuizRestoreV2(quizId.quizId, token.token)).toThrow(HTTPError[400]);
     });
 

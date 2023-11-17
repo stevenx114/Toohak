@@ -1,10 +1,10 @@
 import {
   validDetails,
-  QuestionBody,
   TokenReturn,
   QuizIdReturn,
   SessionIdReturn,
-  sessionState
+  sessionState,
+  VALID_Q_BODY
 } from '../types';
 
 import {
@@ -21,22 +21,6 @@ import HTTPError from 'http-errors';
 const NUMBER = expect.any(Number);
 
 const validAutoStartNum = 5;
-
-const VALID_Q_BODY: QuestionBody = {
-  question: 'question1',
-  duration: 3,
-  points: 3,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ]
-};
 
 afterEach(() => {
   requestClear();
