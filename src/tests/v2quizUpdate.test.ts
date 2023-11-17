@@ -1,6 +1,6 @@
 import { TokenReturn, QuestionBody } from '../types';
 import { QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizUpdateV2 } from './wrapper';
+import { requestAuthRegister, requestClear, requestQuizCreateV2, requestQuizQuestionCreateV2, requestQuizUpdateV2 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
@@ -31,8 +31,8 @@ describe('quizUpdate', () => {
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    questionId = requestQuizQuestionCreate(token.token, quizId.quizId, validQuestionDetails);
+    quizId = requestQuizCreateV2(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    questionId = requestQuizQuestionCreateV2(token.token, quizId.quizId, validQuestionDetails);
     questionBody = JSON.parse(JSON.stringify(validQuestionDetails));
   });
 

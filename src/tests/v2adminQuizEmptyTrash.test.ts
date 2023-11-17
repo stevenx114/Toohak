@@ -1,9 +1,9 @@
 import {
   requestAuthRegister,
   requestClear,
-  requestQuizCreate,
-  requestTrashView,
-  requestQuizRemove,
+  requestQuizCreateV2,
+  requestTrashViewV2,
+  requestQuizRemoveV2,
   requestEmptyTrashV2
 } from './wrapper';
 
@@ -27,12 +27,12 @@ describe('Tests for adminQuizEmptyTrash', () => {
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quiz = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    quiz = requestQuizCreateV2(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   test('Success Case', () => {
-    requestQuizRemove(token.token, quiz.quizId);
-    expect(requestTrashView(token.token)).toStrictEqual({
+    requestQuizRemoveV2(token.token, quiz.quizId);
+    expect(requestTrashViewV2(token.token)).toStrictEqual({
       quizzes: [{
         quizId: quiz.quizId,
         name: validDetails.QUIZ_NAME,
@@ -40,7 +40,7 @@ describe('Tests for adminQuizEmptyTrash', () => {
     });
     arrayOfIds = ('[' + quiz.quizId + ']').toString();
     requestEmptyTrashV2(token.token, arrayOfIds);
-    expect(requestTrashView(token.token)).toStrictEqual({
+    expect(requestTrashViewV2(token.token)).toStrictEqual({
       quizzes: []
     });
   });
@@ -56,7 +56,7 @@ describe('Tests for adminQuizEmptyTrash', () => {
     });
     test('Quiz ID refers to a quiz that current user does not own', () => {
       const noQuizzes = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
-      requestQuizRemove(token.token, quiz.quizId);
+      requestQuizRemoveV2(token.token, quiz.quizId);
       arrayOfIds = '[' + quiz.quizId.toString() + ']';
       expect(() => requestEmptyTrashV2(noQuizzes.token, arrayOfIds)).toThrow(HTTPError[403]);
     });
