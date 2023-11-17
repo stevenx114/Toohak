@@ -41,7 +41,7 @@ describe('statusView test', () => {
 
   describe('Invalid Input Tests', () => {
     test('If player ID does not exist', () => {
-      expect(() => requestSubmitAnswer(playerId.playerId + 1, 1, [answerId])).toThrow(HTTPError[400]);
+      expect(() => requestSubmitAnswer(playerId.playerId + 1, 1, [correctId])).toThrow(HTTPError[400]);
     });
 
     test('If question position is not valid for the session this player is in && If session is not yet up to this question ', () => {

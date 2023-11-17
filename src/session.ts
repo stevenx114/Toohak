@@ -70,7 +70,8 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     state: sessionState.LOBBY,
     numPlayers: 0,
     players: [],
-    autoStartNum: autoStartNum
+    autoStartNum: autoStartNum,
+    chat: []
   };
   data.sessions.push(newSession);
   setData(data);
@@ -197,11 +198,11 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
   const session = getSessionByPlayerId(playerId);
   const quiz = session?.quiz;
   const question = quiz?.questions[questionPosition - 1];
-  const player = getPlayer(session?.sessionId, playerId);
+  const player = getPlayer(playerId);
 
   if (session?.state !== sessionState.QUESTION_OPEN) {
     throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
-  } else if (!session || !player) {
+  } else if (!player) {
     throw HTTPError(400, 'If player ID does not exist');
   } else if (questionPosition !== session.atQuestion) {
     throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');

@@ -51,16 +51,17 @@ export const getSession = (sessionId: number): Session | undefined => {
   return data.sessions.find(session => session.sessionId === sessionId);
 };
 
+export const getPlayer = (playerId: number): Player | undefined => {
+  const data = getData();
+  return data.players.find(player => player.playerId === playerId);
+};
+
 export const getHashOf = (password: string): string => {
   return crypto.createHash('sha256').update(password).digest('hex');
 };
 
 export const getSessionByPlayerId = (playerId: number): Session | undefined => {
   return getData().sessions.find(currSession => currSession.players.some(player => player.playerId === playerId));
-};
-
-export const getPlayer = (sessionId: number, playerId: number): Player | undefined => {
-  return getData().sessions.find(session => session.sessionId === sessionId)?.players.find(player => player.playerId === playerId);
 };
 
 export const sleepSync = (ms: number) => {

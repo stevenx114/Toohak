@@ -21,7 +21,8 @@ export const clear = (): EmptyObject => {
     quizzes: [],
     tokens: [],
     trash: [],
-    sessions: []
+    sessions: [],
+    players: []
   };
   setData(data);
 
