@@ -50,7 +50,8 @@ import {
 
 import {
   playerQuestionInfo,
-  playerJoin
+  playerJoin,
+  playerStatus
 } from './player';
 
 // Set up web app
@@ -414,12 +415,19 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
   res.json(playerJoin(sessionId, name));
 });
 
+// playerStatus
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerStatus(playerId));
+});
+
 // playerQuestionInfo
 app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionInfo(playerId, questionPosition));
 });
+
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
