@@ -3,6 +3,10 @@ import { QuizIdReturn, SessionIdReturn, SessionStatusViewReturn, TokenReturn, VA
 import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizInfoV2, requestQuizQuestionCreate, requestQuizSessionStart, requestSessionStatus } from './wrapper';
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('quizRestore test', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;

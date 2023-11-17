@@ -105,8 +105,8 @@ export interface SessionIdReturn {
 }
 
 export const VALID_Q_BODY: QuestionBody = {
-  question: 'question',
-  duration: 3,
+  question: 'question1',
+  duration: 1,
   points: 3,
   answers: [
     {
@@ -117,7 +117,59 @@ export const VALID_Q_BODY: QuestionBody = {
       answer: 'answer2',
       correct: true
     }
-  ]
+  ],
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+};
+
+export const VALID_Q_BODY_1: QuestionBody = {
+  question: 'question2',
+  duration: 1,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ],
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+};
+
+export const VALID_Q_BODY_2: QuestionBody = {
+  question: 'question3',
+  duration: 1,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ],
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+};
+
+export const VALID_Q_BODY_3: QuestionBody = {
+  question: 'question4',
+  duration: 1,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ],
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
 
 export interface SessionStatusViewReturn {
@@ -125,4 +177,34 @@ export interface SessionStatusViewReturn {
   atQuestion: number;
   players: Player[];
   metadata: Quiz;
+}
+
+export interface PlayerQuestionAnswer {
+  answerId: number;
+  answer: string;
+  colour: string;
+}
+
+export interface PlayerQuestionInfoReturn {
+  questionId: number;
+  question: string;
+  duration: number;
+  thumbnailURL: string;
+  points: number;
+  answers: PlayerQuestionAnswer[];
+}
+
+export interface SessionList {
+  activeSessions: number[],
+  inactiveSessions: number[],
+}
+
+export interface PlayerIdReturn {
+  playerId: number;
+}
+
+export interface PlayerStatusReturn {
+  state: string,
+  numQuestions: number,
+  atQuestion: number
 }

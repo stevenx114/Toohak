@@ -23,6 +23,7 @@ import {
   QuestionBody,
   QuestionIdReturn,
   QuestionDuplicateReturn,
+  sessionState
 } from './types';
 
 import {
@@ -113,6 +114,10 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   if (!user.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
+  const activeSessions = data.sessions.filter(s => s.quizId === quizId);
+  if (activeSessions.find(s => s.state !== sessionState.END)) {
+    throw HTTPError(400, 'All sessions for this quiz in END state');
+  }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   data.trash.push(data.quizzes[indexOfQuizInData]);
@@ -142,17 +147,31 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
   if (!curUser.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
-  return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
-    numQuestions: quiz.numQuestions,
-    questions: quiz.questions,
-    duration: quiz.duration,
-    thumbnailUrl: quiz.thumbnailUrl
-  };
+
+  if (quiz.thumbnailUrl !== undefined) {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
+    };
+  } else {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+    };
+  }
 };
 
 /**
@@ -470,12 +489,6 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
   };
 };
 
-// const checkThumbnailUrl = (question: QuestionBody) => {
-//   // check that thumbnailUrl is correct type
-//   const lowercaseFilename = question.thumbnailUrl.toLowerCase();
-//   return lowercaseFilename.includes('jpg') || lowercaseFilename.includes('png') || lowercaseFilename.includes('jpeg');
-// };
-
 /**
  * Move a question from one particular position in the quiz to another
  *
@@ -611,20 +624,20 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
 
 /**
  *
- * @param quizId
- * @param questionId
- * @param sessionId
+ * @param {number} quizId
+ * @param {number} questionId
+ * @param {string} token
  * @returns
  */
-export const adminQuizQuestionDelete = (quizId: number, questionId: number, sessionId: string): Error | Record<string, never> => {
+export const adminQuizQuestionDelete = (quizId: number, questionId: number, token: string): ErrorObject | Record<string, never> => {
   const data = getData();
   const quiz = getQuiz(quizId);
-  const token = getToken(sessionId);
-  if (!token) {
+  const curToken = getToken(token);
+  if (!curToken) {
     throw HTTPError(401, 'Invalid token');
   }
 
-  const user = getUser(token.authUserId);
+  const user = getUser(curToken.authUserId);
   if (!user.quizzesOwned.includes(quiz.quizId)) {
     throw HTTPError(403, 'User is not the owner of the quiz');
   }
@@ -632,6 +645,12 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, sess
   const question = quiz.questions.find(question => question.questionId === questionId);
   if (!question) {
     throw HTTPError(400, 'Invalid question id');
+  }
+
+  for (const session of data.sessions) {
+    if (session.quizId === quizId && session.state !== 'END') {
+      throw HTTPError(400, 'Session must be in END state');
+    }
   }
 
   quiz.numQuestions--;
@@ -750,5 +769,38 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
 
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
+  return {};
+};
+
+/**
+ * Update the thumbnail for the quiz
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @param {string} imgUrl
+ * @returns {Object} EmptyObject | ErrorObject
+ */
+export const adminQuizThumbnailUpdate = (token: string, quizId: number, imgUrl: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curQuiz = getQuiz(quizId);
+  const curToken = getToken(token);
+  if (!curToken) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  }
+  const curUser = getUser(curToken.authUserId);
+  const validFileTypeRegex = /\.(jpg|jpeg|png)$/i;
+  const validProtocolRegex = /^(http:\/\/|https:\/\/)/;
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
+  } else if (!validFileTypeRegex.test(imgUrl)) {
+    throw HTTPError(400, 'The image must have one of the following filetypes: jpg, jpeg, png');
+  } else if (!validProtocolRegex.test(imgUrl)) {
+    throw HTTPError(400, 'The imgUrl must begin with http:// or https://');
+  }
+
+  curQuiz.thumbnailUrl = imgUrl;
+  curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
   return {};
 };

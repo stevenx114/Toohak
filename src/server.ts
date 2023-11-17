@@ -37,14 +37,22 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminQuizThumbnailUpdate
 } from './quiz';
 
 import {
   adminQuizSessionStart,
   adminQuizSessionStateUpdate,
-  adminQuizSessionStatusView
+  adminQuizSessionStatusView,
+  adminQuizSessionView
 } from './session';
+
+import {
+  playerQuestionInfo,
+  playerJoin,
+  playerStatus
+} from './player';
 
 // Set up web app
 const app = express();
@@ -320,6 +328,14 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.json(adminQuizQuestionDelete(quizId, questionId, token));
 });
 
+// adminQuizQuestionDeleteV2
+app.delete('/v2/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = req.headers.token as string;
+  const questionId = parseInt(req.params.questionid);
+  res.json(adminQuizQuestionDelete(quizId, questionId, token));
+});
+
 // adminQuizQuestionMove
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
@@ -353,6 +369,13 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
 
+// adminQuizSessionView
+app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.headers.token as string;
+  res.json(adminQuizSessionView(quizId, token));
+});
+
 // adminQuizSessionStart
 app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -361,7 +384,7 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
   res.json(adminQuizSessionStart(token, quizId, autoStartNum));
 });
 
-// adminQuizSessionView
+// adminQuizSessionStatusView
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const sessionId = parseInt(req.params.sessionid);
@@ -378,7 +401,32 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
+// adminQuizThumbnailUpdate
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const { imgUrl } = req.body;
+  res.json(adminQuizThumbnailUpdate(token, quizId, imgUrl));
+});
 
+// playerJoin
+app.post('/v1/player/join', (req: Request, res: Response) => {
+  const { sessionId, name } = req.body;
+  res.json(playerJoin(sessionId, name));
+});
+
+// playerStatus
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerStatus(playerId));
+});
+
+// playerQuestionInfo
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionInfo(playerId, questionPosition));
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
