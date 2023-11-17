@@ -3,15 +3,16 @@ import {
   QuizIdReturn,
   TokenReturn,
   QuestionIdReturn,
-  QuestionBody
+  VALID_Q_BODY_1,
+  VALID_Q_BODY_2
 } from '../types';
 
 import {
   requestAuthRegister,
-  requestQuizCreate,
-  requestQuizInfo,
-  requestLogout,
-  requestQuizQuestionCreate,
+  requestQuizCreateV2,
+  requestQuizInfoV2,
+  requestLogoutV2,
+  requestQuizQuestionCreateV2,
   requestClear,
   requestQuizQuestionDuplicateV2
 } from './wrapper';
@@ -32,52 +33,22 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let questionId1: QuestionIdReturn;
   let questionId2: QuestionIdReturn;
   let quizQuestions: Question[];
-  const VALID_Q_BODY_1: QuestionBody = {
-    question: 'question1',
-    duration: 3,
-    points: 3,
-    answers: [
-      {
-        answer: 'answer1',
-        correct: false
-      },
-      {
-        answer: 'answer2',
-        correct: true
-      }
-    ]
-  };
-  const VALID_Q_BODY_2: QuestionBody = {
-    question: 'question2',
-    duration: 4,
-    points: 4,
-    answers: [
-      {
-        answer: 'answer1',
-        correct: false
-      },
-      {
-        answer: 'answer2',
-        correct: true
-      }
-    ]
-  };
 
   beforeEach(() => {
     requestClear();
     userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    userQuizId = requestQuizCreate(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    questionId1 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_1);
-    questionId2 = requestQuizQuestionCreate(userToken.token, userQuizId.quizId, VALID_Q_BODY_2);
+    userQuizId = requestQuizCreateV2(userToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    questionId1 = requestQuizQuestionCreateV2(userToken.token, userQuizId.quizId, VALID_Q_BODY_1);
+    questionId2 = requestQuizQuestionCreateV2(userToken.token, userQuizId.quizId, VALID_Q_BODY_2);
   });
 
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
-      const initialTime = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
+      const initialTime = requestQuizInfoV2(userToken.token, userQuizId.quizId).timeLastEdited;
       const questionIdNew = requestQuizQuestionDuplicateV2(userToken.token, userQuizId.quizId, questionId1.questionId);
       expect(questionIdNew).toEqual({ newQuestionId: expect.any(Number) });
-      const timeLastEdited = requestQuizInfo(userToken.token, userQuizId.quizId).timeLastEdited;
-      quizQuestions = requestQuizInfo(userToken.token, userQuizId.quizId).questions;
+      const timeLastEdited = requestQuizInfoV2(userToken.token, userQuizId.quizId).timeLastEdited;
+      quizQuestions = requestQuizInfoV2(userToken.token, userQuizId.quizId).questions;
       const quizQuestionIds = quizQuestions.map(q => q.questionId);
       expect(quizQuestionIds.indexOf(questionId1.questionId)).toEqual(0);
       expect(quizQuestionIds.indexOf(questionIdNew.newQuestionId)).toEqual(1);
@@ -97,7 +68,7 @@ describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
     });
 
     test('Token does not refer to valid logged in user session', () => {
-      requestLogout(userToken.token);
+      requestLogoutV2(userToken.token);
       expect(() => requestQuizQuestionDuplicateV2(userToken.token, userQuizId.quizId, questionId1.questionId)).toThrow(HTTPError[401]);
     });
 

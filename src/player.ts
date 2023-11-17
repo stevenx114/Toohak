@@ -13,7 +13,6 @@ import {
   ErrorObject,
   PlayerIdReturn,
   PlayerQuestionInfoReturn,
-  sessionAction,
   sessionState
 } from './types';
 
