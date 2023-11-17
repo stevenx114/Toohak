@@ -26,6 +26,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/move', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;

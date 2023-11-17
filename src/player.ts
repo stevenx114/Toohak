@@ -1,13 +1,7 @@
 import {
     getData,
     setData,
-    Quiz,
-    Token,
-    Answer,
-    sessions,
   } from './dataStore';
-  
-  import validator from 'validator';
   
   import HTTPError from 'http-errors';
   
@@ -16,23 +10,15 @@ import {
   } from 'custom-uuid';
   
   import {
-    getUser,
-    getToken,
-    getQuiz,
-    getQuestion,
-    ErrorObject,
-    QuizIdReturn,
-    QuizListReturn,
-    EmptyObject,
-    trashedQuizReturn,
-    getUserByEmail,
-    QuestionBody,
-    QuestionIdReturn,
-    QuestionDuplicateReturn,
     PlayerIdReturn,
-    getSession,
-    PlayerQuestionInfoReturn
+    ErrorObject,
+    PlayerQuestionInfoReturn,
   } from './types';
+  
+  import {
+    getSession,
+  } from './helper';
+  
   
 
 export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | ErrorObject => {

@@ -1,36 +1,7 @@
 import {
-  getData,
-  Quiz,
-  User,
-  Question,
-  Token,
-  Player
+  Player,
+  Quiz
 } from './dataStore';
-
-export const getUser = (userId: number): User | undefined => {
-  const data = getData();
-  return data.users.find(u => u.userId === userId);
-};
-
-export const getQuiz = (quizId: number): Quiz | undefined => {
-  const data = getData();
-  return data.quizzes.find(q => q.quizId === quizId);
-};
-
-export const getToken = (sessionId: string): Token | undefined => {
-  const data = getData();
-  return data.tokens.find(t => t.sessionId === sessionId);
-};
-
-export const getUserByEmail = (email: string): User | undefined => {
-  const data = getData();
-  return data.users.find(u => u.email === email);
-};
-
-export const getQuestion = (quizId: number, questionId: number): Question | undefined => {
-  const quiz = getQuiz(quizId);
-  return quiz.questions.find(q => q.questionId === questionId);
-};
 
 export enum validDetails {
   EMAIL = 'sample@gmail.com',
@@ -45,6 +16,24 @@ export enum validDetails {
   LAST_NAME_2 = 'last',
   QUIZ_NAME_2 = 'quiz',
   DESCRIPTION_2 = 'description2',
+}
+
+export enum sessionState {
+  LOBBY = 'LOBBY',
+  QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
+  QUESTION_OPEN = 'QUESTION_OPEN',
+  QUESTION_CLOSE = 'QUESTION_CLOSE',
+  ANSWER_SHOW = 'ANSWER_SHOW',
+  FINAL_RESULTS = 'FINAL_RESULTS',
+  END = 'END'
+}
+
+export enum sessionAction {
+  NEXT_QUESTION = 'NEXT_QUESTION',
+  SKIP_COUNTDOWN = 'SKIP_COUNTDOWN',
+  GO_TO_ANSWER = 'GO_TO_ANSWER',
+  GO_TO_FINAL_RESULTS = 'GO_TO_FINAL_RESULTS',
+  END = 'END'
 }
 
 export interface ErrorObject {
@@ -90,7 +79,7 @@ export interface QuizListReturn {
 
 export interface AnswerSimple {
   answer: string;
-  correct: true | false;
+  correct: boolean;
 }
 
 export interface QuestionBody {
@@ -98,6 +87,7 @@ export interface QuestionBody {
   duration: number;
   points: number;
   answers: AnswerSimple[];
+  thumbnailUrl?: string;
 }
 
 export interface QuestionIdReturn {
@@ -110,14 +100,44 @@ export interface QuestionDuplicateReturn {
 
 export type EmptyObject = Record<string, string>;
 
-export interface questionAnswer {
-  answer: string;
-  correct: boolean;
+export interface SessionIdReturn {
+  sessionId: number;
 }
 
-export interface questionBody {
+export const VALID_Q_BODY: QuestionBody = {
+  question: 'question',
+  duration: 3,
+  points: 3,
+  answers: [
+    {
+      answer: 'answer1',
+      correct: false
+    },
+    {
+      answer: 'answer2',
+      correct: true
+    }
+  ]
+};
+
+export interface SessionStatusViewReturn {
+  state: string;
+  atQuestion: number;
+  players: Player[];
+  metadata: Quiz;
+}
+
+export interface PlayerQuestionAnswer {
+  answerId: number;
+  answer: string;
+  colour: string;
+}
+
+export interface PlayerQuestionInfoReturn {
+  questionId: number;
   question: string;
   duration: number;
-  points: number,
-  answers: questionAnswer[];
+  thumbnailURL: string;
+  points: number;
+  answers: PlayerQuestionAnswer[];
 }
