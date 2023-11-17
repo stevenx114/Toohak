@@ -43,7 +43,8 @@ import {
 import {
   adminQuizSessionStart,
   adminQuizSessionStateUpdate,
-  adminQuizSessionStatusView
+  adminQuizSessionStatusView,
+  adminQuizSessionView
 } from './session';
 
 import {
@@ -365,6 +366,13 @@ app.post('/v2/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   res.json(adminQuizQuestionDuplicate(token, quizId, questionId));
 });
 
+// adminQuizSessionView
+app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid as string);
+  const token = req.headers.token as string;
+  res.json(adminQuizSessionView(quizId, token));
+});
+
 // adminQuizSessionStart
 app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -373,7 +381,7 @@ app.post('/v1/admin/quiz/:quizid/session/start', (req: Request, res: Response) =
   res.json(adminQuizSessionStart(token, quizId, autoStartNum));
 });
 
-// adminQuizSessionViewV2
+// adminQuizSessionStatusView
 app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
   const sessionId = parseInt(req.params.sessionid);

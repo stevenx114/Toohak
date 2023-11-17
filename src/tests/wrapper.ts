@@ -224,6 +224,10 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
 
+export function requestQuizSessionView(quizId: number, token: string) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, {}, { token });
+}
+
 export function requestQuizSessionStart(token: string, quizId: number, autoStartNum: number) {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
 }
