@@ -140,9 +140,10 @@ const clearCountdown = (sessionId: number) => {
   setTimerData(timerData);
 };
 
-export const getNextState = (sessionId: number, state: string, action: string, questionDuration: number): string => {
+export const getNextState = (sessionId: number, state: string, action: string): string => {
   const data = getData();
   const curSession: Session = getSession(sessionId);
+  const curQuestion: Question = curSession.quiz.questions[curSession.atQuestion - 1];
   let newState: string = state;
 
   if (action === sessionAction.END) {
@@ -156,25 +157,33 @@ export const getNextState = (sessionId: number, state: string, action: string, q
     clearCountdown(sessionId);
     newState = sessionState.QUESTION_OPEN;
     curSession.questionStartTime = (new Date()).getTime();
-    startCountdown(sessionId, sessionState.QUESTION_CLOSE, questionDuration * 1000);
+    startCountdown(sessionId, sessionState.QUESTION_CLOSE, curQuestion.duration * 1000);
   } else if (state === sessionState.QUESTION_OPEN && action === sessionAction.GO_TO_ANSWER) {
     newState = sessionState.ANSWER_SHOW;
   } else if (state === sessionState.QUESTION_CLOSE) {
     if (action === sessionAction.GO_TO_ANSWER) {
       newState = sessionState.ANSWER_SHOW;
     } else if (action === sessionAction.NEXT_QUESTION) {
-      newState = sessionState.QUESTION_COUNTDOWN;
-      curSession.atQuestion++;
-      startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
+      if (curSession.atQuestion >= curSession.quiz.questions.length) {
+        newState = sessionState.FINAL_RESULTS;
+      } else {
+        newState = sessionState.QUESTION_COUNTDOWN;
+        curSession.atQuestion++;
+        startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
+      }
     } else if (action === sessionAction.GO_TO_FINAL_RESULTS) {
       newState = sessionState.FINAL_RESULTS;
       curSession.atQuestion = 0;
     }
   } else if (state === sessionState.ANSWER_SHOW) {
     if (action === sessionAction.NEXT_QUESTION) {
-      newState = sessionState.QUESTION_COUNTDOWN;
-      curSession.atQuestion++;
-      startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
+      if (curSession.atQuestion >= curSession.quiz.questions.length) {
+        newState = sessionState.FINAL_RESULTS;
+      } else {
+        newState = sessionState.QUESTION_COUNTDOWN;
+        curSession.atQuestion++;
+        startCountdown(sessionId, sessionState.QUESTION_OPEN, countdownLength);
+      }
     } else if (action === sessionAction.GO_TO_FINAL_RESULTS) {
       newState = sessionState.FINAL_RESULTS;
       curSession.atQuestion = 0;
