@@ -10,8 +10,9 @@ import {
 } from 'custom-uuid';
 
 import {
+  ErrorObject,
   PlayerIdReturn,
-  ErrorObject
+  PlayerQuestionInfoReturn
 } from './types';
 
 import {
@@ -19,6 +20,12 @@ import {
   getQuiz
 } from './helper';
 
+/**
+ *
+ * @param sessionId
+ * @param name
+ * @returns
+ */
 export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | ErrorObject => {
   const data = getData();
   const session = getSession(sessionId);
@@ -63,58 +70,56 @@ export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | Er
 };
 
 /**
- * 
- * @param playerId 
- * @param questionPosition 
- * @returns 
+ *
+ * @param playerId
+ * @param questionPosition
+ * @returns
  */
 export const playerQuestionInfo = (playerId: number, questionPosition: number): PlayerQuestionInfoReturn | ErrorObject => {
-    const data = getData();
-    let currentSession;
-    let hasPlayerId = false;
-    for (const session of data.sessions) {
-        for (const player of session.players) {
-            if (player.playerId === playerId) {
-                hasPlayerId = true;
-                currentSession = session;
-                break;
-            }
-            
-        }
+  const data = getData();
+  let currentSession;
+  let hasPlayerId = false;
+  for (const session of data.sessions) {
+    for (const player of session.players) {
+      if (player.playerId === playerId) {
+        hasPlayerId = true;
+        currentSession = session;
+        break;
+      }
     }
-    
-    if (hasPlayerId === false) {
-        throw HTTPError(400, "Player ID does not exist");
-    } 
-    
-    const quiz = getQuiz(currentSession.quizId);
-    if (quiz.numQuestions < questionPosition || questionPosition < 0) {
-        throw HTTPError(400, "Invalid question position");
-    }
+  }
 
-    if (currentSession.state === 'LOBBY' || currentSession.state === 'END') {
-        throw HTTPError(400, "Invalid session state");
-    } else if (currentSession.atQuestion !== questionPosition) {
-        throw HTTPError(400, "Incorrect question");
-    }
+  if (hasPlayerId === false) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
 
-    
-    const question = quiz.questions[questionPosition - 1];
-    const findAnswers = question.answers;
-    const newAnswerObj = findAnswers.map(element => ({
-        answerId: element.answerId,
-        answer: element.answer,
-        colour: element.colour,
-    }));
-    
-    const playerQuestion: PlayerQuestionInfoReturn = {
-        questionId: question.questionId,
-        question: question.question,
-        duration: question.duration,
-        thumbnailUrl: question.thumbnailUrl,
-        points: question.points,
-        answers: newAnswerObj,
-    }
+  const quiz = getQuiz(currentSession.quizId);
+  if (quiz.numQuestions < questionPosition || questionPosition < 0) {
+    throw HTTPError(400, 'Invalid question position');
+  }
 
-    return playerQuestion;
-}
+  if (currentSession.state === 'LOBBY' || currentSession.state === 'END') {
+    throw HTTPError(400, 'Invalid session state');
+  } else if (currentSession.atQuestion !== questionPosition) {
+    throw HTTPError(400, 'Incorrect question');
+  }
+
+  const question = quiz.questions[questionPosition - 1];
+  const findAnswers = question.answers;
+  const newAnswerObj = findAnswers.map(element => ({
+    answerId: element.answerId,
+    answer: element.answer,
+    colour: element.colour,
+  }));
+
+  const playerQuestion: PlayerQuestionInfoReturn = {
+    questionId: question.questionId,
+    question: question.question,
+    duration: question.duration,
+    thumbnailUrl: question.thumbnailUrl,
+    points: question.points,
+    answers: newAnswerObj,
+  };
+
+  return playerQuestion;
+};

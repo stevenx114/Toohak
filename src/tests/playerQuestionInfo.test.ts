@@ -1,8 +1,5 @@
 import {
   validDetails,
-  TokenReturn,
-  ErrorObject,
-  QuizIdReturn,
   QuestionBody
 } from '../types';
 
@@ -10,13 +7,12 @@ import {
   requestAuthRegister,
   requestQuizCreateV2,
   requestClear,
-  requestQuizSessionView,
   requestplayerQuestionInfo,
   requestSessionStateUpdate,
   requestQuizSessionStart,
   requestPlayerJoin,
   requestQuizQuestionCreateV2
-} from './wrapper';  
+} from './wrapper';
 
 import {
   sleepSync
@@ -24,12 +20,11 @@ import {
 
 import HTTPError from 'http-errors';
 
-interface QuizId { quizId: number };
-interface TokenObject { token: string };
-interface SessionObject { sessionId: number };
-interface PlayerObject { playerId: number };
+interface QuizId { quizId: number }
+interface TokenObject { token: string }
+interface SessionObject { sessionId: number }
+interface PlayerObject { playerId: number }
 
-const ERROR = expect.any(String);
 const NUMBER = expect.any(Number);
 const COLOUR = expect.any(String);
 
@@ -131,7 +126,6 @@ describe('GET playerQuestionInfo', () => {
           colour: COLOUR
         }
       ]
-    })
+    });
   });
-
 });
