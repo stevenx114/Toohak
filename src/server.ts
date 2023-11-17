@@ -411,10 +411,9 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
-
 // playerQuestionResults
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
-  const playerId = parseInt(req.params.playerId);
+  const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionResults(playerId, questionPosition));
 })
