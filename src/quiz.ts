@@ -489,12 +489,6 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
   };
 };
 
-// const checkThumbnailUrl = (question: QuestionBody) => {
-//   // check that thumbnailUrl is correct type
-//   const lowercaseFilename = question.thumbnailUrl.toLowerCase();
-//   return lowercaseFilename.includes('jpg') || lowercaseFilename.includes('png') || lowercaseFilename.includes('jpeg');
-// };
-
 /**
  * Move a question from one particular position in the quiz to another
  *
