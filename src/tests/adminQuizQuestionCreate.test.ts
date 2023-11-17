@@ -33,7 +33,6 @@ const VALID_Q_BODY: QuestionBody = {
     }
   ]
 };
-
 beforeEach(() => {
   requestClear();
 });

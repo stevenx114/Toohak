@@ -14,7 +14,9 @@ import {
   getQuiz,
   getSession,
   isValidAction,
-  getNextState
+  getNextState,
+  getPlayer,
+  getSessionByPlayerId
 } from './helper';
 
 import {
@@ -57,10 +59,13 @@ export const adminQuizSessionStart = (token: string, quizId: number, autoStartNu
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
 
+  const curQuiz = getQuiz(quizId);
+  const quizCopy = JSON.parse(JSON.stringify(curQuiz));
   const newSessionId = parseInt(generateCustomUuid('0123456789', 12));
   const newSession: Session = {
     sessionId: newSessionId,
     quizId: quizId,
+    quiz: quizCopy,
     atQuestion: 0,
     state: sessionState.LOBBY,
     numPlayers: 0,
@@ -105,10 +110,10 @@ export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessi
     throw HTTPError(400, 'Action cannot be run in the current state');
   }
 
-  const curQuiz = getQuiz(quizId);
+  const curQuiz = curSession.quiz;
   const atQuestionIndex = curSession.atQuestion;
   const nextQuestion = curQuiz.questions[atQuestionIndex];
-  const questionDuration = nextQuestion.duration;
+  const questionDuration = nextQuestion?.duration;
   curSession.state = getNextState(sessionId, curState, action, questionDuration);
   setData(data);
 
@@ -127,7 +132,6 @@ export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessi
 export const adminQuizSessionStatusView = (token: string, quizId: number, sessionId: number): SessionStatusViewReturn | ErrorObject => {
   let session;
   let user;
-  const quiz = getQuiz(quizId);
   if (!(session = getSession(sessionId))) {
     throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
   } else if (!token) {
@@ -142,17 +146,18 @@ export const adminQuizSessionStatusView = (token: string, quizId: number, sessio
     state: session.state,
     atQuestion: session.atQuestion,
     players: session.players,
-    metadata: quiz,
+    metadata: session.quiz,
   };
 
   return quizObject;
 };
 
 /**
+ * Retrieves active and inactive session ids (sorted in ascending order) for a quiz
  *
- * @param quizId
- * @param token
- * @returns
+ * @param {number} quizId
+ * @param {string} token
+ * @returns {Object} SessionList | ErrorObject
  */
 export const adminQuizSessionView = (quizId: number, token: string): SessionList | ErrorObject => {
   const data = getData();
@@ -173,8 +178,61 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
   };
 
   const validSessions = data.sessions.filter(s => s.quizId === quizId);
+  validSessions.sort((session1, session2) => session1.sessionId - session2.sessionId);
   viewSessionList.inactiveSessions = validSessions.filter(s => s.state === sessionState.END).map(s => s.sessionId);
   viewSessionList.activeSessions = validSessions.filter(s => s.state !== sessionState.END).map(s => s.sessionId);
 
   return viewSessionList;
+};
+
+/**
+ * Submits Answers for a session
+ *
+ * @param {number} playerId
+ * @param {number} questionPosistion
+ * @param {Array<number>} answerIds
+ * @returns {object} EmptyObject | ErrorObject
+ */
+export const sessionQuizAnswer = (playerId: number, questionPosistion: number, answerIds: number[]): EmptyObject | ErrorObject => {
+  const session = getSessionByPlayerId(playerId);
+  const quiz = session?.quiz;
+  const question = quiz?.questions[questionPosistion - 1];
+  const player = getPlayer(session?.sessionId, playerId);
+
+  if (session?.state !== sessionState.QUESTION_OPEN) {
+    throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
+  } else if (!session || !player) {
+    throw HTTPError(400, 'If player ID does not exist');
+  } else if (questionPosistion !== session.atQuestion) {
+    throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');
+  } else if ((new Set(answerIds).size < answerIds?.length)) {
+    throw HTTPError(400, 'There are duplicate answer IDs provided');
+  } else if (answerIds.length < 1) {
+    throw HTTPError(400, 'Less than 1 answer ID was submitted');
+  }
+
+  if (!player.questionsCorrect) {
+    player.questionsCorrect = [];
+  }
+
+  if (!player.answerTime) {
+    player.answerTime = [];
+  }
+
+  for (const id of answerIds) {
+    let currAnswer;
+    if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
+      throw HTTPError(400, 'Answer IDs are not valid for this particular question');
+    }
+
+    if (currAnswer.correct) {
+      player.questionsCorrect[questionPosistion - 1] = true;
+    } else {
+      player.questionsCorrect[questionPosistion - 1] = false;
+    }
+
+    player.answerTime[questionPosistion - 1] = Math.floor((new Date()).getTime() / 1000);
+  }
+
+  return {};
 };

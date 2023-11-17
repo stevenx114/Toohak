@@ -37,18 +37,22 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminQuizThumbnailUpdate
 } from './quiz';
 
 import {
   adminQuizSessionStart,
   adminQuizSessionStateUpdate,
   adminQuizSessionStatusView,
-  adminQuizSessionView
+  adminQuizSessionView,
+  sessionQuizAnswer
 } from './session';
 
 import {
-  playerJoin
+  playerQuestionInfo,
+  playerJoin,
+  playerStatus
 } from './player';
 
 // Set up web app
@@ -389,6 +393,14 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
 });
 
+// adminSessionQuestionAnswer
+app.put('/v1/player/:playerid/question/:questionposistion/answer', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosistion = parseInt(req.params.questionposistion);
+  const answerId = req.body.answerIds as number[];
+  res.json(sessionQuizAnswer(playerId, questionPosistion, answerId));
+});
+
 // adminQuizSessionStateUpdate
 app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -398,6 +410,7 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
+
 // playerQuestionResults
 app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerId);
@@ -405,10 +418,31 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
   res.json(playerQuestionResults(playerId, questionPosition));
 })
 
+// adminQuizThumbnailUpdate
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const { imgUrl } = req.body;
+  res.json(adminQuizThumbnailUpdate(token, quizId, imgUrl));
+});
+
 // playerJoin
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
   res.json(playerJoin(sessionId, name));
+});
+
+// playerStatus
+app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerStatus(playerId));
+});
+
+// playerQuestionInfo
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionInfo(playerId, questionPosition));
 });
 
 // ====================================================================

@@ -8,13 +8,13 @@ import {
 
 import {
   requestAuthRegister,
-  requestQuizCreate,
+  requestQuizCreateV2,
   requestClear,
   requestQuizRemoveV2,
-  requestQuizList,
+  requestQuizListV2,
   requestQuizSessionStart,
   requestSessionStateUpdate,
-  requestQuizQuestionCreate
+  requestQuizQuestionCreateV2
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -51,13 +51,13 @@ describe('DELETE /v2/admin/quiz/{quizid}', () => {
     requestClear();
     ownsQuizUserToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     noQuizUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
-    quizOneId = requestQuizCreate(ownsQuizUserToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    quizTwoId = requestQuizCreate(ownsQuizUserToken.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION_2);
+    quizOneId = requestQuizCreateV2(ownsQuizUserToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    quizTwoId = requestQuizCreateV2(ownsQuizUserToken.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION_2);
   });
   describe('Success cases', () => {
     test('Successful removal of quiz one', () => {
       requestQuizRemoveV2(ownsQuizUserToken.token, quizOneId.quizId);
-      expect(requestQuizList(ownsQuizUserToken.token)).toStrictEqual({
+      expect(requestQuizListV2(ownsQuizUserToken.token)).toStrictEqual({
         quizzes: [
           {
             quizId: quizTwoId.quizId,
@@ -68,7 +68,7 @@ describe('DELETE /v2/admin/quiz/{quizid}', () => {
     });
     test('Successful removal of quiz two', () => {
       expect(requestQuizRemoveV2(ownsQuizUserToken.token, quizTwoId.quizId)).toEqual({});
-      expect(requestQuizList(ownsQuizUserToken.token)).toStrictEqual({
+      expect(requestQuizListV2(ownsQuizUserToken.token)).toStrictEqual({
         quizzes: [
           {
             quizId: quizOneId.quizId,
@@ -89,7 +89,7 @@ describe('DELETE /v2/admin/quiz/{quizid}', () => {
       expect(() => requestQuizRemoveV2(noQuizUserToken.token, quizOneId.quizId)).toThrow(HTTPError[403]);
     });
     test('All sessions for this quiz must be in END state', () => {
-      requestQuizQuestionCreate(ownsQuizUserToken.token, quizOneId.quizId, VALID_Q_BODY);
+      requestQuizQuestionCreateV2(ownsQuizUserToken.token, quizOneId.quizId, VALID_Q_BODY);
       const sessionIdOne = requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart).sessionId;
       requestQuizSessionStart(ownsQuizUserToken.token, quizOneId.quizId, autoStart);
       requestSessionStateUpdate(ownsQuizUserToken.token, quizOneId.quizId, sessionIdOne, sessionState.END);

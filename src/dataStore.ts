@@ -13,7 +13,7 @@ export interface Question {
   duration: number;
   points: number;
   answers: Answer[];
-  thumbnailUrl?: string;
+  thumbnailUrl: string;
 }
 
 export interface User {
@@ -58,7 +58,7 @@ export interface Player {
   score: number;
   name: string;
   sessionId: number;
-  questionsCorrect: bool[];
+  questionsCorrect: boolean[];
   answerTime: number[];
 }
 
