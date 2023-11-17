@@ -13,7 +13,8 @@ import {
   ErrorObject,
   PlayerIdReturn,
   PlayerQuestionInfoReturn,
-  sessionState
+  sessionState,
+  PlayerStatusReturn
 } from './types';
 
 import {
@@ -123,4 +124,34 @@ export const playerQuestionInfo = (playerId: number, questionPosition: number): 
   };
 
   return playerQuestion;
+};
+
+/**
+ * Get the status of a guest player that has already joined a session
+ *
+ * @param {number} playerId
+ * @returns {object} PlayerStatusReturn | ErrorObject
+ */
+export const playerStatus = (playerId: number): PlayerStatusReturn | ErrorObject => {
+  const data = getData();
+  let foundPlayer;
+  let foundSession;
+
+  data.sessions.forEach(session => {
+    const player = session.players.find(p => p.playerId === playerId);
+    if (player) {
+      foundPlayer = player;
+      foundSession = session;
+    }
+  });
+
+  if (!foundPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  return {
+    state: foundSession.state,
+    numQuestions: foundSession.quiz.numQuestions,
+    atQuestion: foundSession.atQuestion
+  };
 };
