@@ -22,16 +22,12 @@ import {
   Question
 } from '../dataStore';
 
-import {
-  sleepSync
-} from '../helper';
-
 import HTTPError from 'http-errors';
 
-  interface QuizId { quizId: number }
-  interface TokenObject { token: string }
-  interface SessionObject { sessionId: number }
-  interface PlayerObject { playerId: number }
+interface QuizId { quizId: number }
+interface TokenObject { token: string }
+interface SessionObject { sessionId: number }
+interface PlayerObject { playerId: number }
 
 // Valid constants
 const VALID_NAME = 'Tom Boy';
@@ -60,7 +56,6 @@ beforeEach(() => {
   requestSessionStateUpdate(user.token, quiz.quizId, sessionId.sessionId, sessionAction.SKIP_COUNTDOWN);
   requestSubmitAnswer(player.playerId, 1, [correctId]);
   requestSubmitAnswer(playerTwo.playerId, 1, [answerId]);
-  sleepSync(VALID_Q_BODY.duration);
   requestSessionStateUpdate(user.token, quiz.quizId, sessionId.sessionId, sessionAction.GO_TO_ANSWER);
 });
 
@@ -85,6 +80,9 @@ describe('Test cases for playerQuestionResults', () => {
     });
     test('Question position is not valid for the session this player is in', () => {
       expect(() => requestPlayerQuestionResults(player.playerId, -5)).toThrow(HTTPError[400]);
+    });
+    test('Session is not yet up to this question', () => {
+      expect(() => requestPlayerQuestionResults(player.playerId, 2)).toThrow(HTTPError[400]);
     });
     test('Session is not in ANSWER_SHOW state', () => {
       requestSessionStateUpdate(user.token, quiz.quizId, sessionId.sessionId, sessionAction.END);
