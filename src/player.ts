@@ -60,3 +60,4 @@ export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | Er
 
   return { playerId: newPlayer.playerId };
 };
+
