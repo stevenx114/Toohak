@@ -7,7 +7,7 @@ import {
 import {
   requestAuthRegister,
   requestQuizCreateV2,
-  requestQuizInfo,
+  requestQuizInfoV2,
   requestClear,
   requestQuizNameUpdateV2
 } from './wrapper';
@@ -34,9 +34,9 @@ describe('PUT /v1/admin/quiz/{quizid}/name', () => {
   // Success cases for adminQuizNameUpdate function
   describe('Success Cases', () => {
     test('Successful implementation', () => {
-      const initialTime = requestQuizInfo(newUser.token, newQuiz.quizId).timeLastEdited;
+      const initialTime = requestQuizInfoV2(newUser.token, newQuiz.quizId).timeLastEdited;
       expect(requestQuizNameUpdateV2(newUser.token, newQuiz.quizId, 'name Updated')).toEqual({});
-      const curQuiz = requestQuizInfo(newUser.token, newQuiz.quizId);
+      const curQuiz = requestQuizInfoV2(newUser.token, newQuiz.quizId);
       expect(curQuiz.name).toEqual('name Updated');
       expect(curQuiz.timeLastEdited).toBeGreaterThanOrEqual(initialTime);
       expect(curQuiz.timeLastEdited).toBeLessThanOrEqual(initialTime + 1);
