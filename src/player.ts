@@ -14,7 +14,7 @@ import {
   PlayerIdReturn,
   PlayerQuestionInfoReturn,
   sessionState,
-  PlayerStatusReturn, 
+  PlayerStatusReturn,
   PlayerChatSendReturn
 } from './types';
 
