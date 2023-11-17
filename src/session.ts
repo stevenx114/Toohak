@@ -163,7 +163,7 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
   }
 
   const user = getUser(findToken.authUserId);
-  if (!user.quizzesOwned.includes(quiz.quizId)) {
+  if (!user.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
   }
 
