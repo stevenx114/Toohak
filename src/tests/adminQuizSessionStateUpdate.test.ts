@@ -5,7 +5,9 @@ import {
   QuizIdReturn,
   SessionIdReturn,
   sessionState,
-  sessionAction
+  sessionAction,
+  VALID_Q_BODY_1,
+  VALID_Q_BODY_2
 } from '../types';
 
 import {
@@ -25,38 +27,6 @@ import {
 import HTTPError from 'http-errors';
 
 const validAutoStartNum = 5;
-
-const VALID_Q_BODY_1: QuestionBody = {
-  question: 'question1',
-  duration: 1,
-  points: 3,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ]
-};
-const VALID_Q_BODY_2: QuestionBody = {
-  question: 'question2',
-  duration: 1,
-  points: 4,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ]
-};
-
 let user: TokenReturn;
 let noQuizzesUser: TokenReturn;
 let quiz1: QuizIdReturn;
@@ -116,7 +86,7 @@ describe('Tests for /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
 
   describe('Success Cases', () => {
     test('NEXT_QUESTION: LOBBY -> QUESTION_COUNTDOWN', () => {
-      goToQuestionCountdown(user.token, quiz1.quizId, session1.sessionId);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.NEXT_QUESTION)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.QUESTION_COUNTDOWN);
     });
 
@@ -128,7 +98,7 @@ describe('Tests for /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
 
     test('SKIP_COUNTDOWN: QUESTION_COUNTDOWN -> QUESTION_OPEN', () => {
       goToQuestionCountdown(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.SKIP_COUNTDOWN);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.SKIP_COUNTDOWN)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.QUESTION_OPEN);
     });
 
@@ -140,72 +110,72 @@ describe('Tests for /v1/admin/quiz/{quizid}/session/{sessionid}', () => {
 
     test('GO_TO_ANSWER: QUESTION_OPEN -> ANSWER_SHOW', () => {
       goToQuestionOpen(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_ANSWER);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_ANSWER)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.ANSWER_SHOW);
     });
 
     test('GO_TO_ANSWER: QUESTION_CLOSE -> ANSWER_SHOW', () => {
       goToQuestionClose(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_ANSWER);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_ANSWER)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.ANSWER_SHOW);
     });
 
     test('NEXT_QUESTION: QUESTION_CLOSE -> QUESTION_COUNTDOWN', () => {
       goToQuestionClose(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.NEXT_QUESTION);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.NEXT_QUESTION)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.QUESTION_COUNTDOWN);
     });
 
     test('NEXT_QUESTION: ANSWER_SHOW -> QUESTION_COUNTDOWN', () => {
       goToAnswerShow(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.NEXT_QUESTION);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.NEXT_QUESTION)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.QUESTION_COUNTDOWN);
     });
 
     test('GO_TO_FINAL_RESULTS: QUESTION_CLOSE -> FINAL_RESULTS', () => {
       goToQuestionClose(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_FINAL_RESULTS);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.FINAL_RESULTS);
     });
 
     test('GO_TO_FINAL_RESULTS: ANSWER_SHOW -> FINAL_RESULTS', () => {
       goToAnswerShow(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_FINAL_RESULTS);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.FINAL_RESULTS);
     });
 
     test('END: LOBBY -> END', () => {
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.END);
     });
 
     test('END: QUESTION_COUNTDOWN -> END', () => {
       goToQuestionCountdown(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.END);
     });
 
     test('END: QUESTION_OPEN -> END', () => {
       goToQuestionOpen(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.END);
     });
 
     test('END: QUESTION_CLOSE -> END', () => {
       goToQuestionClose(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.END);
     });
 
     test('END: ANSWER_SHOW -> END', () => {
       goToAnswerShow(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.END);
     });
 
     test('END: FINAL_RESULTS -> END', () => {
       goToFinalResults(user.token, quiz1.quizId, session1.sessionId);
-      requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END);
+      expect(requestSessionStateUpdate(user.token, quiz1.quizId, session1.sessionId, sessionAction.END)).toStrictEqual({});
       expect(requestSessionStatus(user.token, quiz1.quizId, session1.sessionId).state).toStrictEqual(sessionState.END);
     });
   });

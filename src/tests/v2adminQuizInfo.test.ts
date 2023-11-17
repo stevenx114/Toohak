@@ -17,6 +17,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizInfo function
 describe('GET /v2/admin/quiz/{quizid}', () => {
   let ownsQuizUserToken: TokenReturn;

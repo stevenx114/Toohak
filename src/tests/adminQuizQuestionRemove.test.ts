@@ -3,7 +3,8 @@ import {
   QuizIdReturn,
   QuestionIdReturn,
   TokenReturn,
-  QuestionBody
+  QuestionBody,
+  VALID_Q_BODY
 } from '../types';
 
 import {
@@ -17,28 +18,11 @@ import {
 
 import HTTPError from 'http-errors';
 
-const VALID_Q_BODY: QuestionBody = {
-  question: 'question',
-  duration: 3,
-  points: 3,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ]
-};
-
 afterEach(() => {
   requestClear();
 });
 
 describe('Tests for adminQuizQuestionDelete', () => {
-  requestClear();
   let registerReturn: TokenReturn;
   let quizCreateReturn: QuizIdReturn;
   let questionCreateReturn;

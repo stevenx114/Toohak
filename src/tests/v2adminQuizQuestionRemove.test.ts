@@ -1,6 +1,7 @@
 import {
   validDetails,
-  QuestionBody
+  QuestionBody,
+  VALID_Q_BODY
 } from '../types';
 
 import {
@@ -20,22 +21,6 @@ interface QuizId { quizId: number }
 interface TokenObject { token: string }
 interface SessionObject { sessionId: number }
 interface QuestionObject { questionId: number }
-
-const VALID_Q_BODY: QuestionBody = {
-  question: 'question',
-  duration: 3,
-  points: 3,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ]
-};
 
 afterEach(() => {
   requestClear();
