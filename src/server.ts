@@ -398,8 +398,6 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
-
-
 // playerJoin
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
