@@ -7,7 +7,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('quizRestore test', () => {
+describe('quizStatus test', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;
   let sessionId: SessionIdReturn;
