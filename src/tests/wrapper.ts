@@ -236,6 +236,10 @@ export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
 }
 
+export function requestSubmitAnswer(playerId: number, questionPosistion: number, answerIds: number[]) {
+  return requestHelper('PUT', `/v1/player/${playerId}/question/${questionPosistion}/answer`, { answerIds }, {});
+}
+
 export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
 }
@@ -254,4 +258,16 @@ export function requestThumbnailUpdate(token: string, quizId: number, imgUrl: st
 
 export function requestPlayerJoin(sessionId: number, name: string) {
   return requestHelper('POST', '/v1/player/join', { sessionId, name }, {});
+}
+
+export function requestplayerQuestionInfo(playerId: number, questionPosition: number) {
+  return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}`, {}, {});
+}
+
+export function requestPlayerChatSend(playerId: number, messageBody: string) {
+  return requestHelper('POST', `/v1/player/${playerId}/chat`, { messageBody }, {});
+}
+
+export function requestPlayerStatus(playerId: number) {
+  return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
 }

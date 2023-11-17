@@ -13,7 +13,7 @@ export interface Question {
   duration: number;
   points: number;
   answers: Answer[];
-  thumbnailUrl?: string;
+  thumbnailUrl: string;
 }
 
 export interface User {
@@ -50,6 +50,7 @@ export interface DataStore {
   tokens?: Token[];
   trash?: Quiz[];
   sessions?: Session[];
+  players?: Player[];
 }
 
 export interface Player {
@@ -57,7 +58,7 @@ export interface Player {
   score: number;
   name: string;
   sessionId: number;
-  questionsCorrect: bool[];
+  questionsCorrect: boolean[];
   answerTime: number[];
 }
 
@@ -66,10 +67,12 @@ export interface Session {
   quizId: number;
   quiz: Quiz;
   atQuestion: number;
+  questionStartTime?: number;
   state: string;
   numPlayers: number;
   players: Player[];
   autoStartNum: number;
+  chat?: string[];
 }
 
 export interface Timer {

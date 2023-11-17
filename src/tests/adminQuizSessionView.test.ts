@@ -1,6 +1,8 @@
 import {
   validDetails,
-  QuestionBody
+  VALID_Q_BODY_1,
+  VALID_Q_BODY_2,
+  VALID_Q_BODY_3
 } from '../types';
 
 import {
@@ -20,59 +22,6 @@ interface QuizId { quizId: number }
 interface TokenObject { token: string }
 interface SessionObject { sessionId: number }
 
-const QUESTION_BODY_1: QuestionBody = {
-  question: 'question',
-  duration: 3,
-  points: 3,
-  answers: [
-    {
-      answer: 'answer1',
-      correct: false
-    },
-    {
-      answer: 'answer2',
-      correct: true
-    }
-  ],
-  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
-};
-const QUESTION_BODY_2: QuestionBody = {
-  question: 'question2',
-  duration: 6,
-  points: 2,
-  answers: [
-    {
-      answer: 'hello',
-      correct: false
-    },
-    {
-      answer: 'hi',
-      correct: true
-    },
-    {
-      answer: 'nice',
-      correct: true
-    }
-  ],
-  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
-};
-const QUESTION_BODY_3: QuestionBody = {
-  question: 'question3',
-  duration: 11,
-  points: 9,
-  answers: [
-    {
-      answer: 'too many',
-      correct: true
-    },
-    {
-      answer: 'lets go',
-      correct: true
-    }
-  ],
-  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
-};
-
 afterEach(() => {
   requestClear();
 });
@@ -85,7 +34,7 @@ describe('GET adminQuizSessionView', () => {
     requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    requestQuizQuestionCreateV2(user.token, quiz.quizId, QUESTION_BODY_1);
+    requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_Q_BODY_1);
   });
 
   // Error Cases
@@ -107,9 +56,9 @@ describe('GET adminQuizSessionView', () => {
   // Success Case
   test('Successfully return list of sessions across multiple quizzes', () => {
     const quiz2: QuizId = requestQuizCreateV2(user.token, 'human history', 'description 2');
-    requestQuizQuestionCreateV2(user.token, quiz2.quizId, QUESTION_BODY_2);
+    requestQuizQuestionCreateV2(user.token, quiz2.quizId, VALID_Q_BODY_2);
     const quiz3: QuizId = requestQuizCreateV2(user.token, 'dinosaurs', 'description 3');
-    requestQuizQuestionCreateV2(user.token, quiz3.quizId, QUESTION_BODY_3);
+    requestQuizQuestionCreateV2(user.token, quiz3.quizId, VALID_Q_BODY_3);
 
     // Start session for quiz1
     const sessionId: SessionObject = requestQuizSessionStart(user.token, quiz.quizId, 1);
@@ -130,7 +79,7 @@ describe('GET adminQuizSessionView', () => {
     requestSessionStateUpdate(user.token, quiz3.quizId, sessionId8.sessionId, 'END');
 
     // Quiz 1
-    expect(requestQuizSessionView(quiz.quizId, user.token)).toStrictEqual({
+    let sortSessions = {
       activeSessions: [
         sessionId.sessionId,
         sessionId3.sessionId
@@ -139,24 +88,33 @@ describe('GET adminQuizSessionView', () => {
         sessionId2.sessionId,
         sessionId4.sessionId
       ]
-    });
+    };
+    sortSessions.activeSessions.sort((session1, session2) => session1 - session2);
+    sortSessions.inactiveSessions.sort((session1, session2) => session1 - session2);
+    expect(requestQuizSessionView(quiz.quizId, user.token)).toStrictEqual(sortSessions);
 
     // Quiz 2
-    expect(requestQuizSessionView(quiz2.quizId, user.token)).toStrictEqual({
+    sortSessions = {
       activeSessions: [
         sessionId5.sessionId,
         sessionId6.sessionId
       ],
       inactiveSessions: []
-    });
+    };
+    sortSessions.activeSessions.sort((session1, session2) => session1 - session2);
+    sortSessions.inactiveSessions.sort((session1, session2) => session1 - session2);
+    expect(requestQuizSessionView(quiz2.quizId, user.token)).toStrictEqual(sortSessions);
 
     // Quiz 3
-    expect(requestQuizSessionView(quiz3.quizId, user.token)).toStrictEqual({
+    sortSessions = {
       activeSessions: [],
       inactiveSessions: [
         sessionId7.sessionId,
         sessionId8.sessionId
       ]
-    });
+    };
+    sortSessions.activeSessions.sort((session1, session2) => session1 - session2);
+    sortSessions.inactiveSessions.sort((session1, session2) => session1 - session2);
+    expect(requestQuizSessionView(quiz3.quizId, user.token)).toStrictEqual(sortSessions);
   });
 });
