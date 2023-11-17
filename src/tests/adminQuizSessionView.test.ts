@@ -79,7 +79,7 @@ describe('GET adminQuizSessionView', () => {
     requestSessionStateUpdate(user.token, quiz3.quizId, sessionId8.sessionId, 'END');
 
     // Quiz 1
-    expect(requestQuizSessionView(quiz.quizId, user.token)).toStrictEqual({
+    let sortSessions = {
       activeSessions: [
         sessionId.sessionId,
         sessionId3.sessionId
@@ -88,24 +88,33 @@ describe('GET adminQuizSessionView', () => {
         sessionId2.sessionId,
         sessionId4.sessionId
       ]
-    });
+    };
+    sortSessions.activeSessions.sort((session1, session2) => session1 - session2);
+    sortSessions.inactiveSessions.sort((session1, session2) => session1 - session2);
+    expect(requestQuizSessionView(quiz.quizId, user.token)).toStrictEqual(sortSessions);
 
     // Quiz 2
-    expect(requestQuizSessionView(quiz2.quizId, user.token)).toStrictEqual({
+    sortSessions = {
       activeSessions: [
         sessionId5.sessionId,
         sessionId6.sessionId
       ],
       inactiveSessions: []
-    });
+    };
+    sortSessions.activeSessions.sort((session1, session2) => session1 - session2);
+    sortSessions.inactiveSessions.sort((session1, session2) => session1 - session2);
+    expect(requestQuizSessionView(quiz2.quizId, user.token)).toStrictEqual(sortSessions);
 
     // Quiz 3
-    expect(requestQuizSessionView(quiz3.quizId, user.token)).toStrictEqual({
+    sortSessions = {
       activeSessions: [],
       inactiveSessions: [
         sessionId7.sessionId,
         sessionId8.sessionId
       ]
-    });
+    };
+    sortSessions.activeSessions.sort((session1, session2) => session1 - session2);
+    sortSessions.inactiveSessions.sort((session1, session2) => session1 - session2);
+    expect(requestQuizSessionView(quiz3.quizId, user.token)).toStrictEqual(sortSessions);
   });
 });
