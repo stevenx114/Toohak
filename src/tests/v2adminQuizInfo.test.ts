@@ -32,12 +32,25 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
     ownsQuizUserToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     noQuizUserToken = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     quizId = requestQuizCreateV2(ownsQuizUserToken.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    requestThumbnailUpdate(ownsQuizUserToken.token, quizId.quizId, validUrl);
   });
 
   // Success cases for adminQuizInfo function
   describe('Success Cases', () => {
-    test('Correct details', () => {
+    test('Correct details with no quiz thumbnailUrl', () => {
+      expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
+        quizId: quizId.quizId,
+        name: validDetails.QUIZ_NAME,
+        timeCreated: expect.any(Number),
+        timeLastEdited: expect.any(Number),
+        description: validDetails.DESCRIPTION,
+        numQuestions: expect.any(Number),
+        questions: [],
+        duration: 0,
+      });
+    });
+    test('Correct details with quiz thumbnailUrl', () => {
+      const validUrl = 'http://google.com/some/image/path.jpg';
+      requestThumbnailUpdate(ownsQuizUserToken.token, quizId.quizId, validUrl);
       expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
         quizId: quizId.quizId,
         name: validDetails.QUIZ_NAME,
