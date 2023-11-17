@@ -8,11 +8,13 @@ import {
 
 import {
   requestAuthRegister,
-  requestQuizCreate,
+  requestQuizCreateV2,
   requestClear,
   requestQuizSessionView,
-  requestLogout,
-  requestQuizQuestionCreate
+  requestplayerQuestionInfo,
+  requestSessionStateUpdate,
+  requestQuizSessionStart,
+  requestPlayerJoin
 } from './wrapper';  
 
 import HTTPError from 'http-errors';
@@ -71,10 +73,10 @@ describe('GET playerQuestionInfo', () => {
   beforeEach(() => {
     requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     requestCreateQuestionV2(user.token, quiz.quizId, VALID_QUESTION_BODY);
     requestCreateQuestionV2(user.token, quiz.quizId, VALID_QUESTION_BODY_2);
-    session = requestSessionStart(user.token, quiz.quizId, 4);
+    session = requestQuizSessionStart(user.token, quiz.quizId, 4);
     player = requestPlayerJoin(session.sessionId, VALID_NAME);
   });
 

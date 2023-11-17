@@ -200,10 +200,6 @@ export function requestQuizRestoreV2(quizId: number, token: string) {
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/restore`, {}, { token });
 }
 
-<<<<<<< HEAD
-export function requestplayerQuestionInfo(playerId: number, questionPosition: number) {
-  return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}`, {}, {});
-=======
 export function requestQuizQuestionCreateV2(token: string, quizid: number, questionBody: QuestionBody) {
   return requestHelper('POST', `/v2/admin/quiz/${quizid}/question`, { questionBody }, { token });
 }
@@ -246,5 +242,8 @@ export function requestEmptyTrashV2(token: string, quizIds: string) {
 
 export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
->>>>>>> master
+}
+
+export function requestplayerQuestionInfo(playerId: number, questionPosition: number) {
+  return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}`, {}, {});
 }
