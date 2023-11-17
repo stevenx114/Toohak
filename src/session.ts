@@ -173,15 +173,9 @@ export const adminQuizSessionView = (quizId: number, token: string): SessionList
     inactiveSessions: [],
   };
 
-  for (const session of data.sessions) {
-    if (session.quizId === quizId) {
-      if (session.state === 'END') {
-        viewSessionList.inactiveSessions.push(session.sessionId);
-      } else {
-        viewSessionList.activeSessions.push(session.sessionId);
-      }
-    }
-  }
+  const validSessions = data.sessions.filter(s => s.quizId === quizId);
+  viewSessionList.inactiveSessions = validSessions.filter(s => s.state === sessionState.END).map(s => s.sessionId);
+  viewSessionList.activeSessions = validSessions.filter(s => s.state !== sessionState.END).map(s => s.sessionId);
 
   return viewSessionList;
 };
