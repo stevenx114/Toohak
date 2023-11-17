@@ -12,7 +12,9 @@ import {
 import {
   ErrorObject,
   PlayerIdReturn,
-  PlayerQuestionInfoReturn
+  PlayerQuestionInfoReturn,
+  sessionAction,
+  sessionState
 } from './types';
 
 import {
@@ -98,7 +100,7 @@ export const playerQuestionInfo = (playerId: number, questionPosition: number): 
     throw HTTPError(400, 'Invalid question position');
   }
 
-  if (currentSession.state === 'LOBBY' || currentSession.state === 'END') {
+  if (currentSession.state === sessionState.LOBBY || currentSession.state === sessionState.END) {
     throw HTTPError(400, 'Invalid session state');
   } else if (currentSession.atQuestion !== questionPosition) {
     throw HTTPError(400, 'Incorrect question');

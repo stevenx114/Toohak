@@ -1,6 +1,8 @@
 import {
   validDetails,
-  QuestionBody
+  QuestionBody,
+  sessionState,
+  sessionAction
 } from '../types';
 
 import {
@@ -90,24 +92,24 @@ describe('GET playerQuestionInfo', () => {
 
   test('Session is in END or LOBBY state', () => {
     expect(() => requestplayerQuestionInfo(player.playerId, 1)).toThrow(HTTPError[400]);
-    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, sessionState.END);
     expect(() => requestplayerQuestionInfo(player.playerId, 1)).toThrow(HTTPError[400]);
   });
 
   test('Session is not currently on this question', () => {
-    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'NEXT_QUESTION');
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, sessionAction.NEXT_QUESTION);
     sleepSync(100);
     expect(() => requestplayerQuestionInfo(player.playerId, 2)).toThrow(HTTPError[400]);
   });
 
   test('QuestionPosition is invalid', () => {
-    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'NEXT_QUESTION');
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, sessionAction.NEXT_QUESTION);
     expect(() => requestplayerQuestionInfo(player.playerId, 1000)).toThrow(HTTPError[400]);
   });
 
   // Success Case
   test('Correct output for playerQuestionInfo', () => {
-    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'NEXT_QUESTION');
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, sessionAction.NEXT_QUESTION);
     expect(requestplayerQuestionInfo(player.playerId, 1)).toStrictEqual({
       questionId: expect.any(Number),
       question: 'question',
