@@ -17,6 +17,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminQuizInfo function
 describe('GET /v1/admin/quiz/{quizid}', () => {
   let ownsQuizUserToken: TokenReturn;
@@ -47,13 +51,13 @@ describe('GET /v1/admin/quiz/{quizid}', () => {
   // Error cases for adminQuizInfo function
   describe('Error cases', () => {
     test('Token is empty', () => {
-      expect(() => requestQuizInfo('', quizId.quizId).toThrow(HTTPError[401]));
+      expect(() => requestQuizInfo('', quizId.quizId)).toThrow(HTTPError[401]);
     });
     test('Token is invalid', () => {
-      expect(() => requestQuizInfo(ownsQuizUserToken.token + 1, quizId.quizId).toThrow(HTTPError[401]));
+      expect(() => requestQuizInfo(ownsQuizUserToken.token + 1, quizId.quizId)).toThrow(HTTPError[401]);
     });
     test('Quiz ID does not refer to a quiz that this user owns', () => {
-      expect(() => requestQuizInfo(noQuizUserToken.token, quizId.quizId).toThrow(HTTPError[403]));
+      expect(() => requestQuizInfo(noQuizUserToken.token, quizId.quizId)).toThrow(HTTPError[403]);
     });
   });
 });

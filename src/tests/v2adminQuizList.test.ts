@@ -6,10 +6,10 @@ import {
 
 import {
   requestAuthRegister,
-  requestQuizCreate,
   requestClear,
-  requestQuizList,
-  requestLogout
+  requestQuizCreateV2,
+  requestQuizListV2,
+  requestLogoutV2
 } from './wrapper';
 
 import HTTPError from 'http-errors';
@@ -22,33 +22,34 @@ afterEach(() => {
   requestClear();
 });
 
-// Tests for adminQuizList
-describe('GET /v1/admin/quiz/list', () => {
+// Tests for adminQuizListV2
+describe('GET /v2/admin/quiz/list', () => {
   let user: TokenReturn;
   let quiz: QuizIdReturn;
   let quiz1: QuizIdReturn;
   beforeEach(() => {
+    requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
   });
 
   // Error cases
   test('Token is empty', () => {
-    expect(() => requestQuizList('')).toThrow(HTTPError[401]);
+    expect(() => requestQuizListV2('')).toThrow(HTTPError[401]);
   });
 
   test('Token is invalid', () => {
-    expect(() => requestQuizList(user.token + 1)).toThrow(HTTPError[401]);
+    expect(() => requestQuizListV2(user.token + 1)).toThrow(HTTPError[401]);
   });
 
   test('Token does not refer to valid logged in user session', () => {
-    requestLogout(user.token);
-    expect(() => requestQuizList(user.token)).toThrow(HTTPError[401]);
+    requestLogoutV2(user.token);
+    expect(() => requestQuizListV2(user.token)).toThrow(HTTPError[401]);
   });
 
   // success cases:
   test('valid input of 1 quiz', () => {
-    expect(requestQuizList(user.token)).toStrictEqual({
+    expect(requestQuizListV2(user.token)).toStrictEqual({
       quizzes: [
         {
           quizId: quiz.quizId,
@@ -59,8 +60,8 @@ describe('GET /v1/admin/quiz/list', () => {
   });
 
   test('valid input of 2 quizzes', () => {
-    quiz1 = requestQuizCreate(user.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
-    expect(requestQuizList(user.token)).toStrictEqual({
+    quiz1 = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME_2, validDetails.DESCRIPTION);
+    expect(requestQuizListV2(user.token)).toStrictEqual({
       quizzes: [
         {
           quizId: quiz.quizId,

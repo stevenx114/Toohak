@@ -1,27 +1,31 @@
 import {
   validDetails,
   TokenReturn,
-  ErrorObject
+  ErrorObject,
+  QuestionBody,
 } from '../types';
 
 import {
   requestAuthRegister,
-  requestQuizCreate,
+  requestQuizCreateV2,
   requestClear,
   requestPlayerJoin,
+  requestQuizSessionStart,
+  requestSessionStateUpdate,
+  requestQuizQuestionCreateV2
 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
-interface QuizId { quizId: number };
-interface TokenObject { token: string };
-interface SessionObject { sessionId: number };
+interface QuizId { quizId: number }
+interface TokenObject { token: string }
+interface SessionObject { sessionId: number }
 
 const ERROR = expect.any(String);
 const NAME = expect.any(String);
 const NUMBER = expect.any(Number);
 
-// Valid constants 
+// Valid constants
 const VALID_NAME = 'Tom Boy';
 const VALID_QUESTION_BODY: QuestionBody = {
   question: 'question',
@@ -37,7 +41,7 @@ const VALID_QUESTION_BODY: QuestionBody = {
       correct: true
     }
   ],
-  thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
 
 const TEST_VALID_NAME1 = 'ALLCAPS';
@@ -48,36 +52,33 @@ const TEST_VALID_NAME3 = 'namewithnumber123';
 describe('POST v1/player/join', () => {
   let user: TokenObject;
   let quiz: QuizId;
+  let sessionId: SessionObject;
   beforeEach(() => {
     requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quiz = requestQuizCreate(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    requestCreateQuestionV2(user.token, quiz.quizId, VALID_QUESTION_BODY);
-    const sessionId: SessionObject = requestSessionStart(user.token, quiz.quizId, 1); // status - ACTIVE
+    quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_QUESTION_BODY);
+    sessionId = requestQuizSessionStart(user.token, quiz.quizId, 1); // status - ACTIVE
   });
 
   // Error Cases
   test('Session is not in LOBBY state', () => {
-    requestSessionStateUpdate(user.token, quizId.quizId, sessionId.sessionId, 'END');// status - END
-    expect(() => requestPlayerJoin(sessionId.sessionId, 'harry mcClary').toThrow(HTTPError[400]));
+    requestSessionStateUpdate(user.token, quiz.quizId, sessionId.sessionId, 'END');// status - END
+    expect(() => requestPlayerJoin(sessionId.sessionId, 'harry mcClary')).toThrow(HTTPError[400]);
   });
 
-  test('Name is not unique', () => {  
+  test('Name is not unique', () => {
     requestPlayerJoin(sessionId.sessionId, VALID_NAME);
-    expect(() => requestPlayerJoin(sessionId.sessionId, VALID_NAME).toThrow(HTTPError[400]));
+    expect(() => requestPlayerJoin(sessionId.sessionId, VALID_NAME)).toThrow(HTTPError[400]);
   });
 
   // Success Cases
   test.each([
-    [ 'name with number', 'Max123' ],
-    [ 'name with spaces', 'Max Lee' ],
-    [ 'name in CAPS', 'MAXLEE' ],
-    [ 'name is empty', '' ],
-  ]) ('%s', (test, name) => {
-    if (name === '') {
-      expect(requestPlayerJoin(sessionId.sessionId, name)).toStrictEqual({ playerId: NAME });
-    }
+    ['name with number', 'Max123'],
+    ['name with spaces', 'Max Lee'],
+    ['name in CAPS', 'MAXLEE'],
+    ['name is empty', ''],
+  ])('%s', (test, name) => {
     expect(requestPlayerJoin(sessionId.sessionId, name)).toStrictEqual({ playerId: NUMBER });
   });
-  
 });

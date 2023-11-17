@@ -33,6 +33,10 @@ const VALID_Q_BODY: QuestionBody = {
   ]
 };
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('Tests for adminQuizQuestionDelete', () => {
   requestClear();
   let registerReturn: TokenReturn;
@@ -54,22 +58,22 @@ describe('Tests for adminQuizQuestionDelete', () => {
   // Error Cases
   test('Question Id does not refer to a valid question', () => {
     requestQuizQuestionDelete(user1.token, quiz1.quizId, question1.questionId); // Question doesnt exist anymore
-    expect(() => requestQuizQuestionDelete(user1.token, quiz1.quizId, question1.questionId).toThrow(HTTPError[400]));
+    expect(() => requestQuizQuestionDelete(user1.token, quiz1.quizId, question1.questionId)).toThrow(HTTPError[400]);
   });
 
   test('Token is empty', () => {
-    expect(() => requestQuizQuestionDelete('', quiz1.quizId, question1.questionId).toThrow(HTTPError[401]));
+    expect(() => requestQuizQuestionDelete('', quiz1.quizId, question1.questionId)).toThrow(HTTPError[401]);
   });
 
   test('Token is invalid', () => {
     requestClear(); // Nothing in data
-    expect(() => requestQuizQuestionDelete(user1.token, quiz1.quizId, question1.questionId).toThrow(HTTPError[401]));
+    expect(() => requestQuizQuestionDelete(user1.token, quiz1.quizId, question1.questionId)).toThrow(HTTPError[401]);
   });
 
   test('Token is valid but user is not owner of the quiz', () => {
     // Create new user who doesnt own any quizzes
     const newUser = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
-    expect(() => requestQuizQuestionDelete(newUser.token, quiz1.quizId, question1.questionId).toThrow(HTTPError[403]));
+    expect(() => requestQuizQuestionDelete(newUser.token, quiz1.quizId, question1.questionId)).toThrow(HTTPError[403]);
   });
   // Success cases
   test('Successfuly return of empty object and removal of question', () => {

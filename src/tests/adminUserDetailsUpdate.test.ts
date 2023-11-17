@@ -17,6 +17,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminUserDetailsUpdate function
 describe('PUT /v1/admin/user/details', () => {
   let token: TokenReturn;
@@ -37,23 +41,29 @@ describe('PUT /v1/admin/user/details', () => {
 
   // Error cases for adminUserDetailsUpdate function
   describe('Error cases', () => {
-    token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    const invalidToken = token.token + 1;
+    test('Token is empty', () => {
+      expect(() => requestUserDetailsUpdate('', validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2)).toThrow(HTTPError[401]);
+    });
+    test('Token is invalid', () => {
+      expect(() => requestUserDetailsUpdate(token.token + 1, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2)).toThrow(HTTPError[401]);
+    });
+
     const testCases = [
-      ['Token is empty', '', validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2],
-      ['Token is invalid', invalidToken, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2],
-      ['Existing email', token.token, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2],
-      ['Invalid email', token.token, 'hello', validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2],
-      ['First name has forbidden characters', token.token, validDetails.EMAIL_2, 'hello!', validDetails.LAST_NAME_2],
-      ['First name too short', token.token, validDetails.EMAIL_2, 'h', validDetails.LAST_NAME_2],
-      ['First name too long', token.token, validDetails.EMAIL_2, 'hellohellohellohellohello', validDetails.LAST_NAME_2],
-      ['Last name has forbidden characters', token.token, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, 'world!'],
-      ['Last name too short', token.token, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, 'w'],
-      ['Last name too long', token.token, validDetails.EMAIL_2, validDetails.FIRST_NAME_2, 'worldworldworldworldworld'],
+      ['Existing email', validDetails.EMAIL_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2],
+      ['Invalid email', 'hello', validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2],
+      ['First name has forbidden characters', validDetails.EMAIL_2, 'hello!', validDetails.LAST_NAME_2],
+      ['First name too short', validDetails.EMAIL_2, 'h', validDetails.LAST_NAME_2],
+      ['First name too long', validDetails.EMAIL_2, 'hellohellohellohellohello', validDetails.LAST_NAME_2],
+      ['Last name has forbidden characters', validDetails.EMAIL_2, validDetails.FIRST_NAME_2, 'world!'],
+      ['Last name too short', validDetails.EMAIL_2, validDetails.FIRST_NAME_2, 'w'],
+      ['Last name too long', validDetails.EMAIL_2, validDetails.FIRST_NAME_2, 'worldworldworldworldworld'],
     ];
 
-    test.each(testCases)('%s', (testName, tokenValue, email, firstName, lastName) => {
-      expect(() => requestUserDetailsUpdate(tokenValue, email, firstName, lastName).toThrow(HTTPError[401]));
+    test.each(testCases)('%s', (description, email, firstName, lastName) => {
+      if (description === 'Existing email') {
+        requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
+      }
+      expect(() => requestUserDetailsUpdate(token.token, email, firstName, lastName)).toThrow(HTTPError[400]);
     });
   });
 });

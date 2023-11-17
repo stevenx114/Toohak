@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 
 export interface Answer {
   answerId: number;
@@ -13,6 +13,7 @@ export interface Question {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailUrl?: string;
 }
 
 export interface User {
@@ -35,6 +36,7 @@ export interface Quiz {
   numQuestions?: number;
   questions?: Question[];
   duration?: number;
+  thumbnailUrl?: string;
 }
 
 export interface Token {
@@ -47,26 +49,44 @@ export interface DataStore {
   quizzes: Quiz[];
   tokens?: Token[];
   trash?: Quiz[];
+  sessions?: Session[];
 }
 
-// Data for sessions and timers
+export interface Player {
+  playerId: number;
+  score: number;
+  name: string;
+  sessionId: number;
+}
+
 export interface Session {
   sessionId: number;
   quizId: number;
-  currentQuestion: number;
+  atQuestion: number;
   state: string;
+  numPlayers: number;
+  players: Player[];
+  autoStartNum: number;
 }
 
-export const sessions: session[] = []; // Array of sessions
+export interface Timer {
+  timeoutId: ReturnType<typeof setTimeout>;
+  sessionId: number;
+}
+
+let timerData: Timer[] = [];
+
+export const getTimerData = (): Timer[] => timerData;
+
+export const setTimerData = (newTimerData: Timer[]) => {
+  timerData = newTimerData;
+};
 
 const dataFilePath = 'data.json';
 
 const readData = (): DataStore => {
-  if (existsSync(dataFilePath)) {
-    const fileContent = readFileSync(dataFilePath, 'utf8');
-    return JSON.parse(fileContent) as DataStore;
-  }
-  return { users: [], quizzes: [], tokens: [], trash: [] };
+  const fileContent = readFileSync(dataFilePath, 'utf8');
+  return JSON.parse(fileContent) as DataStore;
 };
 
 const writeData = (data: DataStore) => {
@@ -82,5 +102,3 @@ export const setData = (newData: DataStore) => {
   data = newData;
   writeData(data);
 };
-
-

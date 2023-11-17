@@ -13,6 +13,14 @@ import {
 
 import HTTPError from 'http-errors';
 
+beforeEach(() => {
+  requestClear();
+});
+
+afterEach(() => {
+  requestClear();
+});
+
 describe('Clear Function implementation', () => {
   let token: TokenReturn;
 
@@ -27,7 +35,7 @@ describe('Clear Function implementation', () => {
 
   test('Removing user data', () => {
     expect(requestClear()).toStrictEqual({});
-    expect(() => requestUserDetails(token.token).toThrow(HTTPError[401]));
+    expect(() => requestUserDetails(token.token)).toThrow(HTTPError[401]);
   });
 
   test('Removing quiz data', () => {
