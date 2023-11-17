@@ -8,12 +8,17 @@ import {
   requestAuthRegister,
   requestQuizInfoV2,
   requestClear,
-  requestQuizCreateV2
+  requestQuizCreateV2,
+  requestThumbnailUpdate
 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
 beforeEach(() => {
+  requestClear();
+});
+
+afterEach(() => {
   requestClear();
 });
 
@@ -42,8 +47,9 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
         duration: 0,
       });
     });
-    test.skip('Correct details with quiz thumbnailUrl', () => {
-      // request updatethumbnail
+    test('Correct details with quiz thumbnailUrl', () => {
+      const validUrl = 'http://google.com/some/image/path.jpg';
+      requestThumbnailUpdate(ownsQuizUserToken.token, quizId.quizId, validUrl);
       expect(requestQuizInfoV2(ownsQuizUserToken.token, quizId.quizId)).toStrictEqual({
         quizId: quizId.quizId,
         name: validDetails.QUIZ_NAME,
@@ -53,7 +59,7 @@ describe('GET /v2/admin/quiz/{quizid}', () => {
         numQuestions: expect.any(Number),
         questions: [],
         duration: 0,
-        thumbnailUrl: expect.any(String)
+        thumbnailUrl: validUrl
       });
     });
   });
