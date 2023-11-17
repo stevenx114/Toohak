@@ -1,7 +1,5 @@
 import {
   validDetails,
-  TokenReturn,
-  ErrorObject,
   QuestionBody,
 } from '../types';
 
@@ -21,8 +19,6 @@ interface QuizId { quizId: number }
 interface TokenObject { token: string }
 interface SessionObject { sessionId: number }
 
-const ERROR = expect.any(String);
-const NAME = expect.any(String);
 const NUMBER = expect.any(Number);
 
 // Valid constants
@@ -43,10 +39,6 @@ const VALID_QUESTION_BODY: QuestionBody = {
   ],
   thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
-
-const TEST_VALID_NAME1 = 'ALLCAPS';
-const TEST_VALID_NAME2 = 'name with space';
-const TEST_VALID_NAME3 = 'namewithnumber123';
 
 // Tests for playerJoin function
 describe('POST v1/player/join', () => {

@@ -1,13 +1,7 @@
 import {
   getData,
   setData,
-  Quiz,
-  Token,
-  Answer,
-  sessions,
 } from './dataStore';
-
-import validator from 'validator';
 
 import HTTPError from 'http-errors';
 
@@ -16,22 +10,12 @@ import {
 } from 'custom-uuid';
 
 import {
-  sessionState,
-  ErrorObject,
-  SessionIdReturn,
-  EmptyObject,
-  SessionStatusViewReturn,
-  sessionAction, 
-  PlayerIdReturn
+  PlayerIdReturn,
+  ErrorObject
 } from './types';
 
 import {
-  getToken,
-  getUser,
-  getQuiz,
   getSession,
-  isValidAction,
-  getNextState
 } from './helper';
 
 export const playerJoin = (sessionId: number, name: string): PlayerIdReturn | ErrorObject => {
