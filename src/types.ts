@@ -213,3 +213,15 @@ export interface SessionFinalResultsReturn {
   usersRankedByScore: UsersRankedByScore[];
   questionResults: QuestionResults[];
 }
+
+export interface UsersRankedByScore {
+  name: string;
+  score: number;
+}
+
+export interface QuestionResults {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
