@@ -431,10 +431,10 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
 
 // playerChatSend
 app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
-  const playerId = parseInt(req.param.playerId);
+  const playerId = parseInt(req.params.playerid);
   const { messageBody } = req.body;
   res.json(playerChatSend(playerId, messageBody));
-})
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
