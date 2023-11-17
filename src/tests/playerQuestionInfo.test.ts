@@ -14,8 +14,13 @@ import {
   requestplayerQuestionInfo,
   requestSessionStateUpdate,
   requestQuizSessionStart,
-  requestPlayerJoin
+  requestPlayerJoin,
+  requestQuizQuestionCreateV2
 } from './wrapper';  
+
+import {
+  sleepSync
+} from '../helper';
 
 import HTTPError from 'http-errors';
 
@@ -44,7 +49,7 @@ const VALID_QUESTION_BODY: QuestionBody = {
       correct: true
     }
   ],
-  thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
 const VALID_QUESTION_BODY_2: QuestionBody = {
   question: 'question_2',
@@ -60,53 +65,59 @@ const VALID_QUESTION_BODY_2: QuestionBody = {
       correct: true
     }
   ],
-  thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
+  thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png'
 };
+
+afterEach(() => {
+  requestClear();
+});
 
 // Tests for playerQuestionInfo
 describe('GET playerQuestionInfo', () => {
   // Error cases
   let user: TokenObject;
   let quiz: QuizId;
-  let player: playerObject;
+  let player: PlayerObject;
   let session: SessionObject;
   beforeEach(() => {
     requestClear();
     user = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quiz = requestQuizCreateV2(user.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    requestCreateQuestionV2(user.token, quiz.quizId, VALID_QUESTION_BODY);
-    requestCreateQuestionV2(user.token, quiz.quizId, VALID_QUESTION_BODY_2);
+    requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_QUESTION_BODY);
+    requestQuizQuestionCreateV2(user.token, quiz.quizId, VALID_QUESTION_BODY_2);
     session = requestQuizSessionStart(user.token, quiz.quizId, 4);
     player = requestPlayerJoin(session.sessionId, VALID_NAME);
   });
 
   test('Player ID does not exist', () => {
-    expect(() => requestplayerQuestionInfo(player.playerId + 1, 1).toThrow(HTTPError[400]));
+    expect(() => requestplayerQuestionInfo(player.playerId + 1, 1)).toThrow(HTTPError[400]);
   });
 
   test('Session is in END or LOBBY state', () => {
-    expect(() => requestplayerQuestionInfo(player.playerId, 1).toThrow(HTTPError[400]));
-    requestSessionStateUpdate(user.token, quizId.quizId, sessionId.sessionId, 'END');
-    expect(() => requestplayerQuestionInfo(player.playerId, 1).toThrow(HTTPError[400]));
+    expect(() => requestplayerQuestionInfo(player.playerId, 1)).toThrow(HTTPError[400]);
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'END');
+    expect(() => requestplayerQuestionInfo(player.playerId, 1)).toThrow(HTTPError[400]);
   });
 
   test('Session is not currently on this question', () => {
-    requestSessionStateUpdate(user.token, quizId.quizId, sessionId.sessionId, 'NEXT_QUESTION');
-    sleepSync(1 * 100);
-    expect(() => requestplayerQuestionInfo(player.playerId, 2).toThrow(HTTPError[400]));
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'NEXT_QUESTION');
+    sleepSync(100);
+    expect(() => requestplayerQuestionInfo(player.playerId, 2)).toThrow(HTTPError[400]);
   });
 
   test('QuestionPosition is invalid', () => {
-    expect(() => requestplayerQuestionInfo(player.playerId, 1000).toThrow(HTTPError[400]));
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'NEXT_QUESTION');
+    expect(() => requestplayerQuestionInfo(player.playerId, 1000)).toThrow(HTTPError[400]);
   });
 
   // Success Case
-  test('Correct output', () => {
+  test('Correct output for playerQuestionInfo', () => {
+    requestSessionStateUpdate(user.token, quiz.quizId, session.sessionId, 'NEXT_QUESTION');
     expect(requestplayerQuestionInfo(player.playerId, 1)).toStrictEqual({
       questionId: expect.any(Number),
       question: 'question',
       duration: 3,
-      thumbnailURL: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
+      thumbnailUrl: 'https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png',
       points: 3,
       answers: [
         {

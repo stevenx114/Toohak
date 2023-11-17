@@ -127,7 +127,6 @@ export interface SessionStatusViewReturn {
   metadata: Quiz;
 }
 
-<<<<<<< HEAD
 export interface PlayerQuestionAnswer {
   answerId: number;
   answer: string;
