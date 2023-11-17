@@ -46,7 +46,7 @@ const requestHelper = (
 
   // NOTE: the error is rethrown in the test below. This is useful becasuse the
   // test suite will halt (stop) if there's an error, rather than carry on and
-  // potentially failing on a different expect statement without useful outputs
+  // potentially failinAg on a different expect statement without useful outputs
   switch (res.statusCode) {
     case 400: // BAD_REQUEST
     case 401: // UNAUTHORIZED
@@ -224,6 +224,10 @@ export function requestQuizQuestionDuplicateV2(token: string, quizId: number, qu
   return requestHelper('POST', `/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {}, { token });
 }
 
+export function requestQuizSessionView(quizId: number, token: string) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizId}/sessions`, {}, { token });
+}
+
 export function requestQuizSessionStart(token: string, quizId: number, autoStartNum: number) {
   return requestHelper('POST', `/v1/admin/quiz/${quizId}/session/start`, { autoStartNum }, { token });
 }
@@ -242,4 +246,12 @@ export function requestEmptyTrashV2(token: string, quizIds: string) {
 
 export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
+}
+
+export function requestThumbnailUpdate(token: string, quizId: number, imgUrl: string) {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/thumbnail`, { imgUrl }, { token });
+}
+
+export function requestPlayerJoin(sessionId: number, name: string) {
+  return requestHelper('POST', '/v1/player/join', { sessionId, name }, {});
 }
