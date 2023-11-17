@@ -248,6 +248,10 @@ export function requestSessionStateUpdate(token: string, quizId: number, session
   return requestHelper('PUT', `/v1/admin/quiz/${quizId}/session/${sessionId}`, { action }, { token });
 }
 
+export function requestThumbnailUpdate(token: string, quizId: number, imgUrl: string) {
+  return requestHelper('PUT', `/v1/admin/quiz/${quizId}/thumbnail`, { imgUrl }, { token });
+}
+
 export function requestPlayerJoin(sessionId: number, name: string) {
   return requestHelper('POST', '/v1/player/join', { sessionId, name }, {});
 }

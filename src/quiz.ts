@@ -777,3 +777,36 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   setData(data);
   return {};
 };
+
+/**
+ * Update the thumbnail for the quiz
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @param {string} imgUrl
+ * @returns {Object} EmptyObject | ErrorObject
+ */
+export const adminQuizThumbnailUpdate = (token: string, quizId: number, imgUrl: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curQuiz = getQuiz(quizId);
+  const curToken = getToken(token);
+  if (!curToken) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  }
+  const curUser = getUser(curToken.authUserId);
+  const validFileTypeRegex = /\.(jpg|jpeg|png)$/i;
+  const validProtocolRegex = /^(http:\/\/|https:\/\/)/;
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
+  } else if (!validFileTypeRegex.test(imgUrl)) {
+    throw HTTPError(400, 'The image must have one of the following filetypes: jpg, jpeg, png');
+  } else if (!validProtocolRegex.test(imgUrl)) {
+    throw HTTPError(400, 'The imgUrl must begin with http:// or https://');
+  }
+
+  curQuiz.thumbnailUrl = imgUrl;
+  curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
+  return {};
+};

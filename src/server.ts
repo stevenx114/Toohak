@@ -37,7 +37,8 @@ import {
   adminQuizQuestionMove,
   adminQuizQuestionDuplicate,
   adminUpdateQuiz,
-  adminQuizQuestionDelete
+  adminQuizQuestionDelete,
+  adminQuizThumbnailUpdate
 } from './quiz';
 
 import {
@@ -396,6 +397,14 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionid);
   const { action } = req.body;
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
+});
+
+// adminQuizThumbnailUpdate
+app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const quizId = parseInt(req.params.quizid);
+  const { imgUrl } = req.body;
+  res.json(adminQuizThumbnailUpdate(token, quizId, imgUrl));
 });
 
 // playerJoin
