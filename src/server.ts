@@ -53,7 +53,8 @@ import {
   playerQuestionInfo,
   playerJoin,
   playerChatSend,
-  playerStatus
+  playerStatus,
+  playerQuestionResults
 } from './player';
 
 // Set up web app
@@ -416,7 +417,7 @@ app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionResults(playerId, questionPosition));
-})
+});
 
 // adminQuizThumbnailUpdate
 app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {

@@ -233,3 +233,10 @@ interface MessageReturn {
 export interface PlayerChatSendReturn {
   message: MessageReturn;
 }
+
+export interface QuestionResult {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrent: number;
+}
