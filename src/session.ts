@@ -219,12 +219,9 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
     if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
     }
-    
 
-    if (player.questionsCorrect[questionPosition - 1] = true) {
-      if (currAnswer.correct) {
-        player.questionsCorrect[questionPosition - 1] = true;
-      } else {
+    if (player.questionsCorrect[questionPosition - 1] === true) {
+      if (!currAnswer.correct) {
         player.questionsCorrect[questionPosition - 1] = false;
         player.score -= question.points;
       }
