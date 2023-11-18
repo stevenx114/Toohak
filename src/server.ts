@@ -9,6 +9,7 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
+import { createClient } from '@vercel/kv';
 import {
   clear
 } from './other';
@@ -77,6 +78,14 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docE
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || 'localhost';
+
+const KV_REST_API_URL="https://picked-barnacle-45864.kv.vercel-storage.com";
+const KV_REST_API_TOKEN="AbMoASQgZTcxY2M1YzktYThhNy00YjgyLTgxZTUtNGZjMWI1YzIyY2E3YjIxMWE5ZTcyYzZmNGFiODgzY2M3OGQzOGY1ZmM5NDc=";
+
+const database = createClient({
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
+});
 
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
@@ -474,6 +483,17 @@ app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const { messageBody } = req.body;
   res.json(playerChatSend(playerId, messageBody));
+});
+
+app.get('/data', async (req: Request, res: Response) => {
+  const data = await database.hgetall('data:forum');
+  res.status(200).json({ data });
+});
+
+app.put('/data', async (req: Request, res: Response) => {
+  const { data } = req.body;
+  await database.hset('data:forum', data);
+  return res.status(200).json({});
 });
 
 // ====================================================================

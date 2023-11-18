@@ -88,23 +88,41 @@ export const setTimerData = (newTimerData: Timer[]) => {
   timerData = newTimerData;
 };
 
-const dataFilePath = 'data.json';
-
-const readData = (): DataStore => {
-  const fileContent = readFileSync(dataFilePath, 'utf8');
-  return JSON.parse(fileContent) as DataStore;
-};
-
-const writeData = (data: DataStore) => {
-  const dataToSave = JSON.stringify(data, null, 2);
-  writeFileSync(dataFilePath, dataToSave, 'utf8');
-};
-
 let data: DataStore = readData();
 
-export const getData = (): DataStore => data;
+import request, { HttpVerb } from 'sync-request';
 
-export const setData = (newData: DataStore) => {
-  data = newData;
-  writeData(data);
+const DEPLOYED_URL = "https://z5481988-toohak-deploy.vercel.app"
+
+const requestHelper = (method: HttpVerb, path: string, payload: object) => {
+  let json = {};
+  let qs = {};
+  if (['GET', 'DELETE'].includes(method)) {
+    qs = payload;
+  } else {
+    json = payload;
+  }
+
+  const res = request(method, DEPLOYED_URL + path, { qs, json, timeout: 20000 });
+  return JSON.parse(res.body.toString());
+};
+
+export const getData = (): Data => {
+  try {
+    const res = requestHelper('GET', '/data', {});
+    return res.data;
+  } catch (e) {
+    return {
+      users: [],
+      quizzes: [],
+      tokens: [],
+      trash: [],
+      sessions: [],
+      players: []
+    };
+  }
+};
+
+export const setData = (newData: Data) => {
+  requestHelper('PUT', '/data', { data: newData });
 };
