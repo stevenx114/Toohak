@@ -236,12 +236,20 @@ export function requestUserDetailsV2(token: string) {
   return requestHelper('GET', '/v2/admin/user/details', { }, { token });
 }
 
+export function requestSubmitAnswer(playerId: number, questionPosistion: number, answerIds: number[]) {
+  return requestHelper('PUT', `/v1/player/${playerId}/question/${questionPosistion}/answer`, { answerIds }, {});
+}
+
 export function requestSessionStatus(token: string, quizid: number, sessionId: number) {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}`, {}, { token });
 }
 
 export function requestEmptyTrashV2(token: string, quizIds: string) {
   return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
+}
+
+export function requestPlayerQuestionResults(questionId: number, questionPosition: number) {
+  return requestHelper('GET', `/v1/player/${questionId}/question/${questionPosition}/results`, {});
 }
 
 export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
@@ -260,10 +268,18 @@ export function requestplayerQuestionInfo(playerId: number, questionPosition: nu
   return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}`, {}, {});
 }
 
+export function requestPlayerChatSend(playerId: number, messageBody: string) {
+  return requestHelper('POST', `/v1/player/${playerId}/chat`, { messageBody }, {});
+}
+
 export function requestPlayerStatus(playerId: number) {
   return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
 }
 
 export function requestQuizSessionResults(token: string, quizid: number, sessionId: number) {
   return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}/results`, {}, { token });
+}
+
+export function requestPlayerChatView(playerId: number) {
+  return requestHelper('GET', `/v1/player/${playerId}/chat`, {}, {});
 }

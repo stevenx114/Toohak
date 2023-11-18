@@ -804,3 +804,53 @@ export const adminQuizThumbnailUpdate = (token: string, quizId: number, imgUrl: 
 
   return {};
 };
+
+/**
+ * Update the thumbnail for the quiz
+ *
+ * @param {number} playerId
+ * @param {number} questionPosition
+ * @returns {Object} EmptyObject | ErrorObject
+ */
+export const adminQuizSessionResults = (token: string, sessionId: number, quizId: number): SessionResults[] | ErrorObject => {
+  const curToken = getToken(token);
+  if (!curToken) {
+    throw HTTPError(401, 'Token is empty or invalid (does not refer to valid logged in user session)');
+  }
+  const curPlayer = getPlayer(playerId);
+  if (!curPlayer) {
+    throw HTTPError(400, 'PlayerId does not exist');
+  }
+
+  const curSession = getSession(sessionId);
+  if (curSession.state !== sessionState.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+  const user = getUser(tokenObject.authUserId);
+  if (!user.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
+  }
+  const playerScores = curSession.players.map(p => ({ name: p.name, score: p.score })).sort((a, b) => b.score - a.score);
+
+  const questionResults = curQuiz.questions.map((question, index) => {
+    const correctPlayers = curSession.players.filter(player => player.questionsCorrect[index]);
+    const correctPlayerNames = correctPlayers.map(player => player.name);
+
+    const timeTaken = correctPlayers.map(player => player.answerTime[index]);
+    const totalTime = timeTaken.reduce((a, b) => a + b, 0);
+    const averageTime = totalTime > 0 ? Math.floor(totalTime / correctPlayers.length) : 0;
+    const percentCorrect = curSession.players.length > 0 ? Math.round((correctPlayers.length / curSession.players.length) * 100) : 0;
+
+    return {
+      questionId: question.questionId,
+      playersCorrectList: correctPlayerNames,
+      averageAnswerTime: averageTime,
+      percentCorrect: percentCorrect
+    };
+  });
+
+  return {
+    usersRankedByScore: playerScores,
+    questionResults: questionResults
+  };
+};

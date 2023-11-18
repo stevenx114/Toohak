@@ -3,7 +3,10 @@ import {
   TokenReturn,
   SessionIdReturn,
   validDetails,
-  sessionAction
+  sessionAction,
+  VALID_Q_BODY,
+  SessionStatusViewReturn,
+  PlayerIdReturn
 } from '../types';
 
 import {
@@ -12,8 +15,10 @@ import {
   requestQuizCreateV2,
   requestQuizSessionStart,
   requestQuizSessionResults,
-  requestSessionStateUpdate
-
+  requestSessionStateUpdate,
+  requestQuizQuestionCreateV2,
+  requestSessionStatus,
+  requestPlayerJoin,
 } from './wrapper';
 import HTTPError from 'http-errors';
 
@@ -24,6 +29,7 @@ beforeEach(() => {
 afterEach(() => {
   requestClear();
 });
+
 describe('GET /v1/admin/quiz/:quizid/session/:sessionid/results', () => {
   let user1: TokenReturn;
   let user2: TokenReturn;
@@ -31,22 +37,27 @@ describe('GET /v1/admin/quiz/:quizid/session/:sessionid/results', () => {
   let quizId2: QuizIdReturn;
   let sessionId1: SessionIdReturn;
   let sessionId2: SessionIdReturn;
+  let playerId1: PlayerIdReturn;
+  let playerId2: PlayerIdReturn;
+  let sessionInfo: SessionStatusViewReturn;
+
 
   beforeEach(() => {
     user1 = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    user2 = requestAuthRegister(validDetails.EMAIL_2, validDetails.PASSWORD_2, validDetails.FIRST_NAME_2, validDetails.LAST_NAME_2);
     quizId1 = requestQuizCreateV2(user1.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    quizId2 = requestQuizCreateV2(user2.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    sessionId1 = requestQuizSessionStart(user1.token, quizId1.quizId, 3);
-    sessionId2 = requestQuizSessionStart(user2.token, quizId2.quizId, 4);
+    requestQuizQuestionCreateV2(user1.token, quizId1.quizId, VALID_Q_BODY);
+    sessionId1 = requestQuizSessionStart(user1.token, quizId1.quizId, 1);
+    playerId1 = requestPlayerJoin(sessionId1.sessionId, 'bye');
+    
     requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.GO_TO_FINAL_RESULTS);
-    requestSessionStateUpdate(user2.token, quizId2.quizId, sessionId2.sessionId, sessionAction.GO_TO_FINAL_RESULTS);
+
   });
 
   describe('Success Cases', () => {
-    test.skip('Returns correct object', () => {
+    test('Returns correct object', () => {
       expect(requestQuizSessionResults(user1.token, quizId1.quizId, sessionId1.sessionId)).toStrictEqual(
         {
+
           usersRankedByScore: [
             {
               name: expect.any(String),
@@ -66,7 +77,7 @@ describe('GET /v1/admin/quiz/:quizid/session/:sessionid/results', () => {
     });
   });
 
-  describe.skip('Error Cases', () => {
+  describe('Error Cases', () => {
     test('Session Id does not refer to a valid session within this quiz', () => {
       expect(() => requestQuizSessionResults(user1.token, quizId1.quizId, sessionId1.sessionId + 1)).toThrow(HTTPError[400]);
     });

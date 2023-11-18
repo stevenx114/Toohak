@@ -50,6 +50,7 @@ export interface DataStore {
   tokens?: Token[];
   trash?: Quiz[];
   sessions?: Session[];
+  players?: Player[];
 }
 
 export interface Player {
@@ -57,6 +58,8 @@ export interface Player {
   score: number;
   name: string;
   sessionId: number;
+  questionsCorrect: boolean[];
+  answerTime: number[];
 }
 
 export interface Session {
@@ -64,10 +67,12 @@ export interface Session {
   quizId: number;
   quiz: Quiz;
   atQuestion: number;
+  questionStartTime?: number;
   state: string;
   numPlayers: number;
   players: Player[];
   autoStartNum: number;
+  chat?: object[];
 }
 
 export interface Timer {

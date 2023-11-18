@@ -46,13 +46,17 @@ import {
   adminQuizSessionStateUpdate,
   adminQuizSessionStatusView,
   adminQuizSessionView,
-  adminQuizSessionResults
+  adminQuizSessionResults,
+  sessionQuizAnswer
 } from './session';
 
 import {
   playerQuestionInfo,
   playerJoin,
-  playerStatus
+  playerChatSend,
+  playerStatus,
+  playerQuestionResults,
+  playerChatView
 } from './player';
 
 // Set up web app
@@ -393,6 +397,14 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStatusView(token, quizId, sessionId));
 });
 
+// adminSessionQuestionAnswer
+app.put('/v1/player/:playerid/question/:questionposistion/answer', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosistion = parseInt(req.params.questionposistion);
+  const answerId = req.body.answerIds as number[];
+  res.json(sessionQuizAnswer(playerId, questionPosistion, answerId));
+});
+
 // adminQuizSessionStateUpdate
 app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -400,6 +412,13 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   const sessionId = parseInt(req.params.sessionid);
   const { action } = req.body;
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
+});
+
+// playerQuestionResults
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionResults(playerId, questionPosition));
 });
 
 // adminQuizThumbnailUpdate
@@ -435,6 +454,19 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res:
   const sessionId = parseInt(req.params.sessionid);
   const quizId = parseInt(req.params.quizid);
   res.json(adminQuizSessionResults(token, quizId, sessionId));
+});
+
+// playerChatView
+app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerChatView(playerId));
+});
+
+// playerChatSend
+app.post('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const { messageBody } = req.body;
+  res.json(playerChatSend(playerId, messageBody));
 });
 
 // ====================================================================
