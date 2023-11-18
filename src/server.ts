@@ -456,7 +456,6 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   res.json(playerQuestionInfo(playerId, questionPosition));
 });
 
-
 // playerChatView
 app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);

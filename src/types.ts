@@ -236,13 +236,6 @@ export interface UsersRankedByScore {
   score: number;
 }
 
-export interface QuestionResults {
-  questionId: number;
-  playersCorrectList: string[];
-  averageAnswerTime: number;
-  percentCorrect: number;
-}
-
 export interface MessageReturn {
   messageBody: string;
 }
