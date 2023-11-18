@@ -286,7 +286,7 @@ export const adminQuizSessionResults = (token: string, quizId: number, sessionId
   const curQuiz = curSession.quiz;
   const activePlayers = curSession.players;
   activePlayers.sort(function(a, b) {
-    return a.score - b.score;
+    return b.score - a.score;
   });
   const playerScores = activePlayers.map(p => ({ name: p.name, score: p.score }));
   const questionResults = [];
