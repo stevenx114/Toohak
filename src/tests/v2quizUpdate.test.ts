@@ -1,22 +1,8 @@
-import { TokenReturn, QuestionBody } from '../types';
+import { TokenReturn, QuestionBody, VALID_Q_BODY } from '../types';
 import { QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
 import { requestAuthRegister, requestClear, requestQuizCreateV2, requestQuizQuestionCreateV2, requestQuizUpdateV2 } from './wrapper';
 
 import HTTPError from 'http-errors';
-
-const validQuestionDetails: QuestionBody = {
-  question: 'Who is the Monarch of England?',
-  duration: 1,
-  points: 1,
-  answers: [{
-    answer: 'Prince Charles',
-    correct: true,
-  }, {
-    answer: 'hello Charles',
-    correct: false,
-  },
-  ],
-};
 
 afterEach(() => {
   requestClear();
@@ -32,8 +18,8 @@ describe('quizUpdate', () => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quizId = requestQuizCreateV2(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    questionId = requestQuizQuestionCreateV2(token.token, quizId.quizId, validQuestionDetails);
-    questionBody = JSON.parse(JSON.stringify(validQuestionDetails));
+    questionId = requestQuizQuestionCreateV2(token.token, quizId.quizId, VALID_Q_BODY);
+    questionBody = JSON.parse(JSON.stringify(VALID_Q_BODY));
   });
 
   describe('Valid Input test', () => {
@@ -95,7 +81,7 @@ describe('quizUpdate', () => {
     });
 
     test('No Correct Answers', () => {
-      questionBody.answers[0].correct = false;
+      questionBody.answers[1].correct = false;
       expect(() => requestQuizUpdateV2(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
 
@@ -119,6 +105,21 @@ describe('quizUpdate', () => {
 
     test('The question duration is not a positive number', () => {
       questionBody.duration = -1;
+      expect(() => requestQuizUpdateV2(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
+    });
+
+    test('Thumbnail URL cannot be empty', () => {
+      questionBody.thumbnailUrl = '';
+      expect(() => requestQuizUpdateV2(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
+    });
+
+    test('Incorrect thumbnail file type', () => {
+      questionBody.thumbnailUrl = 'http://google.com/some/image/path';
+      expect(() => requestQuizUpdateV2(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
+    });
+
+    test('Incorrect thumbnail file type', () => {
+      questionBody.thumbnailUrl = 'google.com/some/image/path.jpg';
       expect(() => requestQuizUpdateV2(quizId.quizId, questionId.questionId, token.token, questionBody)).toThrow(HTTPError[400]);
     });
   });
