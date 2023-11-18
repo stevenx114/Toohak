@@ -18,6 +18,10 @@ const validQuestionDetails: QuestionBody = {
   ],
 };
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('quizUpdate', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;

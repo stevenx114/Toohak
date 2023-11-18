@@ -112,7 +112,7 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   const user = getUser(userId);
 
   if (!user.quizzesOwned.includes(quizId)) {
-    throw HTTPError(403, 'Quiz ID does not refer to quiz that this user owns');
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
   const activeSessions = data.sessions.filter(s => s.quizId === quizId);
   if (activeSessions.find(s => s.state !== sessionState.END)) {
@@ -623,11 +623,11 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
 };
 
 /**
- * Deletes a quiz question
+ *
  * @param {number} quizId
  * @param {number} questionId
  * @param {string} token
- * @returns {Object} EmptyObject | Record<string, never>
+ * @returns
  */
 export const adminQuizQuestionDelete = (quizId: number, questionId: number, token: string): ErrorObject | Record<string, never> => {
   const data = getData();

@@ -280,6 +280,10 @@ export function requestPlayerStatus(playerId: number) {
   return requestHelper('GET', `/v1/player/${playerId}`, {}, {});
 }
 
+export function requestQuizSessionResults(token: string, quizid: number, sessionId: number) {
+  return requestHelper('GET', `/v1/admin/quiz/${quizid}/session/${sessionId}/results`, {}, { token });
+}
+
 export function requestPlayerChatView(playerId: number) {
   return requestHelper('GET', `/v1/player/${playerId}/chat`, {}, {});
 }

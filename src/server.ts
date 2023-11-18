@@ -46,6 +46,7 @@ import {
   adminQuizSessionStateUpdate,
   adminQuizSessionStatusView,
   adminQuizSessionView,
+  adminQuizSessionResults,
   sessionQuizAnswer
 } from './session';
 
@@ -433,6 +434,14 @@ app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { imgUrl } = req.body;
   res.json(adminQuizThumbnailUpdate(token, quizId, imgUrl));
+});
+
+// adminQuizSessionResults
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const sessionId = parseInt(req.params.sessionid);
+  const quizId = parseInt(req.params.quizid);
+  res.json(adminQuizSessionResults(token, quizId, sessionId));
 });
 
 // playerJoin
