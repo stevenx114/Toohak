@@ -179,6 +179,23 @@ export interface SessionStatusViewReturn {
   metadata: Quiz;
 }
 
+interface UserScore {
+  name: string;
+  score: number;
+}
+
+export interface QuestionResults {
+  questionId: number;
+  playersCorrectList: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
+
+export interface SessionResultsReturn {
+  usersRankedByScore: UserScore[];
+  questionResults: QuestionResults[];
+}
+
 export interface PlayerQuestionAnswer {
   answerId: number;
   answer: string;
@@ -203,27 +220,10 @@ export interface PlayerIdReturn {
   playerId: number;
 }
 
-interface UserScore {
-  name: string;
-  score: number;
-}
-
-export interface QuestionResults {
-  questionId: number;
-  playersCorrectList: string[];
-  averageAnswerTime: number;
-  percentCorrect: number;
-}
-
-export interface SessionResultsReturn {
-  usersRankedByScore: UserScore[];
-  questionResults: QuestionResults[];
-}
-
 export interface PlayerStatusReturn {
-  state: string;
-  numQuestions: number;
-  atQuestion: number;
+  state: string,
+  numQuestions: number,
+  atQuestion: number
 }
 
 export interface SessionFinalResultsReturn {
@@ -248,7 +248,7 @@ export interface QuestionResult {
   questionId: number;
   playersCorrectList: string[];
   averageAnswerTime: number;
-  percentCorrent: number;
+  percentCorrect: number;
 }
 
 export interface PlayerChatReturn {
