@@ -31,7 +31,7 @@ export const getQuiz = (quizId: number): Quiz | undefined => {
   return data.quizzes.find(q => q.quizId === quizId);
 };
 
-export const getToken = (sessionId: number): Token | undefined => {
+export const getToken = (sessionId: string): Token | undefined => {
   const data = getData();
   return data.tokens.find(t => t.sessionId === sessionId);
 };
