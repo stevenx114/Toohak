@@ -7,7 +7,7 @@ afterEach(() => {
   requestClear();
 });
 
-describe('statusView test', () => {
+describe('sessionSubmitAnswer test', () => {
   let token: TokenReturn;
   let sessionId: SessionIdReturn;
   let quizId: QuizIdReturn;
@@ -39,6 +39,10 @@ describe('statusView test', () => {
     });
 
     test('Incorrect then correct', () => {
+      expect(requestSubmitAnswer(playerId.playerId, 1, [answerId, correctId])).toStrictEqual({});
+    });
+
+    test('Correc then incorrect', () => {
       expect(requestSubmitAnswer(playerId.playerId, 1, [answerId, correctId])).toStrictEqual({});
     });
   });
