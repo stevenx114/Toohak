@@ -16,7 +16,8 @@ import {
   isValidAction,
   getNextState,
   getPlayer,
-  getSessionByPlayerId
+  getSessionByPlayerId,
+  getRankByAnswerTime
 } from './helper';
 
 import {
@@ -214,36 +215,39 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
     player.answerTime = [];
   }
 
+  for (const id of answerIds) {
+    if (!question.answers.find(answer => answer.answerId === id)) {
+      throw HTTPError(400, 'Answer IDs are not valid for this particular question');
+    }
+  }
+
   // Consider Multiple correct Answer Questions
   for (const correctAnswer of question.answers) {
+    player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
     if (correctAnswer.correct && !answerIds.includes(correctAnswer.answerId)) {
       return {};
     }
   }
 
   for (const id of answerIds) {
-    let currAnswer;
-    if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
-      throw HTTPError(400, 'Answer IDs are not valid for this particular question');
-    }
+    const currAnswer = question.answers.find(answer => answer.answerId === id);
 
     // Previously Correct
     if (player.questionsCorrect[questionPosition - 1] === true) {
       if (!currAnswer.correct) {
         player.questionsCorrect[questionPosition - 1] = false;
-        player.score -= question.points * getRankByAnswerTime(session.players, player);
+        player.score -= question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition));
       }
-      player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
     } else {
       if (currAnswer.correct) {
-        player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
         player.questionsCorrect[questionPosition - 1] = true;
-        player.score += question.points * getRankByAnswerTime(session.players, player);
+        player.score += question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition));
       } else {
         player.questionsCorrect[questionPosition - 1] = false;
-        player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
       }
     }
+
+    player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
   }
 
   return {};
