@@ -429,6 +429,14 @@ app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
   res.json(adminQuizThumbnailUpdate(token, quizId, imgUrl));
 });
 
+// adminQuizSessionResults
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+  const token = req.headers.token as string;
+  const sessionId = parseInt(req.params.sessionid);
+  const quizId = parseInt(req.params.quizid);
+  res.json(adminQuizSessionResults(token, quizId, sessionId));
+});
+
 // playerJoin
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, name } = req.body;
@@ -448,13 +456,6 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   res.json(playerQuestionInfo(playerId, questionPosition));
 });
 
-// adminQuizSessionResults
-app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
-  const token = req.headers.token as string;
-  const sessionId = parseInt(req.params.sessionid);
-  const quizId = parseInt(req.params.quizid);
-  res.json(adminQuizSessionResults(token, quizId, sessionId));
-});
 
 // playerChatView
 app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
