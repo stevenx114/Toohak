@@ -248,7 +248,7 @@ export const playerSessionResults = (playerId: number): SessionResultsReturn | E
   const curQuiz = curSession.quiz;
   const activePlayers = curSession.players;
   activePlayers.sort(function(a, b) {
-    return a.score - b.score;
+    return b.score - a.score;
   });
   const playerScores = activePlayers.map(p => ({ name: p.name, score: p.score }));
   const questionResults = [];

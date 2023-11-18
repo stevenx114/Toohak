@@ -236,13 +236,14 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
     // Previously Correct
     if (player.questionsCorrect[questionPosition - 1] === true) {
       if (!currAnswer.correct) {
+        player.score -= question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition - 1));
         player.questionsCorrect[questionPosition - 1] = false;
-        player.score -= question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition));
+        player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
       }
     } else {
       if (currAnswer.correct) {
         player.questionsCorrect[questionPosition - 1] = true;
-        player.score += question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition));
+        player.score += question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition - 1));
       } else {
         player.questionsCorrect[questionPosition - 1] = false;
       }
