@@ -200,9 +200,9 @@ export function getRankByAnswerTime(players: Player[], currentPlayer: Player, in
 
   const currentIndex = players.findIndex(player => player.playerId === currentPlayer.playerId);
 
-  const playersWithTime = players.filter(player => player.answerTime !== undefined);
+  const playersWithTime = players.filter(player => player.answerTime !== undefined && player.questionsCorrect[index] === true);
 
   playersWithTime.sort((a, b) => (a.answerTime![index] || 0) - (b.answerTime![index] || 0));
 
-  return currentIndex !== -1 ? playersWithTime.findIndex(player => player.playerId === currentPlayer.playerId) + 1 : 1;
+  return playersWithTime.findIndex(player => player.playerId === currentPlayer.playerId) + 1;
 }
