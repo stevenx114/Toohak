@@ -1,6 +1,238 @@
 {
-  "users": [],
-  "quizzes": [],
-  "tokens": [],
-  "trash": []
+  "users": [
+    {
+      "userId": 50047659508,
+      "name": "firstname lastname",
+      "email": "sample@gmail.com",
+      "password": "1bd425392451454c7cc56fc754a5da9514a9919b25a05a937d68bdbd8a6354be",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [
+        186953082541,
+        334587210140
+      ],
+      "previousPasswords": [
+        "samplepassword1"
+      ]
+    },
+    {
+      "userId": 559206135558,
+      "name": "first last",
+      "email": "sample2@gmail.com",
+      "password": "6cf615d5bcaac778352a8f1f3360d23f02f34ec182e259897fd6ce485d7870d4",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "quizzesOwned": [],
+      "previousPasswords": [
+        "password2"
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 186953082541,
+      "name": "quizName",
+      "timeCreated": 1700281276,
+      "timeLastEdited": 1700281276,
+      "description": "description",
+      "numQuestions": 2,
+      "questions": [
+        {
+          "questionId": 524575784490,
+          "question": "question2",
+          "duration": 1,
+          "points": 3,
+          "answers": [
+            {
+              "answerId": 3475762178,
+              "answer": "answer1",
+              "colour": "brown",
+              "correct": false
+            },
+            {
+              "answerId": 2425796512,
+              "answer": "answer2",
+              "colour": "brown",
+              "correct": true
+            }
+          ],
+          "thumbnailUrl": "https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png"
+        },
+        {
+          "questionId": 190508315701,
+          "question": "question3",
+          "duration": 1,
+          "points": 3,
+          "answers": [
+            {
+              "answerId": 2262593857,
+              "answer": "answer1",
+              "colour": "brown",
+              "correct": false
+            },
+            {
+              "answerId": 1925822280,
+              "answer": "answer2",
+              "colour": "blue",
+              "correct": true
+            }
+          ],
+          "thumbnailUrl": "https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png"
+        }
+      ],
+      "duration": 2
+    },
+    {
+      "quizId": 334587210140,
+      "name": "quiz",
+      "timeCreated": 1700281276,
+      "timeLastEdited": 1700281276,
+      "description": "description2",
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 966660344848,
+          "question": "question2",
+          "duration": 1,
+          "points": 3,
+          "answers": [
+            {
+              "answerId": 4508165530,
+              "answer": "answer1",
+              "colour": "blue",
+              "correct": false
+            },
+            {
+              "answerId": 3588886019,
+              "answer": "answer2",
+              "colour": "purple",
+              "correct": true
+            }
+          ],
+          "thumbnailUrl": "https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png"
+        }
+      ],
+      "duration": 1
+    }
+  ],
+  "tokens": [
+    {
+      "sessionId": "023197481399",
+      "authUserId": 50047659508
+    },
+    {
+      "sessionId": "189774387076",
+      "authUserId": 559206135558
+    }
+  ],
+  "trash": [],
+  "sessions": [
+    {
+      "sessionId": 344094803855,
+      "quizId": 186953082541,
+      "quiz": {
+        "quizId": 186953082541,
+        "name": "quizName",
+        "timeCreated": 1700281276,
+        "timeLastEdited": 1700281276,
+        "description": "description",
+        "numQuestions": 2,
+        "questions": [
+          {
+            "questionId": 524575784490,
+            "question": "question2",
+            "duration": 1,
+            "points": 3,
+            "answers": [
+              {
+                "answerId": 3475762178,
+                "answer": "answer1",
+                "colour": "brown",
+                "correct": false
+              },
+              {
+                "answerId": 2425796512,
+                "answer": "answer2",
+                "colour": "brown",
+                "correct": true
+              }
+            ],
+            "thumbnailUrl": "https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png"
+          },
+          {
+            "questionId": 190508315701,
+            "question": "question3",
+            "duration": 1,
+            "points": 3,
+            "answers": [
+              {
+                "answerId": 2262593857,
+                "answer": "answer1",
+                "colour": "brown",
+                "correct": false
+              },
+              {
+                "answerId": 1925822280,
+                "answer": "answer2",
+                "colour": "blue",
+                "correct": true
+              }
+            ],
+            "thumbnailUrl": "https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png"
+          }
+        ],
+        "duration": 2
+      },
+      "atQuestion": 1,
+      "state": "QUESTION_OPEN",
+      "numPlayers": 0,
+      "players": [],
+      "autoStartNum": 5,
+      "chat": [],
+      "questionStartTime": 1700281276332
+    },
+    {
+      "sessionId": 227273132870,
+      "quizId": 334587210140,
+      "quiz": {
+        "quizId": 334587210140,
+        "name": "quiz",
+        "timeCreated": 1700281276,
+        "timeLastEdited": 1700281276,
+        "description": "description2",
+        "numQuestions": 1,
+        "questions": [
+          {
+            "questionId": 966660344848,
+            "question": "question2",
+            "duration": 1,
+            "points": 3,
+            "answers": [
+              {
+                "answerId": 4508165530,
+                "answer": "answer1",
+                "colour": "blue",
+                "correct": false
+              },
+              {
+                "answerId": 3588886019,
+                "answer": "answer2",
+                "colour": "purple",
+                "correct": true
+              }
+            ],
+            "thumbnailUrl": "https://www.pngall.com/wp-content/uploads/2016/04/Potato-PNG-Clipart.png"
+          }
+        ],
+        "duration": 1
+      },
+      "atQuestion": 0,
+      "state": "LOBBY",
+      "numPlayers": 0,
+      "players": [],
+      "autoStartNum": 5,
+      "chat": []
+    }
+  ],
+  "players": []
 }

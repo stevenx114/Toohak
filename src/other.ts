@@ -1,6 +1,9 @@
 import {
   setData,
-  DataStore
+  DataStore,
+  getTimerData,
+  setTimerData,
+  Timer
 } from './dataStore';
 
 import {
@@ -18,9 +21,17 @@ export const clear = (): EmptyObject => {
     quizzes: [],
     tokens: [],
     trash: [],
+    sessions: [],
+    players: []
   };
-
   setData(data);
+
+  let timerData: Timer[] = getTimerData();
+  for (const timer of timerData) {
+    clearTimeout(timer.timeoutId);
+  }
+  timerData = [];
+  setTimerData(timerData);
 
   return {};
 };

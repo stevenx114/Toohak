@@ -1,10 +1,10 @@
-import { TokenReturn, questionBody } from '../types';
+import { TokenReturn, QuestionBody } from '../types';
 import { QuizIdReturn, validDetails, QuestionIdReturn } from '../types';
-import { requestAuthRegister, requestClear, requestQuizCreate, requestQuizQuestionCreate, requestQuizUpdateV2 } from './wrapper';
+import { requestAuthRegister, requestClear, requestQuizCreateV2, requestQuizQuestionCreateV2, requestQuizUpdateV2 } from './wrapper';
 
 import HTTPError from 'http-errors';
 
-const validQuestionDetails: questionBody = {
+const validQuestionDetails: QuestionBody = {
   question: 'Who is the Monarch of England?',
   duration: 1,
   points: 1,
@@ -18,17 +18,21 @@ const validQuestionDetails: questionBody = {
   ],
 };
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('quizUpdate', () => {
   let token: TokenReturn;
   let quizId: QuizIdReturn;
   let questionId: QuestionIdReturn;
-  let questionBody: questionBody;
+  let questionBody: QuestionBody;
 
   beforeEach(() => {
     requestClear();
     token = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
-    quizId = requestQuizCreate(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
-    questionId = requestQuizQuestionCreate(token.token, quizId.quizId, validQuestionDetails);
+    quizId = requestQuizCreateV2(token.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
+    questionId = requestQuizQuestionCreateV2(token.token, quizId.quizId, validQuestionDetails);
     questionBody = JSON.parse(JSON.stringify(validQuestionDetails));
   });
 

@@ -15,6 +15,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 // Tests for adminUserDetails function
 describe('adminUserDetails', () => {
   let token: TokenReturn;

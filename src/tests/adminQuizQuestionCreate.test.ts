@@ -37,6 +37,10 @@ beforeEach(() => {
   requestClear();
 });
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('Tests for adminQuizQuestionCreate', () => {
   let user1: TokenReturn;
   let quiz1: QuizIdReturn;

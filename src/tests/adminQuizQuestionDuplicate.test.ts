@@ -3,7 +3,8 @@ import {
   QuizIdReturn,
   TokenReturn,
   QuestionIdReturn,
-  QuestionBody
+  VALID_Q_BODY_1,
+  VALID_Q_BODY_2
 } from '../types';
 
 import {
@@ -22,43 +23,16 @@ import {
 
 import HTTPError from 'http-errors';
 
+afterEach(() => {
+  requestClear();
+});
+
 describe('PUT /v1/admin/quiz/{quizid}/question/{questionid}/duplicate', () => {
   let userToken: TokenReturn;
   let userQuizId: QuizIdReturn;
   let questionId1: QuestionIdReturn;
   let questionId2: QuestionIdReturn;
   let quizQuestions: Question[];
-  const VALID_Q_BODY_1: QuestionBody = {
-    question: 'question1',
-    duration: 3,
-    points: 3,
-    answers: [
-      {
-        answer: 'answer1',
-        correct: false
-      },
-      {
-        answer: 'answer2',
-        correct: true
-      }
-    ]
-  };
-  const VALID_Q_BODY_2: QuestionBody = {
-    question: 'question2',
-    duration: 4,
-    points: 4,
-    answers: [
-      {
-        answer: 'answer1',
-        correct: false
-      },
-      {
-        answer: 'answer2',
-        correct: true
-      }
-    ]
-  };
-
   beforeEach(() => {
     requestClear();
     userToken = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);

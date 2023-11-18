@@ -5,7 +5,7 @@ import {
 
 import {
   requestAuthRegister,
-  requestUserDetails,
+  requestUserDetailsV2,
   requestClear,
   requestLogoutV2
 } from './wrapper';
@@ -13,6 +13,10 @@ import {
 import HTTPError from 'http-errors';
 
 beforeEach(() => {
+  requestClear();
+});
+
+afterEach(() => {
   requestClear();
 });
 
@@ -25,7 +29,7 @@ describe('POST /v1/admin/auth/logout', () => {
   describe('Success Cases', () => {
     test('All inputs are valid', () => {
       expect(requestLogoutV2(userToken.token)).toEqual({});
-      expect(() => requestUserDetails(userToken.token)).toThrow(HTTPError[401]);
+      expect(() => requestUserDetailsV2(userToken.token)).toThrow(HTTPError[401]);
     });
   });
 

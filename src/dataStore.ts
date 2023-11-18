@@ -13,6 +13,7 @@ export interface Question {
   duration: number;
   points: number;
   answers: Answer[];
+  thumbnailUrl: string;
 }
 
 export interface User {
@@ -35,6 +36,7 @@ export interface Quiz {
   numQuestions?: number;
   questions?: Question[];
   duration?: number;
+  thumbnailUrl?: string;
 }
 
 export interface Token {
@@ -47,7 +49,44 @@ export interface DataStore {
   quizzes: Quiz[];
   tokens?: Token[];
   trash?: Quiz[];
+  sessions?: Session[];
+  players?: Player[];
 }
+
+export interface Player {
+  playerId: number;
+  score: number;
+  name: string;
+  sessionId: number;
+  questionsCorrect: boolean[];
+  answerTime: number[];
+}
+
+export interface Session {
+  sessionId: number;
+  quizId: number;
+  quiz: Quiz;
+  atQuestion: number;
+  questionStartTime?: number;
+  state: string;
+  numPlayers: number;
+  players: Player[];
+  autoStartNum: number;
+  chat?: object[];
+}
+
+export interface Timer {
+  timeoutId: ReturnType<typeof setTimeout>;
+  sessionId: number;
+}
+
+let timerData: Timer[] = [];
+
+export const getTimerData = (): Timer[] => timerData;
+
+export const setTimerData = (newTimerData: Timer[]) => {
+  timerData = newTimerData;
+};
 
 const dataFilePath = 'data.json';
 
