@@ -765,7 +765,6 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   return {};
 };
 
-
 /**
  * Update the thumbnail for the quiz
  *
