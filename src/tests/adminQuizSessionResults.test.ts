@@ -5,6 +5,7 @@ import {
   validDetails,
   sessionAction,
   VALID_Q_BODY,
+  VALID_Q_BODY_1,
   SessionStatusViewReturn,
   PlayerIdReturn
 } from '../types';
@@ -46,15 +47,22 @@ describe('GET /v1/admin/quiz/:quizid/session/:sessionid/results', () => {
     user1 = requestAuthRegister(validDetails.EMAIL, validDetails.PASSWORD, validDetails.FIRST_NAME, validDetails.LAST_NAME);
     quizId1 = requestQuizCreateV2(user1.token, validDetails.QUIZ_NAME, validDetails.DESCRIPTION);
     requestQuizQuestionCreateV2(user1.token, quizId1.quizId, VALID_Q_BODY);
+    requestQuizQuestionCreateV2(user1.token, quizId1.quizId, VALID_Q_BODY_1);
     sessionId1 = requestQuizSessionStart(user1.token, quizId1.quizId, 1);
     playerId1 = requestPlayerJoin(sessionId1.sessionId, 'bye');
+    requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.NEXT_QUESTION);
+    requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.SKIP_COUNTDOWN);
+   
     
-    requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.GO_TO_FINAL_RESULTS);
-
+    requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.GO_TO_ANSWER);
+    sessionInfo = requestSessionStatus(user1.token, quizId1.quizId, sessionId1.sessionId);
+    expect(requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.GO_TO_FINAL_RESULTS)).toStrictEqual({});
+    
   });
 
   describe('Success Cases', () => {
     test('Returns correct object', () => {
+      sessionInfo = requestSessionStatus(user1.token, quizId1.quizId, sessionId1.sessionId);
       expect(requestQuizSessionResults(user1.token, quizId1.quizId, sessionId1.sessionId)).toStrictEqual(
         {
 
@@ -83,7 +91,7 @@ describe('GET /v1/admin/quiz/:quizid/session/:sessionid/results', () => {
     });
 
     test('Session is not in FINAL_RESULTS state', () => {
-      requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.NEXT_QUESTION);
+      requestSessionStateUpdate(user1.token, quizId1.quizId, sessionId1.sessionId, sessionAction.END);
       expect(() => requestQuizSessionResults(user1.token, quizId1.quizId, sessionId1.sessionId)).toThrow(HTTPError[400]);
     });
 
@@ -96,7 +104,7 @@ describe('GET /v1/admin/quiz/:quizid/session/:sessionid/results', () => {
     });
 
     test('Valid token is provided, but user is not an owner of this quiz', () => {
-      expect(() => requestQuizSessionResults(user2.token, quizId1.quizId, sessionId2.sessionId)).toThrow(HTTPError[403]);
+      expect(() => requestQuizSessionResults(user1.token, quizId1.quizId + 1, sessionId1.sessionId)).toThrow(HTTPError[403]);
     });
   });
 });
