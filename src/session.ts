@@ -17,7 +17,8 @@ import {
   isValidAction,
   getNextState,
   getPlayer,
-  getSessionByPlayerId
+  getSessionByPlayerId,
+  getRankByAnswerTime
 } from './helper';
 
 import {
@@ -216,15 +217,35 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
   }
 
   for (const id of answerIds) {
-    let currAnswer;
-    if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
+    if (!question.answers.find(answer => answer.answerId === id)) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
     }
+  }
 
-    if (currAnswer.correct) {
-      player.questionsCorrect[questionPosition - 1] = true;
+  // Consider Multiple correct Answer Questions
+  for (const correctAnswer of question.answers) {
+    player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
+    if (correctAnswer.correct && !answerIds.includes(correctAnswer.answerId)) {
+      return {};
+    }
+  }
+
+  for (const id of answerIds) {
+    const currAnswer = question.answers.find(answer => answer.answerId === id);
+
+    // Previously Correct
+    if (player.questionsCorrect[questionPosition - 1] === true) {
+      if (!currAnswer.correct) {
+        player.questionsCorrect[questionPosition - 1] = false;
+        player.score -= question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition));
+      }
     } else {
-      player.questionsCorrect[questionPosition - 1] = false;
+      if (currAnswer.correct) {
+        player.questionsCorrect[questionPosition - 1] = true;
+        player.score += question.points * (1 / getRankByAnswerTime(session.players, player, questionPosition));
+      } else {
+        player.questionsCorrect[questionPosition - 1] = false;
+      }
     }
 
     player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
