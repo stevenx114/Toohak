@@ -663,10 +663,10 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, toke
 
 /**
  * Updates a quiz question and its properties
- * @param {number} quizId 
- * @param {number} questionId 
- * @param {number} sessionId 
- * @param {QuestionBody} questionBody 
+ * @param {number} quizId
+ * @param {number} questionId
+ * @param {number} sessionId
+ * @param {QuestionBody} questionBody
  * @returns {Object} EmptyObject | Error Object
  */
 export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: QuestionBody): EmptyObject | ErrorObject => {
