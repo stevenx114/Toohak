@@ -5,7 +5,8 @@ import {
   EmptyObject,
   SessionStatusViewReturn,
   sessionAction,
-  SessionList
+  SessionList,
+  SessionResult
 } from './types';
 
 import {
@@ -232,53 +233,61 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
   return {};
 };
 
-
 /**
  * Get the final results for all players for a completed quiz session
  *
  * @param {string} token
  * @param {number} quizId
  * @param {number} sessionId
- * @returns {Object} SessionResults[] | ErrorObject
+ * @returns {Object} SessionResult[] | ErrorObject
  */
-export const adminQuizSessionResults = (token: string, quizId: number, sessionId: number): SessionResults[] | ErrorObject => {
+export const adminQuizSessionResults = (token: string, quizId: number, sessionId: number): SessionResult[] | ErrorObject => {
   const curToken = getToken(token);
   if (!curToken) {
     throw HTTPError(401, 'Token is empty or invalid (does not refer to valid logged in user session)');
   }
-  const user = getUser(curToken.authUserId);  
-  const curSession = getSession(sessionId);
+  const user = getUser(curToken.authUserId);
   if (!user.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Valid token is provided, but user is not an owner of this quiz');
-  }  
-  
+  }
+
+  const curSession = getSession(sessionId);
+
   if (!curSession || (curSession.quizId !== quizId)) {
     throw HTTPError(400, 'Session Id does not refer to a valid session within this quiz');
-  } 
-  
+  }
+
   if (curSession.state !== sessionState.FINAL_RESULTS) {
     throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
-  } 
+  }
+
   const curQuiz = curSession.quiz;
-  const playerScores = curSession.players.map(p => ({ name: p.name, score: p.score })).sort((a, b) => b.score - a.score);
-
-  const questionResults = curQuiz.questions.map((question, index) => {
-    console.log(index, question)
-    console.log(curSession.players[1].answerTime)
-
-    const correctPlayers = curSession.players.filter(p => p.questionsCorrect[index]);
-    const timeTaken = curSession.players.map(p => p.answerTime[index]);
-    const totalTime = timeTaken.reduce((a, b) => a + b);
-    const averageTime = Math.floor(totalTime / curSession.players.length);
-    const percentCorrect = Math.round((correctPlayers.length / curSession.players.length) * 100);
-    return {
-      questionId: question.questionId,
-      playersCorrectList: correctPlayerNames,
+  const activePlayers = curSession.players;
+  activePlayers.sort(function(a, b) {
+    return a.score - b.score;
+  });
+  const playerScores = activePlayers.map(p => ({ name: p.name, score: p.score }));
+  const questionResults = [];
+  let correctPlayers;
+  let timeTaken;
+  let totalTime;
+  let averageTime;
+  let percentCorrect;
+  let questionResult;
+  for (const questionIndex in curQuiz.questions) {
+    correctPlayers = curSession.players.filter(p => p.questionsCorrect[questionIndex]);
+    timeTaken = curSession.players.map(p => p.answerTime[questionIndex]);
+    totalTime = timeTaken.reduce((a, b) => a + b);
+    averageTime = Math.floor(totalTime / curSession.players.length);
+    percentCorrect = Math.round((correctPlayers.length / curSession.players.length) * 100);
+    questionResult = {
+      questionId: curQuiz.questions[questionIndex].questionId,
+      playersCorrectList: correctPlayers.map(p => p.name),
       averageAnswerTime: averageTime,
       percentCorrect: percentCorrect
-    };  
-  });
-
+    };
+    questionResults.push(questionResult);
+  }
   return {
     usersRankedByScore: playerScores,
     questionResults: questionResults
