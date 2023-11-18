@@ -248,8 +248,12 @@ export function requestEmptyTrashV2(token: string, quizIds: string) {
   return requestHelper('DELETE', '/v2/admin/quiz/trash/empty', { quizIds }, { token });
 }
 
-export function requestPlayerQuestionResults(questionId: number, questionPosition: number) {
-  return requestHelper('GET', `/v1/player/${questionId}/question/${questionPosition}/results`, {});
+export function requestPlayerQuestionResults(playerId: number, questionPosition: number) {
+  return requestHelper('GET', `/v1/player/${playerId}/question/${questionPosition}/results`, {});
+}
+
+export function requestPlayerSessionResults(playerId: number) {
+  return requestHelper('GET', `/v1/player/${playerId}/results`, {}, {});
 }
 
 export function requestSessionStateUpdate(token: string, quizId: number, sessionId: number, action: string) {
