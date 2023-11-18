@@ -22,7 +22,8 @@ import {
   trashedQuizReturn,
   QuestionBody,
   QuestionIdReturn,
-  QuestionDuplicateReturn
+  QuestionDuplicateReturn,
+  sessionState
 } from './types';
 
 import {
@@ -45,6 +46,10 @@ export const adminQuizCreate = (token: string, name: string, description: string
   const data = getData();
   const specialChar = /[^a-zA-Z0-9\s]/;
   const curToken = getToken(token);
+
+  if (!token) {
+    throw HTTPError(401, 'Token is empty');
+  }
 
   if (!curToken) {
     throw HTTPError(401, 'Token does not refer to valid logged in user session');
@@ -78,7 +83,7 @@ export const adminQuizCreate = (token: string, name: string, description: string
       description: description,
       numQuestions: 0,
       questions: [],
-      duration: 0
+      duration: 0,
     }
   );
 
@@ -107,7 +112,11 @@ export const adminQuizRemove = (token: string, quizId: number): EmptyObject | Er
   const user = getUser(userId);
 
   if (!user.quizzesOwned.includes(quizId)) {
-    throw HTTPError(403, 'Quiz ID does not refer toa  quiz that this user owns');
+    throw HTTPError(403, 'Quiz ID does not refer to quiz that this user owns');
+  }
+  const activeSessions = data.sessions.filter(s => s.quizId === quizId);
+  if (activeSessions.find(s => s.state !== sessionState.END)) {
+    throw HTTPError(400, 'All sessions for this quiz in END state');
   }
   const indexOfQuizInData = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
   data.quizzes[indexOfQuizInData].timeLastEdited = Math.floor((new Date()).getTime() / 1000);
@@ -138,16 +147,31 @@ export const adminQuizInfo = (token: string, quizId: number): Quiz | ErrorObject
   if (!curUser.quizzesOwned.includes(quizId)) {
     throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
   }
-  return {
-    quizId: quiz.quizId,
-    name: quiz.name,
-    timeCreated: quiz.timeCreated,
-    timeLastEdited: quiz.timeLastEdited,
-    description: quiz.description,
-    numQuestions: quiz.numQuestions,
-    questions: quiz.questions,
-    duration: quiz.duration,
-  };
+
+  if (quiz.thumbnailUrl !== undefined) {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+      thumbnailUrl: quiz.thumbnailUrl
+    };
+  } else {
+    return {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      duration: quiz.duration,
+    };
+  }
 };
 
 /**
@@ -404,7 +428,20 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     throw HTTPError(400, 'The length of an answer is shorter than 1 character long, or longer than 30 characters long');
   } else if (!CorrectAnswer) {
     throw HTTPError(400, 'Question must have a correct answer');
+  } else if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'Thumbnail URL cannot be empty');
   }
+
+  if (questionBody.thumbnailUrl) {
+    if (!questionBody.thumbnailUrl.endsWith('.png') && !questionBody.thumbnailUrl.endsWith('jpeg') && !questionBody.thumbnailUrl.endsWith('.jpg')) {
+      throw HTTPError(400, 'Incorrect file type');
+    }
+
+    if (questionBody.thumbnailUrl.startsWith('http://') === false && questionBody.thumbnailUrl.startsWith('https://') === false) {
+      throw HTTPError(400, 'Invalid Thumbnail URL');
+    }
+  }
+
   const seenAnswers: string[] = [];
   for (const answer of questionBody.answers) {
     if (seenAnswers.includes(answer.answer)) {
@@ -440,6 +477,7 @@ export const adminQuizQuestionCreate = (quizid: number, token: string, questionB
     duration: questionBody.duration,
     points: questionBody.points,
     answers: answers,
+    thumbnailUrl: questionBody.thumbnailUrl,
   };
 
   quiz.questions.push(newQuestion);
@@ -585,21 +623,21 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
 };
 
 /**
- *
- * @param quizId
- * @param questionId
- * @param sessionId
- * @returns
+ * Deletes a quiz question
+ * @param {number} quizId
+ * @param {number} questionId
+ * @param {string} token
+ * @returns {Object} EmptyObject | Record<string, never>
  */
-export const adminQuizQuestionDelete = (quizId: number, questionId: number, sessionId: string): Error | Record<string, never> => {
+export const adminQuizQuestionDelete = (quizId: number, questionId: number, token: string): ErrorObject | Record<string, never> => {
   const data = getData();
   const quiz = getQuiz(quizId);
-  const token = getToken(sessionId);
-  if (!token) {
+  const curToken = getToken(token);
+  if (!curToken) {
     throw HTTPError(401, 'Invalid token');
   }
 
-  const user = getUser(token.authUserId);
+  const user = getUser(curToken.authUserId);
   if (!user.quizzesOwned.includes(quiz.quizId)) {
     throw HTTPError(403, 'User is not the owner of the quiz');
   }
@@ -607,6 +645,12 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, sess
   const question = quiz.questions.find(question => question.questionId === questionId);
   if (!question) {
     throw HTTPError(400, 'Invalid question id');
+  }
+
+  for (const session of data.sessions) {
+    if (session.quizId === quizId && session.state !== 'END') {
+      throw HTTPError(400, 'Session must be in END state');
+    }
   }
 
   quiz.numQuestions--;
@@ -618,27 +662,13 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, sess
 };
 
 /**
-Update a quiz question by modifying its content and properties.*
-@param {number} quizId - The unique identifier of the quiz containing the question to be updated.
-@param {number} questionId - The unique identifier of the question to be updated.
-@param {string} sessionId - The session ID of the user making the request.
-@param {object} questionBody - An object containing the new question content and properties.
-@param {string} questionBody.question - The updated question text.
-@param {object[]} questionBody.answers - An array of answer objects.
-@param {string} questionBody.answers.answer - The text of an answer option.
-@param {boolean} questionBody.answers.correct - Indicates whether the answer is correct (true) or not (false).
-@param {number} questionBody.duration - The updated duration for the question.
-@param {number} questionBody.points - The updated number of points awarded for the question.
-*
-@returns {EmptyObject | ErrorObject} - An object representing the result of the update operation.
-@returns {EmptyObject} - If the update is successful, an empty object is returned.
-@returns {ErrorObject} - If any validation checks fail, an error object is returned with details.
-*
-@typedef {Object} EmptyObject - An empty object representing a successful operation.
-@typedef {Object} ErrorObject - An object representing an error with a status code and message.
-@property {string} error - A description of the error.
-@property {string} status - The HTTP status code associated with the error.
-*/
+ * Updates a quiz question and its properties
+ * @param {number} quizId 
+ * @param {number} questionId 
+ * @param {number} sessionId 
+ * @param {QuestionBody} questionBody 
+ * @returns {Object} EmptyObject | Error Object
+ */
 export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: QuestionBody): EmptyObject | ErrorObject => {
   const data = getData();
   const quiz = getQuiz(quizId);
@@ -649,7 +679,6 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   }
 
   const user = getUser(token.authUserId);
-
   const question = quiz.questions.find(question => question.questionId === questionId);
 
   if (!quiz || !question) {
@@ -672,16 +701,11 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
     throw HTTPError(400, 'The question duration is not a positive number');
   }
 
-  let sum = 0;
+  let newDuration = quiz.duration;
+  newDuration -= question.duration;
+  newDuration += questionBody.duration;
 
-  for (const question of quiz.questions) {
-    sum += question.duration;
-  }
-
-  sum -= question.duration;
-  sum += questionBody.duration;
-
-  if (sum > 180) {
+  if (newDuration > 180) {
     throw HTTPError(400, 'If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes');
   }
 
@@ -704,15 +728,29 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   if (!questionBody.answers.find(answer => answer.correct === true)) {
     throw HTTPError(400, 'There are no correct answers');
   }
-  const colour = ['red', 'green', 'blue'];
 
+  if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'Thumbnail URL cannot be empty');
+  }
+
+  if (questionBody.thumbnailUrl) {
+    if (!questionBody.thumbnailUrl.endsWith('.png') && !questionBody.thumbnailUrl.endsWith('jpeg') && !questionBody.thumbnailUrl.endsWith('.jpg')) {
+      throw HTTPError(400, 'Incorrect file type');
+    }
+
+    if (questionBody.thumbnailUrl.startsWith('http://') === false && questionBody.thumbnailUrl.startsWith('https://') === false) {
+      throw HTTPError(400, 'Invalid Thumbnail URL');
+    }
+  }
+
+  const colour = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
   const answers: Answer[] = [];
 
   for (const index in questionBody.answers) {
     const pushObject: Answer = {
       answerId: Number(index),
       answer: questionBody.answers[index.answer],
-      colour: colour[Math.floor(Math.random()) % 3],
+      colour: colour[Math.floor(Math.random() * colour.length)],
       correct: questionBody.answers[index].correct,
     };
     answers.push(pushObject);
@@ -722,8 +760,40 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   question.duration = questionBody.duration;
   question.points = questionBody.points;
   question.question = questionBody.question;
-
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
+  return {};
+};
+
+/**
+ * Update the thumbnail for the quiz
+ *
+ * @param {string} token
+ * @param {number} quizId
+ * @param {string} imgUrl
+ * @returns {Object} EmptyObject | ErrorObject
+ */
+export const adminQuizThumbnailUpdate = (token: string, quizId: number, imgUrl: string): EmptyObject | ErrorObject => {
+  const data = getData();
+  const curQuiz = getQuiz(quizId);
+  const curToken = getToken(token);
+  if (!curToken) {
+    throw HTTPError(401, 'Token does not refer to valid logged in user session');
+  }
+  const curUser = getUser(curToken.authUserId);
+  const validFileTypeRegex = /\.(jpg|jpeg|png)$/i;
+  const validProtocolRegex = /^(http:\/\/|https:\/\/)/;
+  if (!curUser.quizzesOwned.includes(quizId)) {
+    throw HTTPError(403, 'Quiz ID does not refer to a quiz that this user owns');
+  } else if (!validFileTypeRegex.test(imgUrl)) {
+    throw HTTPError(400, 'The image must have one of the following filetypes: jpg, jpeg, png');
+  } else if (!validProtocolRegex.test(imgUrl)) {
+    throw HTTPError(400, 'The imgUrl must begin with http:// or https://');
+  }
+
+  curQuiz.thumbnailUrl = imgUrl;
+  curQuiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
+  setData(data);
+
   return {};
 };
