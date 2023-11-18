@@ -88,7 +88,14 @@ export const setTimerData = (newTimerData: Timer[]) => {
   timerData = newTimerData;
 };
 
-let data: DataStore = readData();
+let data: DataStore = {
+  users: [],
+  quizzes: [],
+  tokens: [],
+  trash: [],
+  sessions: [],
+  players: []
+};
 
 import request, { HttpVerb } from 'sync-request';
 
