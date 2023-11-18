@@ -111,11 +111,7 @@ export const adminQuizSessionStateUpdate = (token: string, quizId: number, sessi
     throw HTTPError(400, 'Action cannot be run in the current state');
   }
 
-  const curQuiz = curSession.quiz;
-  const atQuestionIndex = curSession.atQuestion;
-  const nextQuestion = curQuiz.questions[atQuestionIndex];
-  const questionDuration = nextQuestion?.duration;
-  curSession.state = getNextState(sessionId, curState, action, questionDuration);
+  curSession.state = getNextState(sessionId, curState, action);
   setData(data);
 
   return {};
@@ -202,8 +198,6 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
 
   if (session?.state !== sessionState.QUESTION_OPEN) {
     throw HTTPError(400, 'Session is not in QUESTION_OPEN state');
-  } else if (!player) {
-    throw HTTPError(400, 'If player ID does not exist');
   } else if (questionPosition !== session.atQuestion) {
     throw HTTPError(400, 'If question position is not valid for the session this player is in or session is not yet up to this question');
   } else if ((new Set(answerIds).size < answerIds?.length)) {
