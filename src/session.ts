@@ -214,27 +214,36 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
     player.answerTime = [];
   }
 
+  // Consider Multiple correct Answer Questions
+  for (const correctAnswer of question.answers) {
+    if (correctAnswer.correct && !answerIds.includes(correctAnswer.answerId)) {
+      return {};
+    }
+  }
+
   for (const id of answerIds) {
     let currAnswer;
     if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
     }
 
+    // Previously Correct
     if (player.questionsCorrect[questionPosition - 1] === true) {
       if (!currAnswer.correct) {
         player.questionsCorrect[questionPosition - 1] = false;
-        player.score -= question.points;
+        player.score -= question.points * getRankByAnswerTime(session.players, player);
       }
+      player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
     } else {
       if (currAnswer.correct) {
+        player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
         player.questionsCorrect[questionPosition - 1] = true;
-        player.score += question.points;
+        player.score += question.points * getRankByAnswerTime(session.players, player);
       } else {
         player.questionsCorrect[questionPosition - 1] = false;
+        player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
       }
     }
-
-    player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
   }
 
   return {};
