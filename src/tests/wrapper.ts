@@ -3,7 +3,7 @@ import { port, url } from '../config.json';
 import { IncomingHttpHeaders } from 'http';
 import HTTPError from 'http-errors';
 
-const SERVER_URL = `${url}:${port}`;
+const SERVER_URL = `https://z5481988-toohak-deploy.vercel.app`;
 const TIMEOUT_MS = 10000;
 
 interface Payload {
