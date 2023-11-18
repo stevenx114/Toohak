@@ -192,3 +192,17 @@ export const getNextState = (sessionId: number, state: string, action: string): 
   setData(data);
   return newState;
 };
+
+export function getRankByAnswerTime(players: Player[], currentPlayer: Player): number {
+  const playersWithTime = players.filter(player => player.answerTime !== undefined);
+
+  playersWithTime.sort((a, b) => a.answerTime! - b.answerTime!);
+
+  const currentIndex = playersWithTime.findIndex(player => player.playerId === currentPlayer.playerId);
+
+  if (currentPlayer.answerTime === undefined) {
+    return 0;
+  }
+
+  return currentIndex !== -1 ? currentIndex + 1 : 1;
+}
