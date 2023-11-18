@@ -194,8 +194,6 @@ export const getNextState = (sessionId: number, state: string, action: string): 
 };
 
 export function getRankByAnswerTime(players: Player[], currentPlayer: Player, index: number): number {
-  const currentIndex = players.findIndex(player => player.playerId === currentPlayer.playerId);
-
   const playersWithTime = players.filter(player => player.answerTime !== undefined && player.questionsCorrect[index] === true);
 
   playersWithTime.sort((a, b) => (a.answerTime![index] || 0) - (b.answerTime![index] || 0));
