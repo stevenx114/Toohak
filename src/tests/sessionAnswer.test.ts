@@ -40,6 +40,11 @@ describe('statusView test', () => {
   });
 
   describe('Invalid Input Tests', () => {
+    test('Session is not in QUESTION_OPEN state', () => {
+      requestSessionStateUpdate(token.token, quizId.quizId, sessionId.sessionId, sessionAction.END);
+      expect(() => requestSubmitAnswer(playerId.playerId, 1, [correctId])).toThrow(HTTPError[400]);
+    });
+
     test('If player ID does not exist', () => {
       expect(() => requestSubmitAnswer(playerId.playerId + 1, 1, [correctId])).toThrow(HTTPError[400]);
     });

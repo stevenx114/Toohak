@@ -53,7 +53,9 @@ import {
   playerQuestionInfo,
   playerJoin,
   playerChatSend,
-  playerStatus
+  playerStatus,
+  playerQuestionResults,
+  playerChatView
 } from './player';
 
 // Set up web app
@@ -411,6 +413,13 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   res.json(adminQuizSessionStateUpdate(token, quizId, sessionId, action));
 });
 
+// playerQuestionResults
+app.get('/v1/player/:playerid/question/:questionposition/results', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const questionPosition = parseInt(req.params.questionposition);
+  res.json(playerQuestionResults(playerId, questionPosition));
+});
+
 // adminQuizThumbnailUpdate
 app.put('/v1/admin/quiz/:quizid/thumbnail', (req: Request, res: Response) => {
   const token = req.headers.token as string;
@@ -436,6 +445,12 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
   const playerId = parseInt(req.params.playerid);
   const questionPosition = parseInt(req.params.questionposition);
   res.json(playerQuestionInfo(playerId, questionPosition));
+});
+
+// playerChatView
+app.get('/v1/player/:playerid/chat', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  res.json(playerChatView(playerId));
 });
 
 // playerChatSend

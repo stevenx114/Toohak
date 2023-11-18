@@ -15,7 +15,9 @@ import {
   PlayerQuestionInfoReturn,
   sessionState,
   PlayerStatusReturn,
-  PlayerChatSendReturn
+  PlayerChatSendReturn,
+  QuestionResult,
+  PlayerChatReturn
 } from './types';
 
 import {
@@ -187,5 +189,61 @@ export const playerChatSend = (playerId: number, messageBody: string): PlayerCha
     message: {
       messageBody: messageBody
     }
+  };
+};
+
+/**
+ *
+ * @param playerId: number
+ * @param questionPosition: number
+ * @returns QuestionResult
+ */
+export const playerQuestionResults = (playerId: number, questionPosition: number): QuestionResult | ErrorObject => {
+  const curPlayer = getPlayer(playerId);
+  if (!curPlayer) {
+    throw HTTPError(400, 'PlayerId does not exist');
+  }
+  const sessionId = curPlayer.sessionId;
+  const curSession = getSession(sessionId);
+  if (curSession.state !== sessionState.ANSWER_SHOW) {
+    throw HTTPError(400, 'Session is not in ANSWER_SHOW state');
+  }
+  const curQuiz = curSession.quiz;
+  if (questionPosition > curQuiz.numQuestions || questionPosition < 1) {
+    throw HTTPError(400, 'Question position is not valid for the session this player is in');
+  }
+  if (questionPosition > curSession.atQuestion) {
+    throw HTTPError(400, 'Session is not yet up to this question');
+  }
+  const curQuestion = curQuiz.questions[curSession.atQuestion - 1];
+  const correctPlayers = curSession.players.filter(p => p.questionsCorrect[curSession.atQuestion - 1]);
+  const correctPlayerNames = correctPlayers.map(p => p.name);
+  const timeTaken = curSession.players.map(p => p.answerTime[curSession.atQuestion - 1]);
+  const totalTime = timeTaken.reduce((a, b) => a + b);
+  const averageTime = Math.floor(totalTime / curSession.players.length);
+  const percentCorrect = Math.round((correctPlayers.length / curSession.players.length) * 100);
+  return {
+    questionId: curQuestion.questionId,
+    playersCorrectList: correctPlayerNames,
+    averageAnswerTime: averageTime,
+    percentCorrect: percentCorrect
+  };
+};
+
+/*
+ * Return all messages that are in the same session as the player
+ *
+ * @param {number} playerId
+ * @returns {object} PlayerChatReturn | ErrorObject
+ */
+export const playerChatView = (playerId: number): PlayerChatReturn | ErrorObject => {
+  const curPlayer = getPlayer(playerId);
+  if (!curPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+
+  const curSession = getSession(curPlayer.sessionId);
+  return {
+    messages: curSession.chat
   };
 };
