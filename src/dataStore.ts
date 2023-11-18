@@ -99,7 +99,7 @@ let data: DataStore = {
 
 import request, { HttpVerb } from 'sync-request';
 
-const DEPLOYED_URL = "https://z5481988-toohak-deploy.vercel.app"
+const DEPLOYED_URL = "https://w16a-eggs-toohak.vercel.app"
 
 const requestHelper = (method: HttpVerb, path: string, payload: object) => {
   let json = {};
