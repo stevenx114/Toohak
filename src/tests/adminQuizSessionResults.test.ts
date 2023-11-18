@@ -1,13 +1,8 @@
 import {
-  QuizIdReturn,
-  TokenReturn,
-  SessionIdReturn,
   validDetails,
   sessionAction,
   VALID_Q_BODY_2,
   VALID_Q_BODY,
-  SessionStatusViewReturn,
-  PlayerIdReturn,
 } from '../types';
 
 import {
@@ -18,7 +13,6 @@ import {
   requestQuizSessionResults,
   requestSessionStateUpdate,
   requestQuizQuestionCreateV2,
-  requestSessionStatus,
   requestPlayerJoin,
   requestSubmitAnswer,
   requestQuizInfoV2
