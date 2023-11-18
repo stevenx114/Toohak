@@ -17,7 +17,8 @@ import {
   PlayerStatusReturn,
   PlayerChatSendReturn,
   QuestionResult,
-  PlayerChatReturn
+  PlayerChatReturn,
+  SessionResultsReturn
 } from './types';
 
 import {
@@ -227,6 +228,53 @@ export const playerQuestionResults = (playerId: number, questionPosition: number
     playersCorrectList: correctPlayerNames,
     averageAnswerTime: averageTime,
     percentCorrect: percentCorrect
+  };
+};
+
+/**
+ *
+ * @param playerId: number
+ * @returns SessionResultsReturn
+ */
+export const playerSessionResults = (playerId: number): SessionResultsReturn | ErrorObject => {
+  const curPlayer = getPlayer(playerId);
+  if (!curPlayer) {
+    throw HTTPError(400, 'Player ID does not exist');
+  }
+  const curSession = getSession(curPlayer.sessionId);
+  if (curSession.state !== sessionState.FINAL_RESULTS) {
+    throw HTTPError(400, 'Session is not in FINAL_RESULTS state');
+  }
+  const curQuiz = curSession.quiz;
+  const activePlayers = curSession.players;
+  activePlayers.sort(function(a, b) {
+    return a.score - b.score;
+  });
+  const playerScores = activePlayers.map(p => ({ name: p.name, score: p.score }));
+  const questionResults = [];
+  let correctPlayers;
+  let timeTaken;
+  let totalTime;
+  let averageTime;
+  let percentCorrect;
+  let questionResult;
+  for (const questionIndex in curQuiz.questions) {
+    correctPlayers = curSession.players.filter(p => p.questionsCorrect[questionIndex]);
+    timeTaken = curSession.players.map(p => p.answerTime[questionIndex]);
+    totalTime = timeTaken.reduce((a, b) => a + b);
+    averageTime = Math.floor(totalTime / curSession.players.length);
+    percentCorrect = Math.round((correctPlayers.length / curSession.players.length) * 100);
+    questionResult = {
+      questionId: curQuiz.questions[questionIndex].questionId,
+      playersCorrectList: correctPlayers.map(p => p.name),
+      averageAnswerTime: averageTime,
+      percentCorrect: percentCorrect
+    };
+    questionResults.push(questionResult);
+  }
+  return {
+    usersRankedByScore: playerScores,
+    questionResults: questionResults
   };
 };
 
