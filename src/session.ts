@@ -219,11 +219,22 @@ export const sessionQuizAnswer = (playerId: number, questionPosition: number, an
     if (!(currAnswer = question.answers.find(answer => answer.answerId === id))) {
       throw HTTPError(400, 'Answer IDs are not valid for this particular question');
     }
+    
 
-    if (currAnswer.correct) {
-      player.questionsCorrect[questionPosition - 1] = true;
+    if (player.questionsCorrect[questionPosition - 1] = true) {
+      if (currAnswer.correct) {
+        player.questionsCorrect[questionPosition - 1] = true;
+      } else {
+        player.questionsCorrect[questionPosition - 1] = false;
+        player.score -= question.points;
+      }
     } else {
-      player.questionsCorrect[questionPosition - 1] = false;
+      if (currAnswer.correct) {
+        player.questionsCorrect[questionPosition - 1] = true;
+        player.score += question.points;
+      } else {
+        player.questionsCorrect[questionPosition - 1] = false;
+      }
     }
 
     player.answerTime[questionPosition - 1] = Math.floor(((new Date()).getTime() - session.questionStartTime) / 1000);
