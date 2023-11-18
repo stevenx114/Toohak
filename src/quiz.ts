@@ -623,11 +623,11 @@ export const adminQuizTransfer = (token: string, quizId: number, userEmail: stri
 };
 
 /**
- *
+ * Deletes a quiz question
  * @param {number} quizId
  * @param {number} questionId
  * @param {string} token
- * @returns
+ * @returns {Object} EmptyObject | Record<string, never>
  */
 export const adminQuizQuestionDelete = (quizId: number, questionId: number, token: string): ErrorObject | Record<string, never> => {
   const data = getData();
@@ -662,27 +662,13 @@ export const adminQuizQuestionDelete = (quizId: number, questionId: number, toke
 };
 
 /**
-Update a quiz question by modifying its content and properties.*
-@param {number} quizId - The unique identifier of the quiz containing the question to be updated.
-@param {number} questionId - The unique identifier of the question to be updated.
-@param {string} sessionId - The session ID of the user making the request.
-@param {object} questionBody - An object containing the new question content and properties.
-@param {string} questionBody.question - The updated question text.
-@param {object[]} questionBody.answers - An array of answer objects.
-@param {string} questionBody.answers.answer - The text of an answer option.
-@param {boolean} questionBody.answers.correct - Indicates whether the answer is correct (true) or not (false).
-@param {number} questionBody.duration - The updated duration for the question.
-@param {number} questionBody.points - The updated number of points awarded for the question.
-*
-@returns {EmptyObject | ErrorObject} - An object representing the result of the update operation.
-@returns {EmptyObject} - If the update is successful, an empty object is returned.
-@returns {ErrorObject} - If any validation checks fail, an error object is returned with details.
-*
-@typedef {Object} EmptyObject - An empty object representing a successful operation.
-@typedef {Object} ErrorObject - An object representing an error with a status code and message.
-@property {string} error - A description of the error.
-@property {string} status - The HTTP status code associated with the error.
-*/
+ * Updates a quiz question and its properties
+ * @param {number} quizId
+ * @param {number} questionId
+ * @param {number} sessionId
+ * @param {QuestionBody} questionBody
+ * @returns {Object} EmptyObject | Error Object
+ */
 export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: string, questionBody: QuestionBody): EmptyObject | ErrorObject => {
   const data = getData();
   const quiz = getQuiz(quizId);
@@ -693,7 +679,6 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   }
 
   const user = getUser(token.authUserId);
-
   const question = quiz.questions.find(question => question.questionId === questionId);
 
   if (!quiz || !question) {
@@ -716,16 +701,11 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
     throw HTTPError(400, 'The question duration is not a positive number');
   }
 
-  let sum = 0;
+  let newDuration = quiz.duration;
+  newDuration -= question.duration;
+  newDuration += questionBody.duration;
 
-  for (const question of quiz.questions) {
-    sum += question.duration;
-  }
-
-  sum -= question.duration;
-  sum += questionBody.duration;
-
-  if (sum > 180) {
+  if (newDuration > 180) {
     throw HTTPError(400, 'If this question were to be updated, the sum of the question durations in the quiz exceeds 3 minutes');
   }
 
@@ -748,15 +728,29 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   if (!questionBody.answers.find(answer => answer.correct === true)) {
     throw HTTPError(400, 'There are no correct answers');
   }
-  const colour = ['red', 'green', 'blue'];
 
+  if (questionBody.thumbnailUrl === '') {
+    throw HTTPError(400, 'Thumbnail URL cannot be empty');
+  }
+
+  if (questionBody.thumbnailUrl) {
+    if (!questionBody.thumbnailUrl.endsWith('.png') && !questionBody.thumbnailUrl.endsWith('jpeg') && !questionBody.thumbnailUrl.endsWith('.jpg')) {
+      throw HTTPError(400, 'Incorrect file type');
+    }
+
+    if (questionBody.thumbnailUrl.startsWith('http://') === false && questionBody.thumbnailUrl.startsWith('https://') === false) {
+      throw HTTPError(400, 'Invalid Thumbnail URL');
+    }
+  }
+
+  const colour = ['red', 'blue', 'green', 'yellow', 'purple', 'brown', 'orange'];
   const answers: Answer[] = [];
 
   for (const index in questionBody.answers) {
     const pushObject: Answer = {
       answerId: Number(index),
       answer: questionBody.answers[index.answer],
-      colour: colour[Math.floor(Math.random()) % 3],
+      colour: colour[Math.floor(Math.random() * colour.length)],
       correct: questionBody.answers[index].correct,
     };
     answers.push(pushObject);
@@ -766,7 +760,6 @@ export const adminUpdateQuiz = (quizId: number, questionId: number, sessionId: s
   question.duration = questionBody.duration;
   question.points = questionBody.points;
   question.question = questionBody.question;
-
   quiz.timeLastEdited = Math.floor((new Date()).getTime() / 1000);
   setData(data);
   return {};
