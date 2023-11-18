@@ -37,6 +37,10 @@ describe('statusView test', () => {
     test('All inputs are valid with incorrect answer', () => {
       expect(requestSubmitAnswer(playerId.playerId, 1, [answerId])).toStrictEqual({});
     });
+
+    test('Incorrect then correct', () => {
+      expect(requestSubmitAnswer(playerId.playerId, 1, [answerId, correctId])).toStrictEqual({});
+    });
   });
 
   describe('Invalid Input Tests', () => {
